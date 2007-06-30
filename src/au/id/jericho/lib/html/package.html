@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+	<head><title>Jericho HTML Parser (jericho-html) release 1.0</title></head>
+	<body>
+		<p>A simple but powerful java library for parsing and modifying HTML documents, including analysis of abritrary HTML forms to determine the structure of submitted data.</p>
+		<p>
+			The Jericho HTML Parser is an open source library released under the <a href="http://www.gnu.org/copyleft/lesser.html" target="_blank">GNU Lesser General Public License (LGPL)</a>.
+			You are therefore free to use it in commercial applications subject to the terms detailed in the licence document.
+		</p>
+		<p>
+			For downloads, support and updates visit the SourceForge.net project page at
+			<a href="http://sourceforge.net/projects/jerichohtml/" target="_blank">http://sourceforge.net/projects/jerichohtml/</a>
+		</p>
+		<p>
+			For a summary of features and comparison with some other java HTML parsers, visit the homepage at
+			<a href="http://jerichohtml.sourceforge.net" target="_blank">http://jerichohtml.sourceforge.net</a>
+		</p>
+		<h3>Modifying an HTML Document</h3>
+		<p>
+			The typical method for modifying a document is as follows.
+			See the description of the {@link au.id.jericho.lib.html.OutputDocument} class for sample code.
+		</p>
+		<ol>
+			<li>Create a {@link au.id.jericho.lib.html.Source} object from the source text</li>
+			<li>Find the required segments by calling methods on the Source object and other segments</li>
+			<li>Create an {@link au.id.jericho.lib.html.OutputDocument} object from the source text</li>
+			<li>Add an {@link au.id.jericho.lib.html.IOutputSegment} to the OutputDocument for each segment of the document that is to be replaced with other text</li>
+			<li>Call the {@link au.id.jericho.lib.html.OutputDocument#toString()} method to get the final output</li>
+		</ol>
+		<h3>Analysing or Extracting Information from an HTML Document</h3>
+		<p>
+			If the document only needs to be analysed instead of modified, only the first two steps listed above are required.
+			See the description of the {@link au.id.jericho.lib.html.FormFields} class for sample code.
+		</p>
+		<!-- Put @see and @since tags down here. -->
+	</body>
+</html>

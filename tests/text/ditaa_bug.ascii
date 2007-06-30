@@ -1,0 +1,43 @@
+/-----------\
+| 3D engine |
+\-----+-----/
+      |                 /---------------------------\
+      \----------+----->| graphics                  |
+                 |      +---------------------------+
+                 |      | low level opengl handling |
+                 |      | geometry                  |
+                 |      | animation                 |
+                 |      | shaders                   |
+                 |      | scene                     |
+                 |      | textures                  |        /-----------------\
+                 |      | ... lots of stuff ...     |   /--->| X Window System |
+                 |      \---------------------------/   |    \-----------------/
+                 |      /---------------------------\   |    /-------\
+                 +----->| window system abstraction +---+--->| Win32 |
+                 |      +---------------------------+   |    \-------/
+                 |      | window / GL context init  |   |    /------------\
+                 |      | event handling            |   +--->| OSX Carbon |
+                 |      \---------------------------/   |    \------------/
+                 |      /--------------\                |    /-----------------\
+                 +----->| math library |                \--->| PlayStation 3 ? |
+                 |      +--------------+                     \-----------------/
+                 |      | vectors      |
+                 |      | matrices     |
+                 |      | quaternions  |
+                 |      | etc...       |
+                 |      \--------------/
+                 |      /---------------------\
+                 +----->| simulation          |
+                 |      +---------------------+
+                 |      | particle systems    |
+                 |      | rigid bodies        |
+                 |      | spring/mass systems |
+                 |      \---------------------/
+                 |      /---------------------\
+                 \----->| common code         |
+                        +---------------------+
+                        | data structures     |
+                        | error logging       |
+                        | config file parsers |
+                        | ... whatever ...    |
+                        \---------------------/

@@ -1,0 +1,23 @@
+/--------------------------\
+| the                  the |
+| horizontal    horizontal |
+| alignment      alignment |
+| of                    of |
+| strings          strings |
+| is                    is |
+| retained        retained |
+|                          |
+|                          |
+|        hhh               |
+|        MMM               |
+|        iii               |
+|      the example is clear|
+|                          |
+|      o Bullet            |
+|      o points            |
+|      o are               |
+|      o recognised        |
+|      * and               |
+|      * handled           |
+|      * nicely        c9D9|
+\--------------------------/

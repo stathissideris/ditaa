@@ -1,0 +1,4 @@
+<ditaa>
+	<include file="flowchart/config_bw.xml" />
+	<include file="networking/config_bw.xml" />
+</ditaa>

@@ -1,0 +1,60 @@
+<ditaa>
+	<shapes>
+		<shape
+		      tag="con"
+		      stretch="no"
+		      shadow="yes"
+		      border="no"
+		      filename="circle_bw.svg" />
+
+		<shape
+		      tag="s"
+		      stretch="yes"
+		      shadow="yes"
+		      border="no"
+		      filename="database_bw.svg" />
+
+		<shape
+			tag="dec"
+			stretch="yes"
+			shadow="yes"
+			border="no"
+			filename="decision_bw.svg" />
+
+		<shape
+		      tag="dis"
+		      stretch="yes"
+		      shadow="yes"
+		      border="no"
+		      filename="display_bw.svg" />
+		
+		<shape
+		      tag="io"
+		      stretch="yes"
+		      shadow="yes"
+		      border="no"
+		      filename="io_bw.svg" />
+
+		<shape
+		      tag="start"
+		      stretch="yes"
+		      shadow="yes"
+		      border="no"
+		      filename="start_bw.svg" />
+
+		<shape
+		      tag="stop"
+		      stretch="yes"
+		      shadow="yes"
+		      border="no"
+		      filename="stop_bw.svg" />
+
+		<shape
+		      tag="tape"
+		      stretch="yes"
+		      shadow="yes"
+		      border="no"
+		      filename="tape_bw.svg" />
+		
+	</shapes>
+</ditaa>

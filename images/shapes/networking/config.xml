@@ -1,0 +1,17 @@
+<ditaa>
+	<shapes>
+		<shape
+			tag="s"
+			stretch="yes"
+			shadow="no"
+			border="no"
+			filename="database.svg" />
+
+		<shape
+			tag="cl"
+			stretch="yes"
+			shadow="no"
+			border="no"
+			filename="cloud.svg" />	
+	</shapes>
+</ditaa>

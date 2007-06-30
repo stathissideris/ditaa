@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="release-ditaa" default="release-all" basedir=".">
+	<description>
+		Creates the ditaa binary release files.
+	</description>
+    
+	<property name="rootDir" value=".."/>
+	<property name="version.string" value="0_8"/>
+	
+	<target name="release-all" depends="release-zip,release-src" />
+	
+	<target name="clean">
+		<delete file="${rootDir}/releases/ditaa${version.string}.zip" />
+		<delete file="${rootDir}/releases/ditaa${version.string}-src.zip" />
+	</target>
+	
+	<target name="release-zip"
+		description="Creates the ditaa zip that contains the jar and shapes (use fatjar for jar creation)."
+		>
+		
+		<delete file="${rootDir}/releases/ditaa${version.string}.zip" />
+		
+		<zip destfile="${rootDir}/releases/ditaa${version.string}.zip">
+			<fileset dir="${rootDir}" casesensitive="yes">
+				<include name="shapes/**/*.*"/>
+			</fileset>
+			<fileset file="${rootDir}/releases/ditaa${version.string}.jar" />
+		</zip>
+	</target>
+
+	<target name="release-src"
+		description="Creates the ditaa zip that contains the source."
+		>
+			
+		<delete file="${rootDir}/releases/ditaa${version.string}-src.zip" />
+		
+		<zip destfile="${rootDir}/releases/ditaa${version.string}-src.zip">
+			<fileset dir="${rootDir}" casesensitive="yes">
+				<include name="shapes/**/*"/>
+				<include name="src/**/*"/>
+				<include name="lib/**/*"/>
+				<include name="text/**/*"/>
+				<include name=".classpath"/>
+				<include name=".fatjar"/>
+				<include name=".project"/>
+				<include name="copying"/>
+			</fileset>
+		</zip>
+	</target>
+
+		
+</project>

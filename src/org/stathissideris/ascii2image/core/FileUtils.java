@@ -21,6 +21,10 @@
 package org.stathissideris.ascii2image.core;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * 
@@ -73,6 +77,43 @@ public class FileUtils {
 		return pathName.substring(0, pathName.lastIndexOf('.'));
 	}
 	
+	public static String readFile(File file) throws IOException {
+		return readFile(file, null);
+	}
+	
+	public static String readFile(File file, String encoding) throws IOException {
+		InputStream is = new FileInputStream(file);
+        long length = file.length();
+        
+        if (length > Integer.MAX_VALUE) {
+            // File is too large
+        }
+    
+        // Create the byte array to hold the data
+        byte[] bytes = new byte[(int)length];
+    
+        // Read in the bytes
+        int offset = 0;
+        int numRead = 0;
+        while (offset < bytes.length
+               && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+            offset += numRead;
+        }
+    
+        // Ensure all the bytes have been read in
+        if (offset < bytes.length) {
+            throw new IOException("Could not completely read file "+file.getName());
+        }
+    
+        // Close the input stream and return bytes
+        is.close();
+        if(encoding == null){
+        		return new String(bytes);
+        } else {
+        		return new String(bytes, encoding);
+        }
+	}
+		
 	public static void main(String[] args){
 		System.out.println(makeTargetPathname("C:\\Files\\papar.txt", "jpg", false));
 		System.out.println(makeTargetPathname("C:\\Files\\papar", "jpg", false));

@@ -21,8 +21,12 @@
 package org.stathissideris.ascii2image.graphics;
 
 import java.awt.BasicStroke;
+import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
@@ -40,6 +44,8 @@ import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import org.stathissideris.ascii2image.core.ConversionOptions;
 import org.stathissideris.ascii2image.core.RenderingOptions;
@@ -54,6 +60,11 @@ public class BitmapRenderer {
 
 	private static final boolean DEBUG = false;
 
+	private static final String IDREGEX = "^.+_vfill$";
+	
+	Stroke normalStroke;
+	Stroke dashStroke; 
+	
 	public static void main(String[] args) throws Exception {
 		
 		
@@ -65,27 +76,27 @@ public class BitmapRenderer {
 		grid.loadFrom("d:/devel/java/ascii2image/art5.txt");
 		
 		Diagram diagram = new Diagram(grid, options);
-		BitmapRenderer.renderToPNG(diagram, "d:/devel/java/ascii2image/test.png", options.renderingOptions);
+		new BitmapRenderer().renderToPNG(diagram, "d:/devel/java/ascii2image/test.png", options.renderingOptions);
 		long endTime = System.currentTimeMillis();
 		long totalTime  = (endTime - startTime) / 1000;
 		System.out.println("Done in "+totalTime+"sec");
 	}
 
-	private static boolean renderToPNG(Diagram diagram, String filename, RenderingOptions options){	
+	private boolean renderToPNG(Diagram diagram, String filename, RenderingOptions options){	
 		RenderedImage image = renderToImage(diagram, options);
-    
+		
 		try {
 			File file = new File(filename);
 			ImageIO.write(image, "png", file);
-    	} catch (IOException e) {
-    		//e.printStackTrace();
-    		System.err.println("Error: Cannot write to file "+filename);
-    		return false;
+		} catch (IOException e) {
+			//e.printStackTrace();
+			System.err.println("Error: Cannot write to file "+filename);
+			return false;
 		}
 		return true;
 	}
-
-	public static RenderedImage renderToImage(Diagram diagram,  RenderingOptions options){
+	
+	public RenderedImage renderToImage(Diagram diagram,  RenderingOptions options){
 		BufferedImage image = new BufferedImage(
 					diagram.getWidth(),
 					diagram.getHeight(),
@@ -94,10 +105,10 @@ public class BitmapRenderer {
 		return render(diagram, image, options);
 	}
 	
-	public static RenderedImage render(Diagram diagram, BufferedImage image,  RenderingOptions options){
+	public RenderedImage render(Diagram diagram, BufferedImage image,  RenderingOptions options){
 		RenderedImage renderedImage = image;
 		Graphics2D g2 = image.createGraphics();
-		
+
 		Object antialiasSetting = antialiasSetting = RenderingHints.VALUE_ANTIALIAS_OFF;
 		if(options.performAntialias())
 			antialiasSetting = RenderingHints.VALUE_ANTIALIAS_ON;
@@ -128,10 +139,12 @@ public class BitmapRenderer {
 				//GeneralPath path = shape.makeIntoPath();
 				GeneralPath path;
 				path = shape.makeIntoRenderPath(diagram);			
-			
+							
 				float offset = diagram.getMinimumOfCellDimension() / 3.333f;
 			
-				if(path != null && shape.dropsShadow()){
+				if(path != null
+						&& shape.dropsShadow()
+						&& shape.getType() != DiagramShape.TYPE_CUSTOM){
 					GeneralPath shadow = new GeneralPath(path);
 					AffineTransform translate = new AffineTransform();
 					translate.setToTranslation(offset, offset);
@@ -158,17 +171,19 @@ public class BitmapRenderer {
 				//if EDGE_NO_OP is not selected, EDGE_ZERO_FILL is the default which creates a black border 
 				ConvolveOp simpleBlur =
 					new ConvolveOp(myKernel, ConvolveOp.EDGE_NO_OP, null);
-				//BufferedImage destination = new BufferedImage(image.getWidth()+blurRadius, image.getHeight()+blurRadius, image.getType()); 
+								
 				BufferedImage destination =
 					new BufferedImage(
 						image.getWidth(),
 						image.getHeight(),
 						image.getType());
-				simpleBlur.filter(image, destination);
+
+				simpleBlur.filter(image, (BufferedImage) destination);
+
 				//destination = destination.getSubimage(blurRadius/2, blurRadius/2, image.getWidth(), image.getHeight()); 
-				g2 = destination.createGraphics();
+				g2 = (Graphics2D) destination.getGraphics();
 				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialiasSetting);
-				renderedImage = destination;
+				renderedImage = (RenderedImage) destination;
 			}
 		}
 
@@ -180,7 +195,7 @@ public class BitmapRenderer {
 		
 		float strokeWeight = diagram.getMinimumOfCellDimension() / 10;
 		
-		Stroke normalStroke =
+		normalStroke =
 		  new BasicStroke(
 			strokeWeight,
 			//10,
@@ -188,7 +203,7 @@ public class BitmapRenderer {
 			BasicStroke.JOIN_ROUND
 		  );
 
-		Stroke dashStroke = 
+		dashStroke = 
 		  new BasicStroke(
 			strokeWeight,
 			BasicStroke.CAP_BUTT,
@@ -209,8 +224,6 @@ public class BitmapRenderer {
 				continue;
 			} 
 		}
-
-
 
 		//render storage shapes
 		//special case since they are '3d' and should be
@@ -258,7 +271,10 @@ public class BitmapRenderer {
 			if(shape.getType() == DiagramShape.TYPE_STORAGE) {
 				continue;
 			} 
-
+			if(shape.getType() == DiagramShape.TYPE_CUSTOM){
+				renderCustomShape(shape, g2);
+				continue;
+			}
 
 			if(shape.getPoints().isEmpty()) continue;
 
@@ -267,6 +283,7 @@ public class BitmapRenderer {
 			GeneralPath path;
 			path = shape.makeIntoRenderPath(diagram);
 			
+			//fill
 			if(path != null && shape.isClosed() && !shape.isStrokeDashed()){
 				if(shape.getFillColor() != null)
 					g2.setColor(shape.getFillColor());
@@ -274,6 +291,8 @@ public class BitmapRenderer {
 					g2.setColor(Color.white);
 				g2.fill(path);
 			}
+			
+			//draw
 			if(shape.getType() != DiagramShape.TYPE_ARROWHEAD){
 				g2.setColor(shape.getStrokeColor());
 				if(shape.isStrokeDashed())
@@ -299,21 +318,27 @@ public class BitmapRenderer {
 			g2.fill(path);
 			g2.setColor(shape.getStrokeColor());
 			g2.draw(path);
-		}
-
+		}		
 		
 		//handle text
-		//g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-
+		//g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		//renderTextLayer(diagram.getTextObjects().iterator());
+		
 		Iterator textIt = diagram.getTextObjects().iterator();
 		while(textIt.hasNext()){
 			DiagramText text = (DiagramText) textIt.next();
-			g2.setColor(text.getColor());
 			g2.setFont(text.getFont());
+			if(text.hasOutline()){
+				g2.setColor(text.getOutlineColor());
+				g2.drawString(text.getText(), text.getXPos() + 1, text.getYPos());
+				g2.drawString(text.getText(), text.getXPos() - 1, text.getYPos());
+				g2.drawString(text.getText(), text.getXPos(), text.getYPos() + 1);
+				g2.drawString(text.getText(), text.getXPos(), text.getYPos() - 1);
+			}
+			g2.setColor(text.getColor());
 			g2.drawString(text.getText(), text.getXPos(), text.getYPos());
 		}
-
-
+		
 		if(options.renderDebugLines() || DEBUG){
 			Stroke debugStroke =
 			  new BasicStroke(
@@ -334,6 +359,112 @@ public class BitmapRenderer {
 		g2.dispose();
 		
 		return renderedImage;
+	}
+	
+	private RenderedImage renderTextLayer(ArrayList textObjects, int width, int height){
+		TextCanvas canvas = new TextCanvas(textObjects);
+		Image image = canvas.createImage(width, height);
+		Graphics g = image.getGraphics();
+		canvas.paint(g);
+		return (RenderedImage) image;
+	}
+	
+	private class TextCanvas extends Canvas {
+		ArrayList textObjects;
+		
+		public TextCanvas(ArrayList textObjects){
+			this.textObjects = textObjects;
+		}
+		
+		public void paint(Graphics g){
+			Graphics g2 = (Graphics2D) g;
+			Iterator textIt = textObjects.iterator();
+			while(textIt.hasNext()){
+				DiagramText text = (DiagramText) textIt.next();
+				g2.setFont(text.getFont());
+				if(text.hasOutline()){
+					g2.setColor(text.getOutlineColor());
+					g2.drawString(text.getText(), text.getXPos() + 1, text.getYPos());
+					g2.drawString(text.getText(), text.getXPos() - 1, text.getYPos());
+					g2.drawString(text.getText(), text.getXPos(), text.getYPos() + 1);
+					g2.drawString(text.getText(), text.getXPos(), text.getYPos() - 1);
+				}
+				g2.setColor(text.getColor());
+				g2.drawString(text.getText(), text.getXPos(), text.getYPos());
+			}
+		}
+	}
+	
+	private void renderCustomShape(DiagramShape shape, Graphics2D g2){
+		CustomShapeDefinition definition = shape.getDefinition();
+		
+		Rectangle bounds = shape.getBounds();
+		
+		if(definition.hasBorder()){
+			g2.setColor(shape.getStrokeColor());
+			if(shape.isStrokeDashed())
+				g2.setStroke(dashStroke);
+			else
+				g2.setStroke(normalStroke);
+			g2.drawLine(bounds.x, bounds.y, bounds.x + bounds.width, bounds.y);
+			g2.drawLine(bounds.x + bounds.width, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height);
+			g2.drawLine(bounds.x, bounds.y + bounds.height, bounds.x + bounds.width, bounds.y + bounds.height);
+			g2.drawLine(bounds.x, bounds.y, bounds.x, bounds.y + bounds.height);
+			
+//			g2.drawRect(bounds.x, bounds.y, bounds.width, bounds.height); //looks different!			
+		}
+		
+		if(definition.getFilename().endsWith(".png")){
+			renderCustomPNGShape(shape, g2);
+		} else if(definition.getFilename().endsWith(".svg")){
+			renderCustomSVGShape(shape, g2);
+		}
+	}
+	
+	private void renderCustomSVGShape(DiagramShape shape, Graphics2D g2){
+		CustomShapeDefinition definition = shape.getDefinition();
+		Rectangle bounds = shape.getBounds();
+		Image graphic;
+		try {
+			if(shape.getFillColor() == null) {
+				graphic = ImageHandler.instance().renderSVG(
+						definition.getFilename(), bounds.width, bounds.height, definition.stretches());
+			} else {
+				graphic = ImageHandler.instance().renderSVG(
+						definition.getFilename(), bounds.width, bounds.height, definition.stretches(), IDREGEX, shape.getFillColor());				
+			}
+			g2.drawImage(graphic, bounds.x, bounds.y, null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void renderCustomPNGShape(DiagramShape shape, Graphics2D g2){
+		CustomShapeDefinition definition = shape.getDefinition();
+		Rectangle bounds = shape.getBounds();
+		Image graphic = ImageHandler.instance().loadImage(definition.getFilename());
+		
+		int xPos, yPos, width, height;
+		
+		if(definition.stretches()){ //occupy all available space
+			xPos = bounds.x; yPos = bounds.y;
+			width = bounds.width; height = bounds.height;
+		} else { //decide how to fit
+			int newHeight = bounds.width * graphic.getHeight(null) / graphic.getWidth(null);
+			if(newHeight < bounds.height){ //expand to fit width
+				height = newHeight;
+				width = bounds.width;
+				xPos = bounds.x;
+				yPos = bounds.y + bounds.height / 2 - graphic.getHeight(null) / 2;
+			} else { //expand to fit height
+				width = graphic.getWidth(null) * bounds.height / graphic.getHeight(null);
+				height = bounds.height;
+				xPos = bounds.x + bounds.width / 2 - graphic.getWidth(null) / 2;
+				yPos = bounds.y;
+			}
+		}
+		
+		g2.drawImage(graphic, xPos, yPos, width, height, null);		
 	}
 	
 	public static boolean isColorDark(Color color){

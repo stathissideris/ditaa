@@ -45,8 +45,9 @@ public class DiagramShape extends DiagramComponent {
 	public static final int TYPE_DOCUMENT = 3;
 	public static final int TYPE_STORAGE = 4;
 	public static final int TYPE_IO = 5;
+	public static final int TYPE_CUSTOM = 9999;
 
-	private int type = TYPE_SIMPLE;
+	protected int type = TYPE_SIMPLE;
 
 	private Color fillColor = null;
 	private Color strokeColor = Color.black;
@@ -54,7 +55,9 @@ public class DiagramShape extends DiagramComponent {
 	private boolean isClosed = false;
 	private boolean isStrokeDashed = false;
 
-	private ArrayList points = new ArrayList();
+	protected ArrayList points = new ArrayList();
+
+	CustomShapeDefinition definition = null;
 
 	public static void main(String[] args) {
 	}
@@ -227,6 +230,27 @@ public class DiagramShape extends DiagramComponent {
 	}
 	
 	/**
+	 * Crude way to determine which of the two shapes is smaller,
+	 * based just on their bounding boxes. Used in markup
+	 * assignment precendence.
+	 * 
+	 * @param other
+	 * @return
+	 */
+	public boolean isSmallerThan(DiagramShape other){
+		Rectangle bounds = getBounds();
+		Rectangle otherBounds = other.getBounds();
+		
+		int area = bounds.height * bounds.width;
+		int otherArea = otherBounds.height * otherBounds.width;
+		
+		if(area < otherArea) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * @return
 	 */
 	public Color getFillColor() {
@@ -359,113 +383,18 @@ public class DiagramShape extends DiagramComponent {
 			diameter));
 	}
 
-	private GeneralPath makeStoragePath(Diagram diagram){
-		if(points.size() != 4) return null;
+	public Rectangle getBounds(){
 		Rectangle bounds = makeIntoPath().getBounds();
-		ShapePoint point1 = new ShapePoint((float)bounds.getMinX(), (float)bounds.getMinY());
-		ShapePoint point2 = new ShapePoint((float)bounds.getMaxX(), (float)bounds.getMinY());
-		ShapePoint point3 = new ShapePoint((float)bounds.getMaxX(), (float)bounds.getMaxY());
-		ShapePoint point4 = new ShapePoint((float)bounds.getMinX(), (float)bounds.getMaxY());
-		
-		ShapePoint pointMidTop = new ShapePoint((float)bounds.getCenterX(), (float)bounds.getMinY());
-		ShapePoint pointMidBottom = new ShapePoint((float)bounds.getCenterX(), (float)bounds.getMaxY());
-
-		float diameterX = bounds.width;
-		float diameterY = 0.75f * diagram.getCellHeight();
-
-		//control point offset X, and Y
-		float cpOffsetX = bounds.width / 6;
-		float cpOffsetYTop = diagram.getCellHeight() / 2;
-		float cpOffsetYBottom = 10 * diagram.getCellHeight() / 14;
-		//float cpOffsetYBottom = cpOffsetYTop; 
-
-		GeneralPath path = new GeneralPath();
-
-		//top of cylinder
-		path.moveTo(point1.x, point1.y);
-		path.curveTo(
-			point1.x + cpOffsetX, point1.y + cpOffsetYTop,
-			point2.x - cpOffsetX, point2.y + cpOffsetYTop,
-			point2.x, point2.y
-			);
-		path.curveTo(
-			point2.x - cpOffsetX, point2.y - cpOffsetYTop,
-			point1.x + cpOffsetX, point1.y - cpOffsetYTop,
-			point1.x, point1.y
-			);
-
-		//side of cylinder
-		path.moveTo(point1.x, point1.y);
-		path.lineTo(point4.x, point4.y);
-		
-		path.curveTo(
-			point4.x + cpOffsetX, point4.y + cpOffsetYBottom,
-			point3.x - cpOffsetX, point3.y + cpOffsetYBottom,
-			point3.x, point3.y
-			);
-
-		path.lineTo(point2.x, point2.y);		
-		
-		return path;
+		return bounds;
 	}
-
-
-	private GeneralPath makeDocumentPath(Diagram diagram){
-		if(points.size() != 4) return null;
-		Rectangle bounds = makeIntoPath().getBounds();
-		ShapePoint point1 = new ShapePoint((float)bounds.getMinX(), (float)bounds.getMinY());
-		ShapePoint point2 = new ShapePoint((float)bounds.getMaxX(), (float)bounds.getMinY());
-		ShapePoint point3 = new ShapePoint((float)bounds.getMaxX(), (float)bounds.getMaxY());
-		ShapePoint point4 = new ShapePoint((float)bounds.getMinX(), (float)bounds.getMaxY());
-		
-		ShapePoint pointMid = new ShapePoint((float)bounds.getCenterX(), (float)bounds.getMaxY());
-		
-		GeneralPath path = new GeneralPath();
-		path.moveTo(point1.x, point1.y);
-		path.lineTo(point2.x, point2.y);
-		path.lineTo(point3.x, point3.y);
-
-		//int controlDX = diagram.getCellWidth();
-		//int controlDY = diagram.getCellHeight() / 2;
-		
-		int controlDX = bounds.width / 6;
-		int controlDY = bounds.height / 8;
-		
-		path.quadTo(pointMid.x + controlDX, pointMid.y - controlDY, pointMid.x, pointMid.y);
-		path.quadTo(pointMid.x - controlDX, pointMid.y + controlDY, point4.x, point4.y);
-		path.closePath();
-		
-		return path;
-	}
-
-	private GeneralPath makeIOPath(Diagram diagram){
-		if(points.size() != 4) return null;
-		Rectangle bounds = makeIntoPath().getBounds();
-		ShapePoint point1 = new ShapePoint((float)bounds.getMinX(), (float)bounds.getMinY());
-		ShapePoint point2 = new ShapePoint((float)bounds.getMaxX(), (float)bounds.getMinY());
-		ShapePoint point3 = new ShapePoint((float)bounds.getMaxX(), (float)bounds.getMaxY());
-		ShapePoint point4 = new ShapePoint((float)bounds.getMinX(), (float)bounds.getMaxY());
-
-		float offset = diagram.getCellWidth() / 2;
-		
-		GeneralPath path = new GeneralPath();
-		path.moveTo(point1.x + offset, point1.y);
-		path.lineTo(point2.x + offset, point2.y);
-		path.lineTo(point3.x - offset, point3.y);
-		path.lineTo(point4.x - offset, point4.y);
-		path.closePath();
-		
-		return path;
-	}
-
-
+	
 	public GeneralPath makeIntoRenderPath(Diagram diagram) {
 		int size = getPoints().size();
 		
 		if(getType() == TYPE_POINT_MARKER){
 			return makeMarkerPath(diagram);
 		}
-
+		
 		if(getType() == TYPE_DOCUMENT && points.size() == 4){
 			return makeDocumentPath(diagram);
 		}
@@ -477,7 +406,6 @@ public class DiagramShape extends DiagramComponent {
 		if(getType() == TYPE_IO && points.size() == 4){
 			return makeIOPath(diagram);
 		}
-
 		
 		if(size < 2) return null;
 
@@ -822,6 +750,112 @@ public class DiagramShape extends DiagramComponent {
 	 */
 	public void setStrokeDashed(boolean b) {
 		isStrokeDashed = b;
+	}
+
+	private GeneralPath makeStoragePath(Diagram diagram) {
+		if(points.size() != 4) return null;
+		Rectangle bounds = makeIntoPath().getBounds();
+		ShapePoint point1 = new ShapePoint((float)bounds.getMinX(), (float)bounds.getMinY());
+		ShapePoint point2 = new ShapePoint((float)bounds.getMaxX(), (float)bounds.getMinY());
+		ShapePoint point3 = new ShapePoint((float)bounds.getMaxX(), (float)bounds.getMaxY());
+		ShapePoint point4 = new ShapePoint((float)bounds.getMinX(), (float)bounds.getMaxY());
+		
+		ShapePoint pointMidTop = new ShapePoint((float)bounds.getCenterX(), (float)bounds.getMinY());
+		ShapePoint pointMidBottom = new ShapePoint((float)bounds.getCenterX(), (float)bounds.getMaxY());
+	
+		float diameterX = bounds.width;
+		float diameterY = 0.75f * diagram.getCellHeight();
+	
+		//control point offset X, and Y
+		float cpOffsetX = bounds.width / 6;
+		float cpOffsetYTop = diagram.getCellHeight() / 2;
+		float cpOffsetYBottom = 10 * diagram.getCellHeight() / 14;
+		//float cpOffsetYBottom = cpOffsetYTop; 
+	
+		GeneralPath path = new GeneralPath();
+	
+		//top of cylinder
+		path.moveTo(point1.x, point1.y);
+		path.curveTo(
+			point1.x + cpOffsetX, point1.y + cpOffsetYTop,
+			point2.x - cpOffsetX, point2.y + cpOffsetYTop,
+			point2.x, point2.y
+			);
+		path.curveTo(
+			point2.x - cpOffsetX, point2.y - cpOffsetYTop,
+			point1.x + cpOffsetX, point1.y - cpOffsetYTop,
+			point1.x, point1.y
+			);
+	
+		//side of cylinder
+		path.moveTo(point1.x, point1.y);
+		path.lineTo(point4.x, point4.y);
+		
+		path.curveTo(
+			point4.x + cpOffsetX, point4.y + cpOffsetYBottom,
+			point3.x - cpOffsetX, point3.y + cpOffsetYBottom,
+			point3.x, point3.y
+			);
+	
+		path.lineTo(point2.x, point2.y);		
+		
+		return path;
+	}
+
+	private GeneralPath makeDocumentPath(Diagram diagram) {
+		if(points.size() != 4) return null;
+		Rectangle bounds = makeIntoPath().getBounds();
+		ShapePoint point1 = new ShapePoint((float)bounds.getMinX(), (float)bounds.getMinY());
+		ShapePoint point2 = new ShapePoint((float)bounds.getMaxX(), (float)bounds.getMinY());
+		ShapePoint point3 = new ShapePoint((float)bounds.getMaxX(), (float)bounds.getMaxY());
+		ShapePoint point4 = new ShapePoint((float)bounds.getMinX(), (float)bounds.getMaxY());
+		
+		ShapePoint pointMid = new ShapePoint((float)bounds.getCenterX(), (float)bounds.getMaxY());
+		
+		GeneralPath path = new GeneralPath();
+		path.moveTo(point1.x, point1.y);
+		path.lineTo(point2.x, point2.y);
+		path.lineTo(point3.x, point3.y);
+	
+		//int controlDX = diagram.getCellWidth();
+		//int controlDY = diagram.getCellHeight() / 2;
+		
+		int controlDX = bounds.width / 6;
+		int controlDY = bounds.height / 8;
+		
+		path.quadTo(pointMid.x + controlDX, pointMid.y - controlDY, pointMid.x, pointMid.y);
+		path.quadTo(pointMid.x - controlDX, pointMid.y + controlDY, point4.x, point4.y);
+		path.closePath();
+		
+		return path;
+	}
+
+	private GeneralPath makeIOPath(Diagram diagram) {
+		if(points.size() != 4) return null;
+		Rectangle bounds = makeIntoPath().getBounds();
+		ShapePoint point1 = new ShapePoint((float)bounds.getMinX(), (float)bounds.getMinY());
+		ShapePoint point2 = new ShapePoint((float)bounds.getMaxX(), (float)bounds.getMinY());
+		ShapePoint point3 = new ShapePoint((float)bounds.getMaxX(), (float)bounds.getMaxY());
+		ShapePoint point4 = new ShapePoint((float)bounds.getMinX(), (float)bounds.getMaxY());
+	
+		float offset = diagram.getCellWidth() / 2;
+		
+		GeneralPath path = new GeneralPath();
+		path.moveTo(point1.x + offset, point1.y);
+		path.lineTo(point2.x + offset, point2.y);
+		path.lineTo(point3.x - offset, point3.y);
+		path.lineTo(point4.x - offset, point4.y);
+		path.closePath();
+		
+		return path;
+	}
+
+	public CustomShapeDefinition getDefinition() {
+		return definition;
+	}
+
+	public void setDefinition(CustomShapeDefinition definition) {
+		this.definition = definition;
 	}
 
 }

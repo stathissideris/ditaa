@@ -31,15 +31,19 @@ import java.awt.geom.Rectangle2D;
  */
 public class DiagramText extends DiagramComponent {
 
+	public static final Color DEFAULT_COLOR = Color.black;
+	
 	private String text;
 	private Font font;
 	private int xPos, yPos;
 	private Color color = Color.black;
 	private boolean isTextOnLine = false;
+	private boolean hasOutline = false;
+	private Color outlineColor = Color.white;
 
 	public DiagramText(int x, int y, String text, Font font){
 		if(text == null) throw new IllegalArgumentException("DiagramText cannot be initialised with a null string");
-		if(text == null) throw new IllegalArgumentException("DiagramText cannot be initialised with a null font");
+		if(font == null) throw new IllegalArgumentException("DiagramText cannot be initialised with a null font");
 
 		this.xPos = x;
 		this.yPos = y;
@@ -169,4 +173,21 @@ public class DiagramText extends DiagramComponent {
 		isTextOnLine = b;
 	}
 
+	public boolean hasOutline() {
+		return hasOutline;
+	}
+
+	public void setHasOutline(boolean hasOutline) {
+		this.hasOutline = hasOutline;
+	}
+
+	public Color getOutlineColor() {
+		return outlineColor;
+	}
+
+	public void setOutlineColor(Color outlineColor) {
+		this.outlineColor = outlineColor;
+	}
+
+	
 }

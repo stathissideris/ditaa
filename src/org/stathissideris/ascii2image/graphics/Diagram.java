@@ -365,6 +365,7 @@ public class Diagram {
 
 		//assign color codes to shapes
 		//TODO: text on line should not change its color
+		//TODO: each color tag should be assigned to the smallest containing shape (like shape tags)
 		
 		Iterator cellColorPairs = grid.findColorCodes().iterator();
 		while(cellColorPairs.hasNext()){
@@ -386,18 +387,55 @@ public class Diagram {
 				(TextGrid.CellTagPair) cellTagPairs.next();
 			ShapePoint point =
 				new ShapePoint(getCellMidX(pair.cell), getCellMidY(pair.cell));
+
+			//find the smallest shape that contains the tag
+			DiagramShape containingShape = null;
 			Iterator shapes = getShapes().iterator();
 			while(shapes.hasNext()){
 				DiagramShape shape = (DiagramShape) shapes.next();
 				if(shape.contains(point)){
-					if(pair.tag == TextGrid.TAG_DOCUMENT){
-						shape.setType(DiagramShape.TYPE_DOCUMENT);
-					} else if(pair.tag == TextGrid.TAG_STORAGE){
-						shape.setType(DiagramShape.TYPE_STORAGE);
-					} else if(pair.tag == TextGrid.TAG_IO){
-						shape.setType(DiagramShape.TYPE_IO);
+					if(containingShape == null){
+						containingShape = shape;
+					} else {
+						if(shape.isSmallerThan(containingShape)){
+							containingShape = shape;
+						}
 					}
-				} 
+				}
+			}
+			
+			if(pair.tag.equals("d")){
+				CustomShapeDefinition def =
+					options.processingOptions.getFromCustomShapes("d");
+				if(def == null)
+					containingShape.setType(DiagramShape.TYPE_DOCUMENT);
+				else {
+					containingShape.setType(DiagramShape.TYPE_CUSTOM);
+					containingShape.setDefinition(def);
+				}
+			} else if(pair.tag.equals("s")){
+				CustomShapeDefinition def =
+					options.processingOptions.getFromCustomShapes("s");
+				if(def == null)
+					containingShape.setType(DiagramShape.TYPE_STORAGE);
+				else {
+					containingShape.setType(DiagramShape.TYPE_CUSTOM);
+					containingShape.setDefinition(def);
+				}
+			} else if(pair.tag.equals("io")){
+				CustomShapeDefinition def =
+					options.processingOptions.getFromCustomShapes("io");
+				if(def == null)
+					containingShape.setType(DiagramShape.TYPE_IO);
+				else {
+					containingShape.setType(DiagramShape.TYPE_CUSTOM);
+					containingShape.setDefinition(def);
+				}
+			} else {
+				CustomShapeDefinition def =
+					options.processingOptions.getFromCustomShapes(pair.tag);
+				containingShape.setType(DiagramShape.TYPE_CUSTOM);
+				containingShape.setDefinition(def);						
 			}
 		}
 		
@@ -516,6 +554,20 @@ public class Diagram {
 					if(shape.intersects(textObject.getBounds())){
 						textObject.setColor(Color.white);
 					}
+				}
+			}
+		}
+
+		//set outline to true for test within custom shapes
+		shapes = this.getAllDiagramShapes().iterator();
+		while(shapes.hasNext()){
+			DiagramShape shape = (DiagramShape) shapes.next();
+			if(shape.getType() == DiagramShape.TYPE_CUSTOM){
+				Iterator textObjects = getTextObjects().iterator();
+				while(textObjects.hasNext()){
+					DiagramText textObject = (DiagramText) textObjects.next();
+					textObject.setHasOutline(true);
+					textObject.setColor(DiagramText.DEFAULT_COLOR);
 				}
 			}
 		}

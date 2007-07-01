@@ -24,14 +24,19 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import javax.imageio.ImageIO;
 
-import jargs.gnu.CmdLineParser;
-
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.PosixParser;
 import org.stathissideris.ascii2image.graphics.BitmapRenderer;
 import org.stathissideris.ascii2image.graphics.Diagram;
-import org.stathissideris.ascii2image.text.StringUtils;
 import org.stathissideris.ascii2image.text.TextGrid;
 
 /**
@@ -39,101 +44,123 @@ import org.stathissideris.ascii2image.text.TextGrid;
  * @author Efstathios Sideris
  */
 public class CommandLineConverter {
-	
-	private static String usageText =
-		 "Usage:" +
-			"\n\tjava -jar text2image.jar\n" +			//"\n\t[{-v,--verbose}]" +			"\n\t[{-o,--overwrite}]" +
-			"\n\t[{-d,--debug}]" +
-			"\n\t[{-t,--tabs}]" +
-			
-			"\n\n\t[{-S,--no-shadows}]" +			"\n\t[{-A,--no-antialias}]" +			"\n\t[{-s,--scale} scale]" +			"\n\t[{-r,--round-corners}]" +
-		  	"\n\t[{-E,--no-separation}]" +
-
-			"\n\n\t[{-h,--html}]" +
-			//"\n\n\t[{-c,--color-codes}=<use|ignore|render>]" +			//"\n\t[{-g,--tags}=<use|ignore|render>]" +
-			//"\n\t[{-m,--markup}=<use|ignore|use-render>]" +
-
-			"\n\n\t<inpfile> [outfile]" +
-
-			"\n\nNote: do not group options like -rES. This is going to be fixed.";
-	
-	private static String notice = "DiTAA version 0.6b, Copyright (C) 2004 Efstathios Sideris";
-	
+		
+	private static String notice = "DiTAA version 0.7b, Copyright (C) 2004 Efstathios Sideris";
 	
 	private static String[] markupModeAllowedValues = {"use", "ignore", "render"};
 	
 	public static void main(String[] args){
+		
 		long startTime = System.currentTimeMillis();
 		
 		System.out.println("\n"+notice+"\n");
 		
-		CmdLineParser parser = new CmdLineParser();
-		parser.addBooleanOption('h', "help");
-		parser.addBooleanOption('v', "verbose");
-		parser.addBooleanOption('o', "overwrite");
-		parser.addIntegerOption('t', "tabs");
-		parser.addBooleanOption('f', "format");
-		parser.addBooleanOption('S', "no-shadows");
-		parser.addBooleanOption('A', "no-antialias");
-		parser.addBooleanOption('d', "debug");
-		parser.addDoubleOption('s', "scale");
-		parser.addBooleanOption('r', "round-corners");
-		parser.addBooleanOption('E', "no-separation");
-		parser.addBooleanOption('h', "html");
+		Options cmdLnOptions = new Options();
+		cmdLnOptions.addOption(
+				OptionBuilder.withLongOpt("help")
+				.withDescription( "Prints usage help." )
+				.create() );
+		cmdLnOptions.addOption("v", "verbose", false, "Makes ditaa more verbose.");
+		cmdLnOptions.addOption("o", "overwrite", false, "If the filename of the destination image already exists, an alternative name is chosen. If the overwrite option is selected, the image file is instead overwriten.");
+		cmdLnOptions.addOption("S", "no-shadows", false, "Turns off the drop-shadow effect.");
+		cmdLnOptions.addOption("A", "no-antialias", false, "Turns anti-aliasing off.");
+		cmdLnOptions.addOption("d", "debug", false, "Renders the debug grid over the resulting image.");
+		cmdLnOptions.addOption("r", "round-corners", false, "Causes all corners to be rendered as round corners.");
+		cmdLnOptions.addOption("E", "no-separation", false, "Prevents the separation of common edges of shapes.");
+		cmdLnOptions.addOption("h", "html", false, "In this case the input is an HTML file. The contents of the <pre class=\"textdiagram\"> tags are rendered as diagrams and saved in the images directory and a new HTML file is produced with the appropriate <img> tags.");
 		
-		parser.addStringOption('c', "color-codes");
-		parser.addStringOption('g', "tags");
-		parser.addStringOption('m', "markup");
+		cmdLnOptions.addOption(
+				OptionBuilder.withLongOpt("encoding")
+				.withDescription("The encoding of the input file.")
+				.hasArg()
+				.withArgName("ENCODING")
+				.create('e')
+				);
 
+		cmdLnOptions.addOption(
+				OptionBuilder.withLongOpt("scale")
+				.withDescription("A natural number that determines the size of the rendered image. The units are fractions of the default size (2.5 renders 1.5 times bigger than the default).")
+				.hasArg()
+				.withArgName("SCALE")
+				.create('s')
+				);
+
+		cmdLnOptions.addOption(
+				OptionBuilder.withLongOpt("tabs")
+				.withDescription("Tabs are normally interpreted as 8 spaces but it is possible to change that using this option. It is not advisable to use tabs in your diagrams.")
+				.hasArg()
+				.withArgName("TABS")
+				.create('t')
+				);
+
+		cmdLnOptions.addOption(
+				OptionBuilder.withLongOpt("config")
+				.withDescription( "The shape configuration file." )
+				.hasArg()
+				.withArgName("CONFIG_FILE")
+				.create('c') );
+		
+		CommandLine cmdLine = null;
+		
+		
+		
+		///// parse command line options
 		try {
-			parser.parse(args);
-		} catch ( CmdLineParser.OptionException e ) {
+			// parse the command line arguments
+			CommandLineParser parser = new PosixParser();
+			
+			cmdLine = parser.parse(cmdLnOptions, args);
+						
+			// validate that block-size has been set
+			if( cmdLine.hasOption( "block-size" ) ) {
+				// print the value of block-size
+				System.out.println( cmdLine.getOptionValue( "block-size" ) );
+			}
+			
+		} catch (org.apache.commons.cli.ParseException e) {
 			System.err.println(e.getMessage());
-			printUsage();
+			new HelpFormatter().printHelp("java -jar ditaa.jar <inpfile> [outfile]", cmdLnOptions, true);
 			System.exit(2);
 		}
-
-		if((parser.getOptionValue("help") != null
-				&&((Boolean) parser.getOptionValue("help")).booleanValue())
-				|| args.length == 0 ){
-			printUsage();
+		
+		
+		if(cmdLine.hasOption("help") || args.length == 0 ){
+			new HelpFormatter().printHelp("java -jar ditaa.jar <inpfile> [outfile]", cmdLnOptions, true);
 			System.exit(0);			
 		}
-
-		String colorCodeMode = (String) parser.getOptionValue("color-codes");
-		if(colorCodeMode != null && !StringUtils.isOneOf(colorCodeMode, markupModeAllowedValues)){
-			System.err.println("Error: Color code option possible values are: use, ignore, render");
-			printUsage();
-			System.exit(2);						
-		}
+						
+		ConversionOptions options = null;
+		try {
+			options = new ConversionOptions(cmdLine);
+		} catch (UnsupportedEncodingException e2) {
+			System.err.println("Error: " + e2.getMessage());
+			System.exit(2);
+		}  
 		
-		String tagsMode = (String) parser.getOptionValue("tags");
-		if(tagsMode != null && !StringUtils.isOneOf(tagsMode, markupModeAllowedValues)){
-			System.err.println("Error: Tags option possible values are: use, ignore, render");
-			printUsage();
-			System.exit(2);						
-		}
-		
-		String markupMode = (String) parser.getOptionValue("markup");
-		if(markupMode != null && !StringUtils.isOneOf(markupMode, markupModeAllowedValues)){
-			System.err.println("Error: Markup mode option possible values are: use, ignore, render");
-			printUsage();
-			System.exit(2);						
-		}
-
-		parser.printOptions(System.out);
-
-		ConversionOptions options = new ConversionOptions(parser);  
-
-		args = parser.getRemainingArgs();
+		args = cmdLine.getArgs();
 		
 		if(args.length == 0) {
 			System.err.println("Error: Please provide the input file filename");
-			printUsage();
+			new HelpFormatter().printHelp("java -jar ditaa.jar <inpfile> [outfile]", cmdLnOptions, true);
 			System.exit(2);
 		} 
 		
-		if(parser.getOptionValue("html") != null){
+		/////// print options before running
+		System.out.println("Running with options:");
+		Option[] opts = cmdLine.getOptions();
+		for (Option option : opts) {
+			if(option.hasArgs()){
+				for(String value:option.getValues()){
+					System.out.println(option.getLongOpt()+" = "+value);
+				}
+			} else if(option.hasArg()){
+				System.out.println(option.getLongOpt()+" = "+option.getValue());
+			} else {
+				System.out.println(option.getLongOpt());
+			}
+		}
+		
+		if(cmdLine.hasOption("html")){
 			String filename = args[0];
 			
 			boolean overwrite = false;
@@ -155,14 +182,20 @@ public class CommandLineConverter {
 			System.exit(0);
 			
 		} else { //simple mode
-		
+			
 			TextGrid grid = new TextGrid();
+			if(options.processingOptions.getCustomShapes() != null){
+				grid.addToMarkupTags(options.processingOptions.getCustomShapes().keySet());
+			}
 			String filename = args[0];
 			System.out.println("Reading file: "+filename);
 			try {
 				if(!grid.loadFrom(filename, options.processingOptions)){
 					System.err.println("Cannot open file "+filename+" for reading");
 				}
+			} catch (UnsupportedEncodingException e1){
+				System.err.println("Error: "+e1.getMessage());
+				System.exit(1);
 			} catch (FileNotFoundException e1) {
 				System.err.println("Error: File "+filename+" does not exist");
 				System.exit(1);
@@ -170,12 +203,12 @@ public class CommandLineConverter {
 				System.err.println("Error: Cannot open file "+filename+" for reading");
 				System.exit(1);
 			}
-		
+			
 			if(options.processingOptions.printDebugOutput()){
 				System.out.println("Using grid:");
 				grid.printDebug();
 			}
-		
+			
 			boolean overwrite = false;
 			if(options.processingOptions.overwriteFiles()) overwrite = true;
 			String toFilename;
@@ -184,13 +217,13 @@ public class CommandLineConverter {
 			} else {
 				toFilename = args[1];
 			}
-		
+			
 			Diagram diagram = new Diagram(grid, options);
 			System.out.println("Rendering to file: "+toFilename);
-		
-		
-			RenderedImage image = BitmapRenderer.renderToImage(diagram, options.renderingOptions);
-    
+			
+			
+			RenderedImage image = new BitmapRenderer().renderToImage(diagram, options.renderingOptions);
+			
 			try {
 				File file = new File(toFilename);
 				ImageIO.write(image, "png", file);
@@ -199,17 +232,19 @@ public class CommandLineConverter {
 				System.err.println("Error: Cannot write to file "+filename);
 				System.exit(1);
 			}
-		
+			
 			//BitmapRenderer.renderToPNG(diagram, toFilename, options.renderingOptions);
-
+			
 			long endTime = System.currentTimeMillis();
 			long totalTime  = (endTime - startTime) / 1000;
 			System.out.println("Done in "+totalTime+"sec");
+			
+//			try {
+//			Thread.sleep(Long.MAX_VALUE);
+//			} catch (InterruptedException e) {
+//			e.printStackTrace();
+//			}
+			
 		}
-	}
-	
-	private static void printUsage(){
-		System.out.println(usageText);
-	}
-	
+	}	
 }

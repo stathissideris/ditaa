@@ -20,6 +20,18 @@
  */
 package org.stathissideris.ascii2image.core;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
+import org.xml.sax.SAXException;
+
 import jargs.gnu.CmdLineParser;
 
 /**
@@ -40,101 +52,111 @@ public class ConversionOptions {
 	
 	public ConversionOptions(){}
 	
-	public ConversionOptions(CmdLineParser parser){
+	public ConversionOptions(CommandLine cmdLine) throws UnsupportedEncodingException{
 		
-		//verbosity
-		Boolean verbosity = (Boolean) parser.getOptionValue("verbose");
-		if(verbosity != null)
-			processingOptions.setVerbose(verbosity.booleanValue());
+		processingOptions.setVerbose(cmdLine.hasOption("verbose"));
+		renderingOptions.setDropShadows(!cmdLine.hasOption("no-shadows"));
+		this.setDebug(cmdLine.hasOption("debug"));
+		processingOptions.setOverwriteFiles(cmdLine.hasOption("overwrite"));
 		
-		//drop shadows
-		Boolean shadows = (Boolean) parser.getOptionValue("no-shadows");
-		if(shadows != null)
-			renderingOptions.setDropShadows(!shadows.booleanValue());
-
-		//debug		
-		Boolean debug = (Boolean) parser.getOptionValue("debug");
-		if(debug != null)
-			this.setDebug(debug.booleanValue());
-
-		Boolean overwrite = (Boolean) parser.getOptionValue("overwrite");
-		if(overwrite != null)
-			processingOptions.setOverwriteFiles(overwrite.booleanValue());
-
-
-		
-		Double scale = (Double) parser.getOptionValue("scale");
-		if(scale != null)
+		if(cmdLine.hasOption("scale")){
+			Float scale = Float.parseFloat(cmdLine.getOptionValue("scale"));
 			renderingOptions.setScale(scale.floatValue());
-		
-		Boolean roundCorners = (Boolean) parser.getOptionValue("round-corners");
-		if(roundCorners != null)
-			processingOptions.setAllCornersAreRound(roundCorners.booleanValue());
-		
-		Boolean noSeparation = (Boolean) parser.getOptionValue("no-separation");
-		if(noSeparation != null)
-			processingOptions.setPerformSeparationOfCommonEdges(!noSeparation.booleanValue());
-
-		Boolean noAntialias = (Boolean) parser.getOptionValue("no-antialias");
-		if(noAntialias != null)
-			renderingOptions.setAntialias(!noAntialias.booleanValue());
-
-		String exportFormat = (String) parser.getOptionValue("format");
-		if(exportFormat != null){
-			exportFormat = exportFormat.toLowerCase();
-			if(exportFormat == "jpeg" || exportFormat == "jpg"){
-				processingOptions.setExportFormat(ProcessingOptions.FORMAT_JPEG);
-			} else if(exportFormat == "png"){
-				processingOptions.setExportFormat(ProcessingOptions.FORMAT_PNG);
-			} else if(exportFormat == "gif"){
-				processingOptions.setExportFormat(ProcessingOptions.FORMAT_GIF);
-			}
-		}
-
-		
-		
-		String colorCodeMode = (String) parser.getOptionValue("color-codes");
-		if(colorCodeMode != null){
-			if(colorCodeMode.equals("use"))
-				processingOptions.setColorCodesProcessingMode(ProcessingOptions.USE_COLOR_CODES);
-			else if(colorCodeMode.equals("ignore"))
-				processingOptions.setColorCodesProcessingMode(ProcessingOptions.IGNORE_COLOR_CODES);
-			else if(colorCodeMode.equals("render"))
-				processingOptions.setColorCodesProcessingMode(ProcessingOptions.RENDER_COLOR_CODES);
 		}
 		
-		String tagsMode = (String) parser.getOptionValue("tags");
-		if(tagsMode != null){
-			if(tagsMode.equals("use"))
-				processingOptions.setTagProcessingMode(ProcessingOptions.USE_TAGS);
-			else if(tagsMode.equals("ignore"))
-				processingOptions.setTagProcessingMode(ProcessingOptions.IGNORE_TAGS);
-			else if(tagsMode.equals("render"))
-				processingOptions.setTagProcessingMode(ProcessingOptions.RENDER_TAGS);
-		}
+		processingOptions.setAllCornersAreRound(cmdLine.hasOption("round-corners"));
+		processingOptions.setPerformSeparationOfCommonEdges(!cmdLine.hasOption("no-separation"));
+		renderingOptions.setAntialias(!cmdLine.hasOption("no-antialias"));
 
 
-		String markupMode = (String) parser.getOptionValue("markup");
-		if(markupMode != null){
-			if(markupMode.equals("use")){
-				processingOptions.setColorCodesProcessingMode(ProcessingOptions.USE_COLOR_CODES);
-				processingOptions.setTagProcessingMode(ProcessingOptions.USE_TAGS);
-			} else if(markupMode.equals("ignore")){
-				processingOptions.setColorCodesProcessingMode(ProcessingOptions.IGNORE_COLOR_CODES);
-				processingOptions.setTagProcessingMode(ProcessingOptions.IGNORE_TAGS);
-			} else if(markupMode.equals("render")){
-				processingOptions.setColorCodesProcessingMode(ProcessingOptions.RENDER_COLOR_CODES);
-				processingOptions.setTagProcessingMode(ProcessingOptions.RENDER_TAGS);
-			}
-		}
 
-		Integer tabSize = (Integer) parser.getOptionValue("tabs");
-		if(tabSize != null){
+		if(cmdLine.hasOption("tabs")){
+			Integer tabSize = Integer.parseInt(cmdLine.getOptionValue("tabs"));
 			int tabSizeValue = tabSize.intValue();
 			if(tabSizeValue < 0) tabSizeValue = 0;
 			processingOptions.setTabSize(tabSizeValue);
 		}
 
-
+		String encoding = (String) cmdLine.getOptionValue("encoding");
+		if(encoding != null){
+			new String(new byte[2], encoding);
+			processingOptions.setCharacterEncoding(encoding);
+		}
+		
+		ConfigurationParser configParser = new ConfigurationParser();
+		try {
+			for (Option curOption : cmdLine.getOptions()) {
+				if(curOption.getLongOpt().equals("config")) {
+					String configFilename = curOption.getValue();
+					System.out.println("Parsing configuration file "+configFilename);
+					File file = new File(configFilename);
+					if(file.exists()){
+						configParser.parseFile(file);
+						HashMap<String, CustomShapeDefinition> shapes = configParser.getShapeDefinitionsHash();
+						processingOptions.putAllInCustomShapes(shapes);
+					} else {
+						System.err.println("File "+file+" does not exist, skipping");
+					}
+				}
+			}
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
+
+
+// may be supported at a later date:
+//String exportFormat = (String) cmdLine.getOptionValue("format");
+//if(exportFormat != null){
+//	exportFormat = exportFormat.toLowerCase();
+//	if(exportFormat == "jpeg" || exportFormat == "jpg"){
+//		processingOptions.setExportFormat(ProcessingOptions.FORMAT_JPEG);
+//	} else if(exportFormat == "png"){
+//		processingOptions.setExportFormat(ProcessingOptions.FORMAT_PNG);
+//	} else if(exportFormat == "gif"){
+//		processingOptions.setExportFormat(ProcessingOptions.FORMAT_GIF);
+//	}
+//}
+//
+//String colorCodeMode = (String) cmdLine.getOptionValue("color-codes");
+//if(colorCodeMode != null){
+//	if(colorCodeMode.equals("use"))
+//		processingOptions.setColorCodesProcessingMode(ProcessingOptions.USE_COLOR_CODES);
+//	else if(colorCodeMode.equals("ignore"))
+//		processingOptions.setColorCodesProcessingMode(ProcessingOptions.IGNORE_COLOR_CODES);
+//	else if(colorCodeMode.equals("render"))
+//		processingOptions.setColorCodesProcessingMode(ProcessingOptions.RENDER_COLOR_CODES);
+//}
+//
+//String tagsMode = (String) cmdLine.getOptionValue("tags");
+//if(tagsMode != null){
+//	if(tagsMode.equals("use"))
+//		processingOptions.setTagProcessingMode(ProcessingOptions.USE_TAGS);
+//	else if(tagsMode.equals("ignore"))
+//		processingOptions.setTagProcessingMode(ProcessingOptions.IGNORE_TAGS);
+//	else if(tagsMode.equals("render"))
+//		processingOptions.setTagProcessingMode(ProcessingOptions.RENDER_TAGS);
+//}
+//
+//
+//String markupMode = (String) cmdLine.getOptionValue("markup");
+//if(markupMode != null){
+//	if(markupMode.equals("use")){
+//		processingOptions.setColorCodesProcessingMode(ProcessingOptions.USE_COLOR_CODES);
+//		processingOptions.setTagProcessingMode(ProcessingOptions.USE_TAGS);
+//	} else if(markupMode.equals("ignore")){
+//		processingOptions.setColorCodesProcessingMode(ProcessingOptions.IGNORE_COLOR_CODES);
+//		processingOptions.setTagProcessingMode(ProcessingOptions.IGNORE_TAGS);
+//	} else if(markupMode.equals("render")){
+//		processingOptions.setColorCodesProcessingMode(ProcessingOptions.RENDER_COLOR_CODES);
+//		processingOptions.setTagProcessingMode(ProcessingOptions.RENDER_TAGS);
+//	}
+//}

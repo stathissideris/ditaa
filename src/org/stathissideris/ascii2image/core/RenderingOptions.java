@@ -20,12 +20,18 @@
  */
 package org.stathissideris.ascii2image.core;
 
+import java.util.HashMap;
+
+import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
+
 /**
  * 
  * @author Efstathios Sideris
  */
 public class RenderingOptions {
 
+	private HashMap<String, CustomShapeDefinition> customShapes;
+	
 	private boolean dropShadows = true;
 	private boolean renderDebugLines = false;
 	private boolean antialias = true;

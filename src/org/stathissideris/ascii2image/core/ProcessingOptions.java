@@ -20,12 +20,17 @@
  */
 package org.stathissideris.ascii2image.core;
 
+import java.util.HashMap;
+
+import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
+
 /**
  * @author Efstathios Sideris
  *
  */
 public class ProcessingOptions {
 
+	private HashMap<String, CustomShapeDefinition> customShapes = new HashMap<String, CustomShapeDefinition>();
 	
 	private boolean beVerbose = false;
 	private boolean printDebugOutput = false;
@@ -53,7 +58,9 @@ public class ProcessingOptions {
 
 	private String inputFilename;
 	private String outputFilename;
-
+	
+	private String characterEncoding = null;
+	
 	/**
 	 * @return
 	 */
@@ -207,5 +214,31 @@ public class ProcessingOptions {
 	public void setTabSize(int i) {
 		tabSize = i;
 	}
+
+	public String getCharacterEncoding() {
+		return characterEncoding;
+	}
+
+	public void setCharacterEncoding(String characterEncoding) {
+		this.characterEncoding = characterEncoding;
+	}
+
+	public HashMap<String, CustomShapeDefinition> getCustomShapes() {
+		return customShapes;
+	}
+
+	public void setCustomShapes(HashMap<String, CustomShapeDefinition> customShapes) {
+		this.customShapes = customShapes;
+	}
+
+	public void putAllInCustomShapes(HashMap<String, CustomShapeDefinition> customShapes) {
+		this.customShapes.putAll(customShapes);
+	}
+	
+	public CustomShapeDefinition getFromCustomShapes(String tagName){
+		return customShapes.get(tagName);
+	}
+	
+	
 
 }

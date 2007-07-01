@@ -84,10 +84,10 @@ public class Tester {
 			dir+"bug15.txt"
 		};
 		
-		tester.createHTMLTestSuite(filenames, HTMLReportName);
+		tester.createHTMLTestReport(filenames, HTMLReportName);
 	}
 
-	public boolean createHTMLTestSuite(String[] textFilenames, String reportName){
+	public boolean createHTMLTestReport(String[] textFilenames, String reportName){
 
 		ConversionOptions options = new ConversionOptions();
 

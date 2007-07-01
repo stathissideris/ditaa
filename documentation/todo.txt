@@ -1,0 +1,14 @@
+Known bugs/issues:
+
+* ditaa is too slow, possibly due to the excessive number of calls to fill
+  functions.
+* There are certain diagrams which are not rendered correctly, see
+  tests/text/ditaa_bug.txt and tests/text/ditaa_bug2.txt
+
+Planned features:
+
+* Support for custom shapes which can be loaded from SVG or PNG files (almost
+  done, testing pending).
+* Javadoc taglet will be integrated into ditaa (written by Mikael Brännström)
+* Limited-features EPS output (written by Mikael Brännström)
+* Possible LaTeX filter similar to the HTML filter.

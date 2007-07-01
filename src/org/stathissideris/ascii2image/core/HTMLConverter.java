@@ -1,7 +1,22 @@
 /*
- * Created on 25 Σεπ 2004
+ * DiTAA - Diagrams Through Ascii Art
+ * 
+ * Copyright (C) 2004 Efstathios Sideris
  *
- * @author Efstathios Sideris
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *   
  */
 package org.stathissideris.ascii2image.core;
 
@@ -14,6 +29,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -162,10 +178,17 @@ public class HTMLConverter extends HTMLEditorKit {
 
 
 			TextGrid grid = new TextGrid();
-			grid.initialiseWithText(text, options.processingOptions);
+			grid.addToMarkupTags(options.processingOptions.getCustomShapes().keySet());
+
+			try {
+				grid.initialiseWithText(text, options.processingOptions);
+			} catch (UnsupportedEncodingException e1) {
+				System.err.println("Error: "+e1.getMessage());
+				System.exit(1);
+			}
 
 			Diagram diagram = new Diagram(grid, options);
-			RenderedImage image = BitmapRenderer.renderToImage(diagram, options.renderingOptions);
+			RenderedImage image = new BitmapRenderer().renderToImage(diagram, options.renderingOptions);
 
 			try {
 				File file = new File(URL);

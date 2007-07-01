@@ -32,8 +32,6 @@ import org.apache.commons.cli.Option;
 import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
 import org.xml.sax.SAXException;
 
-import jargs.gnu.CmdLineParser;
-
 /**
  * 
  * @author Efstathios Sideris

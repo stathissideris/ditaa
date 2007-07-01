@@ -23,10 +23,14 @@ package org.stathissideris.ascii2image.graphics;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.Locale;
+
+import javax.swing.JOptionPane;
 
 /**
  * 
@@ -34,14 +38,21 @@ import java.awt.image.BufferedImage;
  */
 public class FontMeasurer {
 	
+	private static final String fontFamilyName = "Dialog";
+	//private static final String fontFamilyName = "Helvetica";
+	
 	private static final boolean DEBUG = false;
 	
 	private static final FontMeasurer instance = new FontMeasurer();
 	FontRenderContext fakeRenderContext;
 	Graphics2D fakeGraphics;
+	
 	{   
 		BufferedImage image = new BufferedImage(1,1, BufferedImage.TYPE_INT_RGB);
 		fakeGraphics = image.createGraphics();
+		
+		System.out.println("Locale: "+Locale.getDefault());
+		
 		fakeRenderContext = fakeGraphics.getFontRenderContext();
 	}		 
 	
@@ -93,7 +104,7 @@ public class FontMeasurer {
 
 	public Font getFontFor(int maxWidth, String string){
 		float size = 12;
-		Font currentFont = new Font("Sans", Font.BOLD, (int) size);
+		Font currentFont = new Font(fontFamilyName, Font.BOLD, (int) size);
 		//ascent is the distance between the baseline and the tallest character
 		int width = getWidthFor(string, currentFont);
 
@@ -130,7 +141,9 @@ public class FontMeasurer {
 
 	public Font getFontFor(int pixelHeight, FontRenderContext frc){
 		float size = 12;
-		Font currentFont = new Font("Sans", Font.BOLD, (int) size);
+		Font currentFont = new Font(fontFamilyName, Font.BOLD, (int) size);
+//		Font currentFont = new Font("Times", Font.BOLD, (int) size);
+		System.out.println(currentFont.getFontName());
 		//ascent is the distance between the baseline and the tallest character
 		int ascent = getAscent(currentFont);
 

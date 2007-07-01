@@ -26,7 +26,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.stathissideris.ascii2image.core.FileUtils;
 import org.stathissideris.ascii2image.core.ProcessingOptions;
+import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
 
 
 /**
@@ -37,7 +39,7 @@ public class TextGrid {
 
 	private static final boolean DEBUG = false;
 
-	private ArrayList rows;
+	private ArrayList<String> rows;
 
 	private static char[] boundaries = {'/', '\\', '|', '-', '*', '=', ':'};
 	private static char[] undisputableBoundaries = {'|', '-', '*', '=', ':'};
@@ -59,7 +61,7 @@ public class TextGrid {
 
 
 
-	private static HashMap humanColorCodes = new HashMap();
+	private static HashMap<String, String> humanColorCodes = new HashMap<String, String>();
 	static{
 		humanColorCodes.put("GRE", "9D9");
 		humanColorCodes.put("BLU", "55B");
@@ -70,24 +72,19 @@ public class TextGrid {
 		
 	}
 
+	private static ArrayList<String> markupTags =
+		new ArrayList<String>();
 
-	public static final int TAG_DOCUMENT = 0;
-	public static final int TAG_STORAGE = 1;
-	public static final int TAG_IO = 2;
-	private static HashMap markupTags = new HashMap();
-	private static HashMap tagToName = new HashMap();
-
-	static{
-		markupTags.put("d", new Integer(TAG_DOCUMENT));
-		markupTags.put("s", new Integer(TAG_STORAGE));
-		markupTags.put("io", new Integer(TAG_IO));
-
-		tagToName.put(new Integer(TAG_DOCUMENT), "d");
-		tagToName.put(new Integer(TAG_STORAGE), "s");
-		tagToName.put(new Integer(TAG_IO), "io");
+	{
+		markupTags.add("d");
+		markupTags.add("s");
+		markupTags.add("io");
 	}
 
-
+	public void addToMarkupTags(Collection<String> tags){
+		markupTags.addAll(tags);
+	}
+	
 	public static void main(String[] args) throws Exception {
 		TextGrid grid = new TextGrid();
 		grid.loadFrom("d:/devel/java/ascii2image/art10.txt");
@@ -131,6 +128,7 @@ public class TextGrid {
 		for(int i = 0; i < height; i++) rows.add(new String(blank)); 
 	}
 
+//	duplicated code due to lots of hits to this function
 	public char get(int x, int y){
 		if(x > getWidth() - 1
 			|| y > getHeight() - 1
@@ -140,8 +138,14 @@ public class TextGrid {
 		return row.charAt(x);
 	}
 
+	//duplicated code due to lots of hits to this function
 	public char get(Cell cell){
-		return get(cell.x, cell.y);
+		if(cell.x > getWidth() - 1
+			|| cell.y > getHeight() - 1
+			|| cell.x < 0
+			|| cell.y < 0) return 0;
+		String row = (String) rows.get(cell.y);
+		return row.charAt(cell.x);
 	}
 	
 	public String getRow(int y){
@@ -660,10 +664,9 @@ public class TextGrid {
 					Matcher matcher = tagPattern.matcher(rowPart);
 					if(matcher.find()){
 						String tagName = matcher.group(1);
-						if(markupTags.containsKey(tagName)){
+						if(markupTags.contains(tagName)){
 							if(DEBUG) System.out.println("found tag "+tagName+" at "+x+", "+y);
-							int tag = ((Integer) markupTags.get(tagName)).intValue();
-							result.add(new CellTagPair(new Cell(x, y), tag));
+							result.add(new CellTagPair(new Cell(x, y), tagName));
 						}
 					}
 				}
@@ -676,7 +679,7 @@ public class TextGrid {
 		Iterator it = findMarkupTags().iterator();
 		while (it.hasNext()) {
 			CellTagPair pair = (CellTagPair) it.next();
-			String tagName = (String) tagToName.get(new Integer(pair.tag));
+			String tagName = pair.tag;
 			if(tagName == null) continue;
 			int length = 2 + tagName.length();
 			writeStringTo(pair.cell, StringUtils.repeatString(" ", length));
@@ -1407,7 +1410,7 @@ public class TextGrid {
 		boundaries.removeDuplicateCells();
 		return boundaries;
 	}
-
+	
 	
 	//TODO: incomplete method seedFillLine()
 	private CellSet seedFillLine(Cell cell, char newChar){
@@ -1502,44 +1505,23 @@ public class TextGrid {
 	}
 
 	public boolean loadFrom(String filename, ProcessingOptions options)
-			throws FileNotFoundException, IOException
-			{
+		throws IOException
+	{
 				
-		ArrayList lines = new ArrayList(); 
-		BufferedReader in = null;
-		boolean hasEncounteredNonBlankLine = false;
-		try {
-			in = new BufferedReader(new FileReader(filename));
-			String row;
-			while(in.ready()) {
-				row = in.readLine();
-				if(StringUtils.isBlank(row) && hasEncounteredNonBlankLine){
-					lines.add(row);
-				} else if(!StringUtils.isBlank(row)){
-					lines.add(row);
-					hasEncounteredNonBlankLine = true;
-				}
-			}
-		} catch (FileNotFoundException e) {
-			//e.printStackTrace();
-			throw e; 
-			//return false;
-		} catch (IOException e) {
-			//e.printStackTrace();
-			throw e;
-			//return false;
-		}
+		String encoding = (options == null) ? null : options.getCharacterEncoding();
+		ArrayList lines = new ArrayList();
+		Collections.addAll(lines, FileUtils.readFile(new File(filename), encoding).split("\n"));
 		
 		return initialiseWithLines(lines, options);
 	}
 
-	public boolean initialiseWithText(String text, ProcessingOptions options) {
+	public boolean initialiseWithText(String text, ProcessingOptions options) throws UnsupportedEncodingException {
 		String[] linesArray = text.split("\n");
 		ArrayList lines = new ArrayList(Arrays.asList(linesArray));
 		return initialiseWithLines(lines, options);
 	}
 
-	public boolean initialiseWithLines(ArrayList lines, ProcessingOptions options) {
+	public boolean initialiseWithLines(ArrayList lines, ProcessingOptions options) throws UnsupportedEncodingException {
 
 		//remove blank rows at the bottom
 		boolean done = false;
@@ -1562,9 +1544,17 @@ public class TextGrid {
 		
 		int maxLength = 0;
 		int index = 0;
+		
+		String encoding = null;
+		if(options != null) encoding = options.getCharacterEncoding();
+		
 		Iterator it = rows.iterator();
 		while(it.hasNext()){
 			String row = (String) it.next();
+			if(encoding != null){
+				byte[] bytes = row.getBytes();
+				row = new String(bytes, encoding);
+			}
 			if(row.length() > maxLength) maxLength = row.length();
 			rows.set(index, row);
 			index++;
@@ -1653,12 +1643,12 @@ public class TextGrid {
 	}
 
 	public class CellTagPair{
-		public CellTagPair(Cell cell, int tag){
+		public CellTagPair(Cell cell, String tag){
 			this.cell = cell;
 			this.tag = tag;
 		}
 		public Cell cell;
-		public int tag;
+		public String tag;
 	}
 
 	

@@ -30,7 +30,7 @@ import org.stathissideris.ascii2image.text.TextGrid.Cell;
  * 
  * @author Efstathios Sideris
  */
-public class CellSet extends ArrayList {
+public class CellSet extends ArrayList<TextGrid.Cell> {
 
 	private static final boolean DEBUG = false;
 	private static final boolean VERBOSE_DEBUG = false;

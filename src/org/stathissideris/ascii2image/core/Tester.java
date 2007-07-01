@@ -20,11 +20,17 @@
  */
 package org.stathissideris.ascii2image.core;
 
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Iterator;
+
+import javax.imageio.ImageIO;
 
 import org.stathissideris.ascii2image.graphics.BitmapRenderer;
 import org.stathissideris.ascii2image.graphics.Diagram;
@@ -42,60 +48,33 @@ public class Tester {
 	public static void main(String[] args){
 		Tester tester = new Tester();
 		
-		String dir = "d:\\devel\\java\\ascii2image\\";
+		String textDir = "tests/text";
+		String reportDir = "tests/images";
 		
-		String[] filenames = {
-			//dir+"art1.txt",
-
-			dir+"logo.txt",
-			dir+"color_codes.txt",
-
-			//dir+"art2.txt",
-			dir+"art2_5.txt",
-			dir+"art3.txt",
-			dir+"art3_5.txt",
-			dir+"art4.txt",
-			dir+"art5.txt",
-			dir+"art6.txt",
-			dir+"art7.txt",
-			dir+"art10.txt",
-			dir+"art11.txt",
-			dir+"art12.txt",
-			dir+"art13.txt",
-			dir+"art14.txt",
-
-			dir+"art_text.txt",
-			
-			dir+"bug1.txt",
-			dir+"bug2.txt",
-			dir+"bug3.txt",
-			dir+"bug4.txt",
-			dir+"bug5.txt",
-			dir+"bug6.txt",
-			dir+"bug7.txt",
-			dir+"bug8.txt",
-			dir+"bug9.txt",
-			dir+"bug9_5.txt",
-			dir+"bug10.txt",
-			dir+"bug11.txt",
-			dir+"bug12.txt",
-			dir+"bug13.txt",
-			dir+"bug14.txt",
-			dir+"bug15.txt"
-		};
+		File textDirObj = new File(textDir);
+		ArrayList<File> textFiles
+			= new ArrayList<File>(Arrays.asList(textDirObj.listFiles()));
 		
-		tester.createHTMLTestReport(filenames, HTMLReportName);
+		Iterator<File> it = textFiles.iterator();
+		while(it.hasNext()){
+			if(!it.next().toString().matches(".+\\.txt$")){
+				it.remove();
+			}
+		}
+						
+		tester.createHTMLTestReport(textFiles, reportDir, HTMLReportName);
+		
+		System.out.println("Tests completed");
 	}
 
-	public boolean createHTMLTestReport(String[] textFilenames, String reportName){
+	public boolean createHTMLTestReport(ArrayList<File> textFiles, String reportDir, String reportName){
 
 		ConversionOptions options = new ConversionOptions();
 
-		String imageDir = reportName+"_images";
-		String reportFilename = reportName+".html";
+		String reportFilename = reportDir+"/"+reportName+".html";
 
-		if(!(new File(imageDir).exists())){
-			File dir = new File(imageDir);
+		if(!(new File(reportDir).exists())){
+			File dir = new File(reportDir);
 			dir.mkdir();
 		}
 
@@ -109,36 +88,43 @@ public class Tester {
 		}
 
 		s.println("<html><body>");
-		s.println("<h1>ascii2image test suite<h1>");
-		s.println("<h2>generated on: "+Calendar.getInstance().getTime()+"<h2>");
+		s.println("<h1>ditaa test suite</h1>");
+		s.println("<h2>generated on: "+Calendar.getInstance().getTime()+"</h2>");
 
 
-		for (int i = 0; i < textFilenames.length; i++) {
-			String filename = textFilenames[i];
+		for(File textFile : textFiles) {
 			TextGrid grid = new TextGrid();
 
+			File toFile = new File(reportDir + "/" + textFile.getName() + ".png");
+			
 			try {
-				grid.loadFrom(filename);
+				grid.loadFrom(textFile.toString());
 				Diagram diagram = new Diagram(grid, options);
-
-				String toFilename = StringUtils.getPath(filename) + "\\"+ imageDir + "\\";
-				toFilename += StringUtils.getBaseFilename(filename);
-				toFilename += ".png";
+				
+				System.out.println("Rendering "+textFile+" to "+toFile);
 			
 				//TODO: fix this
-				//BitmapRenderer.renderToPNG(diagram, toFilename, options.renderingOptions);
+				RenderedImage image = new BitmapRenderer().renderToImage(diagram, options.renderingOptions);
+				
+				try {
+					File file = new File(toFile.getAbsolutePath());
+					ImageIO.write(image, "png", file);
+				} catch (IOException e) {
+					//e.printStackTrace();
+					System.err.println("Error: Cannot write to file "+toFile);
+					System.exit(1);
+				}
+				
 			} catch (Exception e) {
-				s.println("<b>!!! Failed to render: "+filename+" !!!</b>");
-				s.println("<center><pre>\n"+grid.getDebugString()+"\n</pre></center>");
+				s.println("<b>!!! Failed to render: "+textFile+" !!!</b>");
+				s.println("<pre>\n"+grid.getDebugString()+"\n</pre>");
 				s.println(e.getMessage());
 				s.println("<hr />");
 				s.flush();
 				continue;
 			}
 			
-			String imageURL = imageDir + "/" + StringUtils.getBaseFilename(filename) + ".png";
-			
-			s.println(makeReportTable(filename, grid, imageURL));
+			s.println(makeReportTable(textFile.getName(), grid, toFile.getName()));
 			s.println("<hr />");
 			s.flush();
 		}

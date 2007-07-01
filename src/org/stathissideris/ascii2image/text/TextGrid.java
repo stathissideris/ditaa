@@ -262,6 +262,7 @@ public class TextGrid {
 			String row = (String) it.next();
 			String index = new Integer(i).toString();
 			if(i < 10) index = " "+index;
+			row.replaceAll("\n", "");
 			buffer.append(index+" ("+row+")\n");
 			i++; 
 		}

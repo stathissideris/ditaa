@@ -262,7 +262,8 @@ public class TextGrid {
 			String row = (String) it.next();
 			String index = new Integer(i).toString();
 			if(i < 10) index = " "+index;
-			row.replaceAll("\n", "");
+			row = row.replaceAll("\n", "\\\\n");
+			row = row.replaceAll("\r", "\\\\r");
 			buffer.append(index+" ("+row+")\n");
 			i++; 
 		}
@@ -1511,13 +1512,13 @@ public class TextGrid {
 				
 		String encoding = (options == null) ? null : options.getCharacterEncoding();
 		ArrayList lines = new ArrayList();
-		Collections.addAll(lines, FileUtils.readFile(new File(filename), encoding).split("\n"));
+		Collections.addAll(lines, FileUtils.readFile(new File(filename), encoding).split("(\r)?\n"));
 		
 		return initialiseWithLines(lines, options);
 	}
 
 	public boolean initialiseWithText(String text, ProcessingOptions options) throws UnsupportedEncodingException {
-		String[] linesArray = text.split("\n");
+		String[] linesArray = text.split("(\r)?\n");
 		ArrayList lines = new ArrayList(Arrays.asList(linesArray));
 		return initialiseWithLines(lines, options);
 	}

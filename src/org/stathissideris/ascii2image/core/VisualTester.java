@@ -41,12 +41,12 @@ import org.stathissideris.ascii2image.text.TextGrid;
  * 
  * @author Efstathios Sideris
  */
-public class Tester {
+public class VisualTester {
 
 	private static final String HTMLReportName = "test_suite";
 
 	public static void main(String[] args){
-		Tester tester = new Tester();
+		VisualTester tester = new VisualTester();
 		
 		String textDir = "tests/text";
 		String reportDir = "tests/images";
@@ -102,8 +102,7 @@ public class Tester {
 				Diagram diagram = new Diagram(grid, options);
 				
 				System.out.println("Rendering "+textFile+" to "+toFile);
-			
-				//TODO: fix this
+
 				RenderedImage image = new BitmapRenderer().renderToImage(diagram, options.renderingOptions);
 				
 				try {

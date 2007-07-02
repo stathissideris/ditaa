@@ -87,6 +87,7 @@ public class FileUtils {
         
         if (length > Integer.MAX_VALUE) {
             // File is too large
+        	// TODO: we need some feedback for the case of the file being too large
         }
     
         // Create the byte array to hold the data

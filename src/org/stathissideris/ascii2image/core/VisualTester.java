@@ -95,15 +95,22 @@ public class VisualTester {
 		for(File textFile : textFiles) {
 			TextGrid grid = new TextGrid();
 
-			File toFile = new File(reportDir + "/" + textFile.getName() + ".png");
+			File toFile = new File(reportDir + File.separator + textFile.getName() + ".png");
 			
+			
+			long a = java.lang.System.nanoTime();
+			long b;
 			try {
+				
 				grid.loadFrom(textFile.toString());
 				Diagram diagram = new Diagram(grid, options);
 				
 				System.out.println("Rendering "+textFile+" to "+toFile);
 
 				RenderedImage image = new BitmapRenderer().renderToImage(diagram, options.renderingOptions);
+				
+				b = java.lang.System.nanoTime();
+		        java.lang.System.out.println( "Done in " + Math.round((b - a)/10e6) + "msec");
 				
 				try {
 					File file = new File(toFile.getAbsolutePath());
@@ -120,10 +127,14 @@ public class VisualTester {
 				s.println(e.getMessage());
 				s.println("<hr />");
 				s.flush();
+				
+				System.err.println("!!! Failed to render: "+textFile+" !!!");
+				e.printStackTrace(System.err);
+				
 				continue;
 			}
 			
-			s.println(makeReportTable(textFile.getName(), grid, toFile.getName()));
+			s.println(makeReportTable(textFile.getName(), grid, toFile.getName(), b - a));
 			s.println("<hr />");
 			s.flush();
 		}
@@ -136,9 +147,9 @@ public class VisualTester {
 
 	}
 
-	private String makeReportTable(String gridURI, TextGrid grid, String imageURI){
+	private String makeReportTable(String gridURI, TextGrid grid, String imageURI, long time){
 		StringBuffer buffer = new StringBuffer("<center><table border=\"0\">");
-		buffer.append("<th colspan=\"2\"><h3>"+gridURI+"</h3></th>");
+		buffer.append("<th colspan=\"2\"><h3>"+gridURI+" ("+Math.round(time/10e6)+"msec)</h3></th>");
 		buffer.append("<tr><td><pre>\n"+grid.getDebugString()+"\n</pre></td>");
 		buffer.append("<td><img border=\"0\" src=\""+imageURI+"\"</td></tr>");
 		buffer.append("</table></center>");

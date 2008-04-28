@@ -51,6 +51,19 @@ public class CompositeDiagramShape extends DiagramComponent {
 						false);
 	}
 
+	
+	/**
+	 * 
+	 *************************
+	 * 
+	 * WARNING
+	 * 
+	 * The logic of this method is wrong, see ditaa_bug.txt in tests/ to
+	 * see exactly what the problem is.
+	 * 
+	 *************************
+	 * 
+	 */
 	public static DiagramComponent createOpenFromBoundaryCells(
 			final TextGrid grid,
 			final CellSet boundaryCells,
@@ -88,7 +101,7 @@ public class CompositeDiagramShape extends DiagramComponent {
 				CellSet nextCells = workGrid.followCell(previous);
 				if(nextCells.size() == 0)
 					throw new IllegalArgumentException("This shape is either open but multipart or has only one cell, and cannot be processed by this method");
-				cell = (TextGrid.Cell) nextCells.get(0);
+				cell = (TextGrid.Cell) nextCells.getFirst();
 				if(workGrid.cellContainsDashedLineChar(cell)) s.setStrokeDashed(true);
 				if(workGrid.isPointCell(cell)) s.addToPoints(makePointForCell(cell, workGrid, cellWidth, cellHeight, allRound));
 				
@@ -102,7 +115,7 @@ public class CompositeDiagramShape extends DiagramComponent {
 					nextCells = workGrid.followCell(cell, previous);
 					if(nextCells.size() == 1) {
 						previous = cell;
-						cell = (TextGrid.Cell) nextCells.get(0);
+						cell = (TextGrid.Cell) nextCells.getFirst();
 						if(workGrid.cellContainsDashedLineChar(cell)) s.setStrokeDashed(true);
 						if(!cell.equals(start) && workGrid.isPointCell(cell))
 							s.addToPoints(makePointForCell(cell, workGrid, cellWidth, cellHeight, allRound));

@@ -91,20 +91,20 @@ public abstract class DiagramComponent {
 			workGrid.printDebug();
 		}
 		
-		TextGrid.Cell start = (TextGrid.Cell) cells.get(0);
+		TextGrid.Cell start = (TextGrid.Cell) cells.getFirst();
 		if(workGrid.isCorner(start)) shape.addToPoints(makePointForCell(start, workGrid, cellWidth, cellHeight, allRound));
 		TextGrid.Cell previous = start;
 		TextGrid.Cell cell = null;
 		CellSet nextCells = workGrid.followCell(previous);
 		if(nextCells.size() == 0) return null;
-		cell = (TextGrid.Cell) nextCells.get(0);
+		cell = (TextGrid.Cell) nextCells.getFirst();
 		if(workGrid.isCorner(cell)) shape.addToPoints(makePointForCell(cell, workGrid, cellWidth, cellHeight, allRound));
 		
 		while(!cell.equals(start)){
 			nextCells = workGrid.followCell(cell, previous);
 			if(nextCells.size() == 1) {
 				previous = cell;
-				cell = (TextGrid.Cell) nextCells.get(0);
+				cell = (TextGrid.Cell) nextCells.getFirst();
 				if(!cell.equals(start) && workGrid.isCorner(cell))
 					shape.addToPoints(makePointForCell(cell, workGrid, cellWidth, cellHeight, allRound));
 			} else if(nextCells.size() > 1) {

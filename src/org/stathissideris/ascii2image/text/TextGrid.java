@@ -134,8 +134,7 @@ public class TextGrid {
 			|| y > getHeight() - 1
 			|| x < 0
 			|| y < 0) return 0;
-		String row = (String) rows.get(y);
-		return row.charAt(x);
+		return rows.get(y).charAt(x);
 	}
 
 	//duplicated code due to lots of hits to this function
@@ -144,8 +143,7 @@ public class TextGrid {
 			|| cell.y > getHeight() - 1
 			|| cell.x < 0
 			|| cell.y < 0) return 0;
-		String row = (String) rows.get(cell.y);
-		return row.charAt(cell.x);
+		return rows.get(cell.y).charAt(cell.x);
 	}
 	
 	public String getRow(int y){
@@ -1298,10 +1296,10 @@ public class TextGrid {
 	 * @param cells
 	 * @param c
 	 */
-	public void fillCellsWith(ArrayList cells, char c){
-		Iterator it = cells.iterator();
+	public void fillCellsWith(Iterable cells, char c){
+		Iterator<Cell> it = cells.iterator();
 		while(it.hasNext()){
-			Cell cell = (Cell) it.next();
+			Cell cell = it.next();
 			set(cell.x, cell.y, c);
 		}
 	}
@@ -1409,7 +1407,6 @@ public class TextGrid {
 			else if(get(wCell) == '*') boundaries.add(wCell);
 		}
 		
-		boundaries.removeDuplicateCells();
 		return boundaries;
 	}
 	
@@ -1726,10 +1723,15 @@ public class TextGrid {
 		}
 
 
-		public boolean equals(Cell cell){
+		public boolean equals(Object o){
+			Cell cell = (Cell) o;
 			if(cell == null) return false;
 			if(x == cell.x && y == cell.y) return true;
 			else return false;
+		}
+		
+		public int hashCode() {
+			return (x << 16) | y;
 		}
 		
 		public boolean isNextTo(int x2, int y2){

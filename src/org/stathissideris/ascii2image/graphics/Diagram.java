@@ -62,7 +62,9 @@ public class Diagram {
 	 *       distinct shapes. This can produce duplicate shapes (if the boundaries
 	 *       are the same when filling from the inside and the outside).</li>
 	 *   <li>Remove duplicate boundaries.</li>
-	 *   <li>Remove obsolete boundaries. (see method removeObsoleteShapes())</li>
+	 *   <li>Remove obsolete boundaries. Obsolete boundaries are the ones that are
+	 *       the sum of their parts when plotted as filled shapes. (see method
+	 *       removeObsoleteShapes())</li>
 	 *   <li>Seperate the found boundary sets to open, closed or mixed
 	 *       (See CellSet class on how its done).</li>
 	 *   <li>Are there any closed boundaries?
@@ -335,7 +337,7 @@ public class Diagram {
 		while(sets.hasNext()){
 			CellSet set = (CellSet) sets.next();
 			if(set.size() == 1){
-				TextGrid.Cell cell = (TextGrid.Cell) set.get(0);
+				TextGrid.Cell cell = (TextGrid.Cell) set.getFirst();
 				if(!grid.cellContainsDashedLineChar(cell)) { 
 					DiagramShape shape = DiagramShape.createSmallLine(workGrid, cell, cellWidth, cellHeight); 
 					if(shape != null) {

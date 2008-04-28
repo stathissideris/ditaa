@@ -21,16 +21,17 @@
 package org.stathissideris.ascii2image.text;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
-
-import org.stathissideris.ascii2image.text.TextGrid.Cell;
+import java.util.Set;
 
 /**
  * 
  * @author Efstathios Sideris
  */
-public class CellSet extends ArrayList<TextGrid.Cell> {
+public class CellSet implements Iterable<TextGrid.Cell> {
 
 	private static final boolean DEBUG = false;
 	private static final boolean VERBOSE_DEBUG = false;
@@ -41,9 +42,13 @@ public class CellSet extends ArrayList<TextGrid.Cell> {
 	public static final int TYPE_HAS_CLOSED_AREA = 3;
 	public static final int TYPE_UNDETERMINED = 4;
 
+	Set<TextGrid.Cell> internalSet = new HashSet<TextGrid.Cell>();
+	
 	private int type = TYPE_UNDETERMINED;
 	private boolean typeIsValid = false;
 
+	private static final Object FAKE = new Object();
+	
 	public static void main(String[] args) {
 		TextGrid g = new TextGrid();
 		
@@ -56,9 +61,58 @@ public class CellSet extends ArrayList<TextGrid.Cell> {
 		
 		set.remove(set.find(g.new Cell(10, 30)));
 		set.printDebug();
+		
+		TextGrid.Cell cell1 = g.new Cell(10, 20);
+		TextGrid.Cell cell2 = g.new Cell(10, 20);
+		System.out.println(cell1.equals(cell2));
+		System.out.println("Cell 1 hash code: "+cell1.hashCode());
+		System.out.println("Cell 2 hash code: "+cell2.hashCode());
+		
+		System.out.println(set.contains(cell1));
+		
+		HashMap<TextGrid.Cell, Object> set2 = new HashMap<TextGrid.Cell, Object>();
+		set2.put(g.new Cell(10, 20), FAKE);
+		System.out.println(set2.containsKey(cell1));
+		
+		Set<TextGrid.Cell> set3 = new HashSet<TextGrid.Cell>();
+		set3.add(g.new Cell(10, 20));
+		System.out.println(set3.contains(cell1));
+
 	}
 
+	public CellSet(){
+		
+	}
+	
+	public CellSet(CellSet other){
+		addAll(other);
+	}
+	
+	public Iterator<TextGrid.Cell> iterator(){
+		return internalSet.iterator();
+	}
 
+	public Object add(TextGrid.Cell cell){
+		return internalSet.add(cell);
+	}
+
+	public void addAll(CellSet set){
+		internalSet.addAll(set.internalSet);
+	}
+	
+	void clear(){
+		internalSet.clear();
+	}
+	
+	public int size() {
+		return internalSet.size();
+	}
+	
+	public TextGrid.Cell getFirst(){
+		//return internalSet.get(0);
+		return (TextGrid.Cell) internalSet.iterator().next();
+	}
+	
 	public void printAsGrid(){
 		TextGrid grid = new TextGrid(getMaxX()+2, getMaxY()+2);
 		grid.fillCellsWith(this, '*');
@@ -74,28 +128,6 @@ public class CellSet extends ArrayList<TextGrid.Cell> {
 		}
 		System.out.println();
 	}
-
-	/**
-	 * @param arg0
-	 */
-	public CellSet(int arg0) {
-		super(arg0);
-	}
-
-	/**
-	 * 
-	 */
-	public CellSet() {
-		super();
-	}
-
-	/**
-	 * @param arg0
-	 */
-	public CellSet(Collection arg0) {
-		super(arg0);
-	}
-
 
 	/**
 	 * Deep copy
@@ -167,14 +199,14 @@ public class CellSet extends ArrayList<TextGrid.Cell> {
 		TextGrid workGrid = TextGrid.makeSameSizeAs(grid);
 		grid.copyCellsTo(this, workGrid);
 		
-		TextGrid.Cell start = (TextGrid.Cell) get(0);
+		TextGrid.Cell start = (TextGrid.Cell) getFirst();
 		if (DEBUG)
 			System.out.println("Tracing:\nStarting at "+start+" ("+grid.getCellTypeAsString(start)+")");
 		TextGrid.Cell previous = start;
 		TextGrid.Cell cell = null;
 		CellSet nextCells = workGrid.followCell(previous);
 		if(nextCells.size() == 0) return TYPE_OPEN;
-		cell = (TextGrid.Cell) nextCells.get(0);
+		cell = (TextGrid.Cell) nextCells.getFirst();
 		if (DEBUG)
 			System.out.println("\tat cell "+cell+" ("+grid.getCellTypeAsString(cell)+")");
 
@@ -187,7 +219,7 @@ public class CellSet extends ArrayList<TextGrid.Cell> {
 				return TYPE_OPEN;
 			} if(nextCells.size() == 1) {
 				previous = cell;
-				cell = (TextGrid.Cell) nextCells.get(0);
+				cell = (TextGrid.Cell) nextCells.getFirst();
 				if (DEBUG)
 					System.out.println("\tat cell "+cell+" ("+grid.getCellTypeAsString(cell)+")");
 			} else if(nextCells.size() > 1) {
@@ -278,33 +310,37 @@ public class CellSet extends ArrayList<TextGrid.Cell> {
 	}
 
 	public TextGrid.Cell find(TextGrid.Cell cell){
-		Iterator it = iterator();
+		Iterator<TextGrid.Cell> it = iterator();
 		while(it.hasNext()){
-			TextGrid.Cell cCell = (TextGrid.Cell) it.next();
+			TextGrid.Cell cCell = it.next();
 			if(cCell.equals(cell)) return cCell;
 		}
 		return null;		
 	}
 
 	public boolean contains(TextGrid.Cell cell){
-		Iterator it = iterator();
-		while(it.hasNext()){
-			TextGrid.Cell cCell = (TextGrid.Cell) it.next();
-			if(cCell.equals(cell)) return true;
-		}
-		return false;		
+		if(cell == null) return false;
+		return internalSet.contains(cell);
 	}
+	
+//	public boolean contains(TextGrid.Cell cell){
+//		Iterator<TextGrid.Cell> it = iterator();
+//		while(it.hasNext()){
+//			TextGrid.Cell cCell = it.next();
+//			if(cCell.equals(cell)) return true;
+//		}
+//		return false;		
+//	}
 
 	public void addSet(CellSet set){
 		typeIsValid = false;
 		this.addAll(set);
 	}
 
-	public boolean hasCommonCells(CellSet set){
-		CellSet otherSet = (this.size() < set.size())?set:this;
-		Iterator it = (this.size() < set.size())?iterator():set.iterator();
+	public boolean hasCommonCells(CellSet otherSet){
+		Iterator<TextGrid.Cell> it = iterator();
 		while(it.hasNext()){
-			TextGrid.Cell cell = (TextGrid.Cell) it.next();
+			TextGrid.Cell cell = it.next();
 			if(otherSet.contains(cell)) return true;
 		}
 		return false;
@@ -447,47 +483,16 @@ public class CellSet extends ArrayList<TextGrid.Cell> {
 	}
 
 
-	public boolean remove(Object o) {
-		if(!(o instanceof TextGrid.Cell)) return false;
+	public Object remove(TextGrid.Cell cell){
 		typeIsValid = false;
-		TextGrid.Cell cell = (TextGrid.Cell) o;
 		cell = find(cell);
-		if(cell != null) return super.remove(cell);
-		else return false;
+		if(cell != null) return internalSet.remove(cell);
+		else return null;
 	}
 
 	public boolean equals(Object o){
-		if(!(o instanceof CellSet)) return false;
-		CellSet set = (CellSet) o;
-		
-		if(size() != set.size()) return false;
-		
-		Iterator it = iterator();
-		while(it.hasNext()){
-			TextGrid.Cell cell = (TextGrid.Cell) it.next();
-			if(!set.contains(cell)) return false; 
-		}
-		return true;
-	}
-
-	public void removeDuplicateCells() {
-		ArrayList uniqueCells = new ArrayList();
-
-		Iterator it = iterator();
-		while(it.hasNext()){
-			Cell cell = (Cell) it.next();
-			boolean isOriginal = true;
-			Iterator uniquesIt = uniqueCells.iterator();
-			while(uniquesIt.hasNext()){
-				Cell uniqueCell = (Cell) uniquesIt.next();
-				if(cell.equals(uniqueCell)){
-					isOriginal = false;
-				}
-			}
-			if(isOriginal) uniqueCells.add(cell);
-		}
-		this.clear();
-		this.addAll(uniqueCells);
+		CellSet otherSet = (CellSet) o;
+		return internalSet.equals(otherSet.internalSet);
 	}
 
 	
@@ -612,7 +617,7 @@ public class CellSet extends ArrayList<TextGrid.Cell> {
 				CellSet nextCells = workGrid.followCell(previous);
 				if(nextCells.size() == 0)
 					throw new IllegalArgumentException("This shape is either open but multipart or has only one cell, and cannot be processed by this method");
-				cell = (TextGrid.Cell) nextCells.get(0);
+				cell = (TextGrid.Cell) nextCells.getFirst();
 				set.add(cell);
 				if(DEBUG) System.out.println("Added boundary "+cell);
 				
@@ -628,7 +633,7 @@ public class CellSet extends ArrayList<TextGrid.Cell> {
 						set.add(cell);
 						if(DEBUG) System.out.println("Added boundary " + cell);
 						previous = cell;
-						cell = (TextGrid.Cell) nextCells.get(0);
+						cell = (TextGrid.Cell) nextCells.getFirst();
 						//if(!cell.equals(start) && grid.isPointCell(cell))
 						//	s.addToPoints(makePointForCell(cell, workGrid, cellWidth, cellHeight, allRound));
 						if(workGrid.isLinesEnd(cell)){

@@ -490,7 +490,7 @@ public class DiagramShape extends DiagramComponent {
 			ShapePoint firstPoint = (ShapePoint) points.get(0);
 			ShapePoint lastPoint = (ShapePoint) points.get(points.size() - 1);
 			ShapeEdge edge = new ShapeEdge(lastPoint, firstPoint, this);
-			edges.add(edge);			
+			edges.add(edge);
 		}
 		return edges;
 	}

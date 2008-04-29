@@ -49,37 +49,6 @@ public class CellSet implements Iterable<TextGrid.Cell> {
 
 	private static final Object FAKE = new Object();
 	
-	public static void main(String[] args) {
-		TextGrid g = new TextGrid();
-		
-		CellSet set = new CellSet();
-		set.add(g.new Cell(10, 20));
-		set.add(g.new Cell(10, 60));
-		set.add(g.new Cell(10, 30));
-		set.add(g.new Cell(60, 20));
-		set.printDebug();
-		
-		set.remove(set.find(g.new Cell(10, 30)));
-		set.printDebug();
-		
-		TextGrid.Cell cell1 = g.new Cell(10, 20);
-		TextGrid.Cell cell2 = g.new Cell(10, 20);
-		System.out.println(cell1.equals(cell2));
-		System.out.println("Cell 1 hash code: "+cell1.hashCode());
-		System.out.println("Cell 2 hash code: "+cell2.hashCode());
-		
-		System.out.println(set.contains(cell1));
-		
-		HashMap<TextGrid.Cell, Object> set2 = new HashMap<TextGrid.Cell, Object>();
-		set2.put(g.new Cell(10, 20), FAKE);
-		System.out.println(set2.containsKey(cell1));
-		
-		Set<TextGrid.Cell> set3 = new HashSet<TextGrid.Cell>();
-		set3.add(g.new Cell(10, 20));
-		System.out.println(set3.contains(cell1));
-
-	}
-
 	public CellSet(){
 		
 	}

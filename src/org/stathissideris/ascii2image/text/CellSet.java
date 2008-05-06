@@ -89,15 +89,31 @@ public class CellSet implements Iterable<TextGrid.Cell> {
 	}
 
 	public void printDebug(){
-		Iterator it = iterator();
+		Iterator<TextGrid.Cell> it = iterator();
 		while(it.hasNext()){
-			TextGrid.Cell cell = (TextGrid.Cell) it.next();
+			TextGrid.Cell cell = it.next();
 			System.out.print(cell);
 			if(it.hasNext()) System.out.print(" ");
 		}
 		System.out.println();
 	}
 
+	public String getCellsAsString(){
+		StringBuffer str = new StringBuffer();
+		Iterator<TextGrid.Cell> it = iterator();
+		while(it.hasNext()){
+			str.append(it.next().toString());
+			if(it.hasNext()) str.append("/");
+		}
+		return str.toString();
+	}
+	
+	public String toString(){
+		TextGrid grid = new TextGrid(getMaxX()+2, getMaxY()+2);
+		grid.fillCellsWith(this, '*');
+		return grid.getDebugString();		
+	}
+	
 	/**
 	 * Deep copy
 	 * 

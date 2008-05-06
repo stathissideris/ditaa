@@ -87,7 +87,7 @@ public class TextGrid {
 	
 	public static void main(String[] args) throws Exception {
 		TextGrid grid = new TextGrid();
-		grid.loadFrom("d:/devel/java/ascii2image/art10.txt");
+		grid.loadFrom("tests/text/art10.txt");
 
 		grid.writeStringTo(grid.new Cell(28, 1), "testing");
 

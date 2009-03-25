@@ -20,22 +20,10 @@
  */
 package org.stathissideris.ascii2image.core;
 
-import java.awt.image.RenderedImage;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Iterator;
 
-import javax.imageio.ImageIO;
-
-import org.stathissideris.ascii2image.graphics.BitmapRenderer;
 import org.stathissideris.ascii2image.graphics.Diagram;
-import org.stathissideris.ascii2image.text.StringUtils;
 import org.stathissideris.ascii2image.text.TextGrid;
 
 /**
@@ -43,8 +31,6 @@ import org.stathissideris.ascii2image.text.TextGrid;
  * @author Efstathios Sideris
  */
 public class PerformanceTester {
-
-	private static final String HTMLReportName = "test_suite";
 
 	public static void main(String[] args){
 		
@@ -57,9 +43,11 @@ public class PerformanceTester {
 			long a = java.lang.System.currentTimeMillis();
 			
 			for(int i = 0; i < iterations; i++) {
+				System.out.println("iteration "+i);
+				
 				TextGrid grid = new TextGrid();
 				grid.loadFrom(inputFilename);
-				Diagram diagram = new Diagram(grid, options);
+				new Diagram(grid, options);
 			}
 			
 			long b = java.lang.System.currentTimeMillis();

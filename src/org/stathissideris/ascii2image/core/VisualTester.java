@@ -143,6 +143,10 @@ public class VisualTester {
 
 		s.flush();
 		s.close();
+		
+		
+		System.out.println("Wrote HTML report to " + reportFilename);
+		
 		return true;
 
 	}

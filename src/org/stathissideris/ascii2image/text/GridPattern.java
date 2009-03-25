@@ -108,7 +108,7 @@ public class GridPattern extends TextGrid {
 		if(!regExpsAreValid) prepareRegExps(); 
 
 		for(int i = 0; i < grid.getHeight(); i++) {
-			String row = (String) grid.getRow(i);
+			String row = grid.getRow(i).toString();
 			String regexp = (String) regExps.get(i);
 			if(!row.matches(regexp)) {
 				if(DEBUG)
@@ -125,17 +125,17 @@ public class GridPattern extends TextGrid {
 		if (DEBUG)
 			System.out.println("Trying to match:");
 		if(!usesStandardSyntax){
-			Iterator it = getRows().iterator();
+			Iterator<StringBuffer> it = getRows().iterator();
 			while (it.hasNext()) {
-				String row = (String) it.next();
+				String row = it.next().toString();
 				regExps.add(makeRegExp(row));
 				if(DEBUG)
 					System.out.println(row+" becomes "+makeRegExp(row));
 			}			
 		} else {
-			Iterator it = getRows().iterator();
+			Iterator<StringBuffer> it = getRows().iterator();
 			while (it.hasNext()) {
-				String row = (String) it.next();
+				String row = it.next().toString();
 				regExps.add(row);
 			}
 		}

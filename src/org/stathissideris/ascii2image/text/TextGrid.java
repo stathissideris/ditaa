@@ -62,7 +62,7 @@ public class TextGrid {
 
 
 	private static HashMap<String, String> humanColorCodes = new HashMap<String, String>();
-	static{
+	static {
 		humanColorCodes.put("GRE", "9D9");
 		humanColorCodes.put("BLU", "55B");
 		humanColorCodes.put("PNK", "FAA");
@@ -474,8 +474,8 @@ public class TextGrid {
 	 * 
 	 * @return
 	 */
-	public ArrayList findStrings(){
-		ArrayList result = new ArrayList();
+	public ArrayList<CellStringPair> findStrings(){
+		ArrayList<CellStringPair> result = new ArrayList<CellStringPair>();
 		int width = getWidth();
 		int height = getHeight();
 		for(int y = 0; y < height; y++){
@@ -624,9 +624,9 @@ public class TextGrid {
 	}
 
 
-	public ArrayList findColorCodes(){
+	public ArrayList<CellColorPair> findColorCodes(){
 		Pattern colorCodePattern = Pattern.compile("c[A-F0-9]{3}");
-		ArrayList result = new ArrayList();
+		ArrayList<CellColorPair> result = new ArrayList<CellColorPair>();
 		int width = getWidth();
 		int height = getHeight();
 		for(int yi = 0; yi < height; yi++){
@@ -649,9 +649,9 @@ public class TextGrid {
 		return result;
 	}
 
-	public ArrayList findMarkupTags(){
+	public ArrayList<CellTagPair> findMarkupTags(){
 		Pattern tagPattern = Pattern.compile("\\{(.+?)\\}");
-		ArrayList result = new ArrayList();
+		ArrayList<CellTagPair> result = new ArrayList<CellTagPair>();
 
 		int width = getWidth();
 		int height = getHeight();
@@ -1038,21 +1038,6 @@ public class TextGrid {
 		return nextCells;
 	}
 
-//	public Cell followCorner(Cell cell, Cell blocked){
-//		CellSet nextCells = followCorner(cell);
-//		if(nextCells == null) return null;
-//		if(nextCells.size() == 1){
-//			return (TextGrid.Cell) nextCells.get(0);
-//		} else if(nextCells.size() == 2) {
-//			if(!((TextGrid.Cell) nextCells.get(0)).equals(blocked)){
-//				return (TextGrid.Cell) nextCells.get(0);
-//			} else if(!((TextGrid.Cell) nextCells.get(1)).equals(blocked)){
-//				return (TextGrid.Cell) nextCells.get(1);
-//			}
-//		}
-//		return null;
-//	}
-
 	public CellSet followCorner(Cell cell){
 		return followCorner(cell, null);
 	}
@@ -1331,7 +1316,6 @@ public class TextGrid {
 		return seedFill(cell, c);
 	}
 
-
 	private CellSet seedFill(Cell seed, char newChar){
 		CellSet cellsFilled = new CellSet();
 		char oldChar = get(seed);
@@ -1339,7 +1323,38 @@ public class TextGrid {
 		if(oldChar == newChar) return cellsFilled;
 		if(isOutOfBounds(seed)) return cellsFilled;
 
-		Stack stack = new Stack();
+		Stack<Cell> stack = new Stack<Cell>();
+
+		stack.push(seed);
+		
+		while(!stack.isEmpty()){
+			Cell cell = (Cell) stack.pop();
+			
+			//set(cell, newChar);
+			cellsFilled.add(cell);
+
+			Cell nCell = cell.getNorth();
+			Cell sCell = cell.getSouth();
+			Cell eCell = cell.getEast();
+			Cell wCell = cell.getWest();
+			
+			if(get(nCell) == oldChar && !cellsFilled.contains(nCell)) stack.push(nCell);
+			if(get(sCell) == oldChar && !cellsFilled.contains(sCell)) stack.push(sCell);
+			if(get(eCell) == oldChar && !cellsFilled.contains(eCell)) stack.push(eCell);
+			if(get(wCell) == oldChar && !cellsFilled.contains(wCell)) stack.push(wCell);
+		}
+		
+		return cellsFilled;
+	}
+
+	private CellSet seedFillOld(Cell seed, char newChar){
+		CellSet cellsFilled = new CellSet();
+		char oldChar = get(seed);
+		
+		if(oldChar == newChar) return cellsFilled;
+		if(isOutOfBounds(seed)) return cellsFilled;
+
+		Stack<Cell> stack = new Stack<Cell>();
 
 		stack.push(seed);
 		
@@ -1380,7 +1395,7 @@ public class TextGrid {
 
 		char newChar = 1; //TODO: kludge
 
-		Stack stack = new Stack();
+		Stack<Cell> stack = new Stack<Cell>();
 
 		stack.push(seed);
 		
@@ -1470,28 +1485,6 @@ public class TextGrid {
 		return cellsFilled;
 	}
 	
-	/**
-	 * Extra method for recursion
-	 * 
-	 * (This is an the old seedFill method that causes stack
-	 * overflow - do not use) 
-	 * 
-	 */
-	private void fillContinuousArea_internal(int x, int y, char c1, char c2, CellSet cells){
-		char cc = get(x, y);
-		if(cc == c1) {
-			set(x, y, c2);
-			cells.add(new Cell(x, y));
-		} else {
-			return;
-		}
-
-		fillContinuousArea_internal(x + 1, y, c1, c2, cells);
-		fillContinuousArea_internal(x - 1, y, c1, c2, cells);
-		fillContinuousArea_internal(x, y + 1, c1, c2, cells);
-		fillContinuousArea_internal(x, y - 1, c1, c2, cells);
-	}
-
 	public boolean cellContainsDashedLineChar(Cell cell){
 		char c = get(cell);
 		return StringUtils.isOneOf(c, dashedLines);

@@ -49,6 +49,10 @@ public class ShapePoint extends java.awt.geom.Point2D.Float {
 		this.type = type;
 	}
 
+	public ShapePoint(ShapePoint other){
+		this(other.x, other.y, other.type);
+	}
+	
 	/**
 	 * @return
 	 */
@@ -65,16 +69,6 @@ public class ShapePoint extends java.awt.geom.Point2D.Float {
 	
 	public boolean isInLineWith(ShapePoint point){
 		if(this.x == point.x) return true;
-		if(this.y == point.y) return true;
-		return false;
-	}
-
-	public boolean isHorizontallyInLineWith(ShapePoint point){
-		if(this.x == point.x) return true;
-		return false;
-	}
-
-	public boolean isVerticallyInLineWith(ShapePoint point){
 		if(this.y == point.y) return true;
 		return false;
 	}

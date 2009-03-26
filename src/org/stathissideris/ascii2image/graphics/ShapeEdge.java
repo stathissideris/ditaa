@@ -45,6 +45,14 @@ public class ShapeEdge {
 		this.owner = owner;
 	}
 	
+	public ShapeEdge(ShapeEdge other){
+		this(
+			new ShapePoint(other.startPoint),
+			new ShapePoint(other.endPoint),
+			other.owner
+		);
+	}
+	
 	private float getDistanceFromOrigin() {
 		int type = this.getType();
 		if(type == TYPE_SLOPED)
@@ -58,7 +66,6 @@ public class ShapeEdge {
 	public void moveInwardsBy(float offset){
 		int type = this.getType();
 		if(type == TYPE_SLOPED)
-			//return;
 			throw new RuntimeException("Cannot move a sloped egde inwards: "+this);
 		
 		float xOffset = 0;
@@ -104,8 +111,8 @@ public class ShapeEdge {
 	 * @return
 	 */
 	private int getType(){
-		if(startPoint.isHorizontallyInLineWith(endPoint)) return TYPE_VERTICAL;
-		if(startPoint.isVerticallyInLineWith(endPoint)) return TYPE_HORIZONTAL;
+		if(isVertical()) return TYPE_VERTICAL;
+		if(isHorizontal()) return TYPE_HORIZONTAL;
 		return TYPE_SLOPED;
 	}
 
@@ -168,6 +175,49 @@ public class ShapeEdge {
 		if(other.isHorizontal() && this.isVertical()) return false;
 		
 		if(this.getDistanceFromOrigin() != other.getDistanceFromOrigin()) return false;
+
+		//covering this corner case (should produce false):
+		//      ---------
+		//              ---------
+		
+		ShapeEdge first = new ShapeEdge(this);
+		ShapeEdge second = new ShapeEdge(other);
+		
+		if(first.isVertical()) {
+			first.changeAxis();
+			second.changeAxis();
+		}
+		
+		first.fixDirection();
+		second.fixDirection();
+		
+		if(first.startPoint.x > second.startPoint.x) {
+			ShapeEdge temp = first;
+			first = second;
+			second = temp;
+		}
+		
+		if(first.endPoint.equals(second.startPoint)) return false;
+		
+//		if(this.startPoint.equals(other.startPoint) 
+//				&& !this.endPoint.isWithinEdge(other)
+//				&& !other.endPoint.isWithinEdge(this)
+//				) return false;
+//		
+//		if(this.endPoint.equals(other.endPoint)
+//				&& !this.startPoint.isWithinEdge(other)
+//				&& !other.startPoint.isWithinEdge(this)
+//				) return false;
+//		
+//		if(this.startPoint.equals(other.endPoint)
+//				&& !this.endPoint.isWithinEdge(other)
+//				&& !other.startPoint.isWithinEdge(this)
+//				) return false;
+//		
+//		if(this.endPoint.equals(other.startPoint) 
+//				&& !this.startPoint.isWithinEdge(other)
+//				&& !other.endPoint.isWithinEdge(this)
+//				) return false;
 		
 		// case 1:
 		// ----------
@@ -179,17 +229,45 @@ public class ShapeEdge {
 		
 		if(this.startPoint.isWithinEdge(other) || this.endPoint.isWithinEdge(other)) return true;
 		if(other.startPoint.isWithinEdge(this) || other.endPoint.isWithinEdge(this)) return true;	
-			
+		
+		
 		return false;
 	}
 	
+	private void changeAxis(){
+		ShapePoint temp = new ShapePoint(startPoint);
+		startPoint = new ShapePoint(endPoint.y, endPoint.x);
+		endPoint = new ShapePoint(temp.y, temp.x);
+	}
+	
+	/**
+	 * if horizontal flips start and end points so that start is left of end
+	 * if verical flips start and end points so that start is over of end
+	 *
+	 */
+	private void fixDirection(){
+		if(isHorizontal()) {
+			if(startPoint.x > endPoint.x) flipDirection();
+		} else if(isVertical()) {
+			if(startPoint.y > endPoint.y) flipDirection();
+		} else {
+			throw new RuntimeException("Cannot fix direction of sloped egde");
+		}
+	}
+	
+	private void flipDirection(){
+		ShapePoint temp = startPoint;
+		startPoint = endPoint;
+		endPoint = temp;
+	}
+	
 	public boolean isHorizontal(){
-		if(startPoint.isHorizontallyInLineWith(endPoint)) return true;
+		if(startPoint.y == endPoint.y) return true;
 		return false;
 	}
 	
 	public boolean isVertical(){
-		if(startPoint.isVerticallyInLineWith(endPoint)) return true;
+		if(startPoint.x == endPoint.x) return true;
 		return false;
 	}
 

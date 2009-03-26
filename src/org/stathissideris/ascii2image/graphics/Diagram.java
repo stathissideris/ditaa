@@ -755,42 +755,46 @@ public class Diagram {
 			edges.addAll(shape.getEdges());
 		}
 		
-		//group edges into groups off equivalent edges
-		ArrayList<ArrayList<ShapeEdge>> listOfGroups = new ArrayList<ArrayList<ShapeEdge>>();
+		//group edges into pairs of touching edges
+		ArrayList<ArrayList<ShapeEdge>> listOfPairs = new ArrayList<ArrayList<ShapeEdge>>();
 		it = edges.iterator();
+		
+		//all-against-all touching test for the edges
+		int startIndex = 1; //skip some to avoid duplicate comparisons and self-to-self comparisons
+		
 		while(it.hasNext()){
-			ShapeEdge edge = (ShapeEdge) it.next();
+			ShapeEdge edge1 = (ShapeEdge) it.next();
 			
-			boolean putEdgeIntoExistingGroup = false;
-			
-			Iterator<ArrayList<ShapeEdge>> it2 = listOfGroups.iterator();
-			while(it2.hasNext()){
-				ArrayList<ShapeEdge> group = it2.next();
-				ShapeEdge firstEdge = group.get(0);
-				if(edge.touchesWith(firstEdge)) {
-				//if(edge.equals(firstEdge)) {
-					group.add(edge);
-					putEdgeIntoExistingGroup = true;
-				} 
+			for(int k = startIndex; k < edges.size(); k++) {
+				ShapeEdge edge2 =  edges.get(k);
+				
+				if(edge1.touchesWith(edge2)) {
+					//System.out.println("T: "+edge1+" | "+edge2);
+
+					ArrayList<ShapeEdge> pair = new ArrayList<ShapeEdge>();
+					pair.add(edge1);
+					pair.add(edge2);
+					listOfPairs.add(pair);
+				}
 			}
-			
-			if(!putEdgeIntoExistingGroup){ //new group is being created
-				ArrayList<ShapeEdge> group = new ArrayList<ShapeEdge>();
-				group.add(edge);
-				listOfGroups.add(group);
-			}
+			startIndex++;
 		}
 		
+		ArrayList<ShapeEdge> movedEdges = new ArrayList<ShapeEdge>();
 		
 		//move equivalent edges inwards
-		it = listOfGroups.iterator();
+		it = listOfPairs.iterator();
 		while(it.hasNext()){
-			ArrayList group = (ArrayList) it.next();
-			if(group.size() == 1) continue; //does not have equivalents
-			Iterator it2 = group.iterator();
-			while (it2.hasNext()) {
-				ShapeEdge edge = (ShapeEdge) it2.next();
-				edge.moveInwardsBy(offset);
+			ArrayList<ShapeEdge> pair = (ArrayList<ShapeEdge>) it.next();
+			ShapeEdge edge1 = pair.get(0);
+			ShapeEdge edge2 = pair.get(1);
+			if(!movedEdges.contains(edge1)) {
+				edge1.moveInwardsBy(offset);
+				movedEdges.add(edge1);
+			}
+			if(!movedEdges.contains(edge2)) {
+				edge2.moveInwardsBy(offset);
+				movedEdges.add(edge2);
 			}
 		}
 

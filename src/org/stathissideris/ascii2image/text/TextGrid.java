@@ -197,7 +197,7 @@ public class TextGrid {
 
 	public void writeStringTo(Cell cell, String str){
 		if(isOutOfBounds(cell)) return;
-		rows.get(cell.y).replace(cell.x, str.length(), str);
+		rows.get(cell.y).replace(cell.x, cell.x + str.length(), str);
 	}
 
 	public void set(Cell cell, char c){
@@ -1266,8 +1266,8 @@ public class TextGrid {
 		}
 		int height = grid.getHeight();
 		for(int i = 0; i < height; i++){
-			StringBuffer row1 = this.getRow(i);
-			StringBuffer row2 = grid.getRow(i);
+			String row1 = this.getRow(i).toString();
+			String row2 = grid.getRow(i).toString();
 			if(!row1.equals(row2)) return false;
 		}
 		return true;

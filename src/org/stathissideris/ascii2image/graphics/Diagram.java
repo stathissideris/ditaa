@@ -406,6 +406,10 @@ public class Diagram {
 				}
 			}
 			
+			//this tag is not within a shape, skip
+			if(containingShape == null) continue;
+			
+			
 			if(pair.tag.equals("d")){
 				CustomShapeDefinition def =
 					options.processingOptions.getFromCustomShapes("d");
@@ -604,13 +608,13 @@ public class Diagram {
 	 * @return true if it removed any obsolete.
 	 * 
 	 */
-	private boolean removeObsoleteShapes(TextGrid grid, ArrayList sets){
+	private boolean removeObsoleteShapes(TextGrid grid, ArrayList<CellSet> sets){
 		if (DEBUG)
 			System.out.println("******* Removing obsolete shapes *******");
 		
 		boolean removedAny = false;
 		
-		ArrayList filledSets = new ArrayList();
+		ArrayList<CellSet> filledSets = new ArrayList<CellSet>();
 
 		Iterator it;
 
@@ -633,18 +637,18 @@ public class Diagram {
 			} else filledSets.add(set);
 		}
 		
-		ArrayList toBeRemovedIndices = new ArrayList();
+		ArrayList<Integer> toBeRemovedIndices = new ArrayList<Integer>();
 		it = filledSets.iterator();
 		while(it.hasNext()){
 			CellSet set = (CellSet) it.next();
 			
 			if(VERBOSE_DEBUG){
-				System.out.println("Looking at set:");
+				System.out.println("*** Deciding if the following should be removed:");
 				set.printAsGrid();
 			}
 			
 			//find the other sets that have common cells with set
-			ArrayList common = new ArrayList();
+			ArrayList<CellSet> common = new ArrayList<CellSet>();
 			common.add(set);
 			Iterator it2 = filledSets.iterator();
 			while(it2.hasNext()){
@@ -687,7 +691,7 @@ public class Diagram {
 				gridOfSmalls.fillCellsWith(set2, '*');
 			}
 			if(VERBOSE_DEBUG){
-				System.out.println("Grid of smalls:");
+				System.out.println("Sum of smalls:");
 				gridOfSmalls.printDebug();
 			}
 			TextGrid gridLargest = new TextGrid(largest.getMaxX() + 2, largest.getMaxY() + 2);
@@ -701,11 +705,14 @@ public class Diagram {
 					System.out.println("Decided to remove set:");
 					largest.printAsGrid();
 				}
+			} else if (DEBUG){
+				System.out.println("This set WILL NOT be removed:");
+				largest.printAsGrid();
 			}
 			//if(gridLargest.equals(gridOfSmalls)) toBeRemovedIndices.add(new Integer(index));
 		}
 		
-		ArrayList setsToBeRemoved = new ArrayList();
+		ArrayList<CellSet> setsToBeRemoved = new ArrayList<CellSet>();
 		it = toBeRemovedIndices.iterator();
 		while(it.hasNext()){
 			int i = ((Integer) it.next()).intValue();
@@ -739,7 +746,7 @@ public class Diagram {
 
 		float offset = getMinimumOfCellDimension() / 5;
 
-		ArrayList edges = new ArrayList();
+		ArrayList<ShapeEdge> edges = new ArrayList<ShapeEdge>();
 
 		//get all adges
 		Iterator it = shapes.iterator();
@@ -749,25 +756,26 @@ public class Diagram {
 		}
 		
 		//group edges into groups off equivalent edges
-		ArrayList listOfGroups = new ArrayList();
+		ArrayList<ArrayList<ShapeEdge>> listOfGroups = new ArrayList<ArrayList<ShapeEdge>>();
 		it = edges.iterator();
 		while(it.hasNext()){
 			ShapeEdge edge = (ShapeEdge) it.next();
 			
 			boolean putEdgeIntoExistingGroup = false;
 			
-			Iterator it2 = listOfGroups.iterator();
+			Iterator<ArrayList<ShapeEdge>> it2 = listOfGroups.iterator();
 			while(it2.hasNext()){
-				ArrayList group = (ArrayList) it2.next();
-				ShapeEdge firstEdge = (ShapeEdge) group.get(0);
-				if(edge.equals(firstEdge)) {
+				ArrayList<ShapeEdge> group = it2.next();
+				ShapeEdge firstEdge = group.get(0);
+				if(edge.touchesWith(firstEdge)) {
+				//if(edge.equals(firstEdge)) {
 					group.add(edge);
 					putEdgeIntoExistingGroup = true;
 				} 
 			}
 			
-			if(!putEdgeIntoExistingGroup){
-				ArrayList group = new ArrayList();
+			if(!putEdgeIntoExistingGroup){ //new group is being created
+				ArrayList<ShapeEdge> group = new ArrayList<ShapeEdge>();
 				group.add(edge);
 				listOfGroups.add(group);
 			}

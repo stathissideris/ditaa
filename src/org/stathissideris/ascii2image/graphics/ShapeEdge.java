@@ -44,6 +44,15 @@ public class ShapeEdge {
 		this.endPoint = end;
 		this.owner = owner;
 	}
+	
+	private float getDistanceFromOrigin() {
+		int type = this.getType();
+		if(type == TYPE_SLOPED)
+			throw new RuntimeException("Cannot calculate distance of sloped edge from origin");
+		if(type == TYPE_HORIZONTAL)
+			return startPoint.y;
+		return startPoint.x; //vertical
+	}
 
 	//TODO: moveInwardsBy() not implemented
 	public void moveInwardsBy(float offset){
@@ -152,12 +161,25 @@ public class ShapeEdge {
 		return false;
 	}
 
-	public boolean coincides(ShapeEdge other){
+	public boolean touchesWith(ShapeEdge other){
+		if(this.equals(other)) return true;
+		
 		if(this.isHorizontal() && other.isVertical()) return false;
 		if(other.isHorizontal() && this.isVertical()) return false;
 		
+		if(this.getDistanceFromOrigin() != other.getDistanceFromOrigin()) return false;
 		
+		// case 1:
+		// ----------
+		//      -----------
 		
+		// case 2:
+		//         ------
+		// -----------------
+		
+		if(this.startPoint.isWithinEdge(other) || this.endPoint.isWithinEdge(other)) return true;
+		if(other.startPoint.isWithinEdge(this) || other.endPoint.isWithinEdge(this)) return true;	
+			
 		return false;
 	}
 	

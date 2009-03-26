@@ -79,6 +79,19 @@ public class ShapePoint extends java.awt.geom.Point2D.Float {
 		return false;
 	}
 	
+	public boolean isWithinEdge(ShapeEdge edge) {
+		if(edge.isHorizontal()) {
+			if(x >= edge.getStartPoint().x && x <= edge.getEndPoint().x) return true;
+			if(x >= edge.getEndPoint().x && x <= edge.getStartPoint().x) return true;
+			return false;
+		} else if(edge.isVertical()) {
+			if(y >= edge.getStartPoint().y && y <= edge.getEndPoint().y) return true;
+			if(y >= edge.getEndPoint().y && y <= edge.getStartPoint().y) return true;			
+			return false;
+		}
+		throw new RuntimeException("Cannot calculate is ShapePoint is within sloped edge");
+	}
+	
 	public boolean isNorthOf(ShapePoint point){
 		return (this.y < point.y);
 	}

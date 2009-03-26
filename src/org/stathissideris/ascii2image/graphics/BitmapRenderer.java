@@ -71,15 +71,21 @@ public class BitmapRenderer {
 		long startTime = System.currentTimeMillis();
 		
 		ConversionOptions options = new ConversionOptions();
+		
 		TextGrid grid = new TextGrid();
 		
-		grid.loadFrom("d:/devel/java/ascii2image/art5.txt");
+		String filename = "art10.txt";
+		
+		grid.loadFrom("tests/text/"+filename);
 		
 		Diagram diagram = new Diagram(grid, options);
-		new BitmapRenderer().renderToPNG(diagram, "d:/devel/java/ascii2image/test.png", options.renderingOptions);
+		new BitmapRenderer().renderToPNG(diagram, "tests/images/"+filename+".png", options.renderingOptions);
 		long endTime = System.currentTimeMillis();
 		long totalTime  = (endTime - startTime) / 1000;
 		System.out.println("Done in "+totalTime+"sec");
+		
+		File workDir = new File("tests/images");
+		Process p = Runtime.getRuntime().exec("display "+filename+".png", null, workDir);
 	}
 
 	private boolean renderToPNG(Diagram diagram, String filename, RenderingOptions options){	

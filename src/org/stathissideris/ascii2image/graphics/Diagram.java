@@ -27,6 +27,7 @@ import java.util.*;
 import javax.swing.plaf.SeparatorUI;
 
 import org.stathissideris.ascii2image.core.ConversionOptions;
+import org.stathissideris.ascii2image.core.Pair;
 import org.stathissideris.ascii2image.core.ProcessingOptions;
 import org.stathissideris.ascii2image.text.*;
 
@@ -756,7 +757,7 @@ public class Diagram {
 		}
 		
 		//group edges into pairs of touching edges
-		ArrayList<ArrayList<ShapeEdge>> listOfPairs = new ArrayList<ArrayList<ShapeEdge>>();
+		ArrayList<Pair<ShapeEdge, ShapeEdge>> listOfPairs = new ArrayList<Pair<ShapeEdge, ShapeEdge>>();
 		it = edges.iterator();
 		
 		//all-against-all touching test for the edges
@@ -769,12 +770,7 @@ public class Diagram {
 				ShapeEdge edge2 =  edges.get(k);
 				
 				if(edge1.touchesWith(edge2)) {
-					//System.out.println("T: "+edge1+" | "+edge2);
-
-					ArrayList<ShapeEdge> pair = new ArrayList<ShapeEdge>();
-					pair.add(edge1);
-					pair.add(edge2);
-					listOfPairs.add(pair);
+					listOfPairs.add(new Pair<ShapeEdge, ShapeEdge>(edge1, edge2));
 				}
 			}
 			startIndex++;
@@ -785,16 +781,14 @@ public class Diagram {
 		//move equivalent edges inwards
 		it = listOfPairs.iterator();
 		while(it.hasNext()){
-			ArrayList<ShapeEdge> pair = (ArrayList<ShapeEdge>) it.next();
-			ShapeEdge edge1 = pair.get(0);
-			ShapeEdge edge2 = pair.get(1);
-			if(!movedEdges.contains(edge1)) {
-				edge1.moveInwardsBy(offset);
-				movedEdges.add(edge1);
+			Pair<ShapeEdge, ShapeEdge> pair = (Pair<ShapeEdge, ShapeEdge>) it.next();
+			if(!movedEdges.contains(pair.first)) {
+				pair.first.moveInwardsBy(offset);
+				movedEdges.add(pair.first);
 			}
-			if(!movedEdges.contains(edge2)) {
-				edge2.moveInwardsBy(offset);
-				movedEdges.add(edge2);
+			if(!movedEdges.contains(pair.second)) {
+				pair.second.moveInwardsBy(offset);
+				movedEdges.add(pair.second);
 			}
 		}
 

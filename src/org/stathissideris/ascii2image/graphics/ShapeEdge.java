@@ -199,26 +199,6 @@ public class ShapeEdge {
 		
 		if(first.endPoint.equals(second.startPoint)) return false;
 		
-//		if(this.startPoint.equals(other.startPoint) 
-//				&& !this.endPoint.isWithinEdge(other)
-//				&& !other.endPoint.isWithinEdge(this)
-//				) return false;
-//		
-//		if(this.endPoint.equals(other.endPoint)
-//				&& !this.startPoint.isWithinEdge(other)
-//				&& !other.startPoint.isWithinEdge(this)
-//				) return false;
-//		
-//		if(this.startPoint.equals(other.endPoint)
-//				&& !this.endPoint.isWithinEdge(other)
-//				&& !other.startPoint.isWithinEdge(this)
-//				) return false;
-//		
-//		if(this.endPoint.equals(other.startPoint) 
-//				&& !this.startPoint.isWithinEdge(other)
-//				&& !other.endPoint.isWithinEdge(this)
-//				) return false;
-		
 		// case 1:
 		// ----------
 		//      -----------

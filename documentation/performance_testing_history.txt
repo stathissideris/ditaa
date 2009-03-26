@@ -1,0 +1,10 @@
+Performance testing
+
+23/04/2008
+	249 143 msec for 10 iterations on tests/text/ditaa_bug.txt
+28/04/2008
+	186 817 msec for 10 iterations on tests/text/ditaa_bug.txt (25% faster)
+24/03/2009
+	124 531 msec for 10 iterations on tests/text/ditaa_bug.txt: Due to java 6 (50% faster)
+25/03/2009
+         41 721 msec for 10 iterations on tests/text/ditaa_bug.txt: Due to StringBuffers in TextGrid (83% faster)

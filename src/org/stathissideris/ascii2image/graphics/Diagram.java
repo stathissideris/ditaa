@@ -202,8 +202,6 @@ public class Diagram {
 				+boundarySetsStep2.size());
 		} 
 		
-		boolean removedAnyObsolete = removeObsoleteShapes(workGrid, boundarySetsStep2);
-
 
 		//split boundaries to open, closed and mixed
 		
@@ -310,7 +308,8 @@ public class Diagram {
 			}
 		}
 
-
+		boolean removedAnyObsolete = removeObsoleteShapes(workGrid, closed);
+		
 		boolean allCornersRound = false;
 		if(options.processingOptions.areAllCornersRound()) allCornersRound = true;
 		

@@ -1,11 +1,11 @@
 +--+--------+
-|  |  Test  |
-|  |        +-----
+|  |        |
+|  |        |
 |  |    /---+
 |  |    |   |
-|  |cPNK|   |
+|  |    |   |
 +--+----+---/
 
-   o Bullet point 1
-   o Point 2
-
+          ^
+          |
+ This square makes a difference

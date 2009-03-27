@@ -344,6 +344,8 @@ public class CellSet implements Iterable<TextGrid.Cell> {
 		if(this.getType(textGrid) == CellSet.TYPE_OPEN) return new CellSet(this);
 		TextGrid grid = new TextGrid(getMaxX()+2, getMaxY()+2);
 		grid.fillCellsWith(this, '*');
+		
+		//find a cell that has a blank both on the east and the west
 		TextGrid.Cell cell = null;
 		boolean finished = false;
 		for(int y = 0; y < grid.getHeight() && !finished; y++){

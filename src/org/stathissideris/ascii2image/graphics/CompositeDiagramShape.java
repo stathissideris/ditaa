@@ -36,7 +36,7 @@ public class CompositeDiagramShape extends DiagramComponent {
 
 	private static final boolean DEBUG = false;
 
-	private ArrayList shapes = new ArrayList();
+	private ArrayList<DiagramShape> shapes = new ArrayList<DiagramShape>();
 
 	public static void main(String[] args) {
 	}
@@ -151,99 +151,6 @@ public class CompositeDiagramShape extends DiagramComponent {
 		result.add(shape);
 		return result;
 	}
-	
-	
-	/**
-	 * 
-	 *************************
-	 * 
-	 * WARNING
-	 * 
-	 * The logic of this method is wrong, see ditaa_bug.txt in tests/ to
-	 * see exactly what the problem is.
-	 * 
-	 * This method starts with line ends. A better approach would be to start with intersections.
-	 * 
-	 * 
-	 *************************
-	 * 
-	 */
-	private static DiagramComponent createOpenFromBoundaryCellsOld(
-			final TextGrid grid,
-			final CellSet boundaryCells,
-			final int cellWidth,
-			final int cellHeight,
-			boolean allRound) {
-		if(boundaryCells.getType(grid) != CellSet.TYPE_OPEN) throw new IllegalArgumentException("This shape is closed and cannot be handled by this method");
-		if(boundaryCells.size() == 0) return null;
-
-		CompositeDiagramShape result = new CompositeDiagramShape();
-		TextGrid workGrid = new TextGrid(grid.getWidth(), grid.getHeight());
-		grid.copyCellsTo(boundaryCells, workGrid);
-
-		if(DEBUG) {
-			System.out.println("Making composite shape from grid:");
-			workGrid.printDebug();
-		} 
-		
-		CellSet visitedEnds = new CellSet();
-		
-		Iterator it = boundaryCells.iterator();
-		while(it.hasNext()){
-			TextGrid.Cell start = (TextGrid.Cell) it.next();
-			if(workGrid.isLinesEnd(start) && !visitedEnds.contains(start)){
-				
-				if(DEBUG)
-					System.out.println("Starting new subshape:");
-				
-				DiagramShape s = new DiagramShape();
-				
-				if(DEBUG)
-					System.out.println("cell: " + start);
-				if(workGrid.isPointCell(start)) s.addToPoints(makePointForCell(start, workGrid, cellWidth, cellHeight, allRound));
-				if(workGrid.cellContainsDashedLineChar(start)) s.setStrokeDashed(true);
-				TextGrid.Cell previous = start;
-				TextGrid.Cell cell = null;
-				CellSet nextCells = workGrid.followCell(previous);
-				if(nextCells.size() == 0)
-					throw new IllegalArgumentException("This shape is either open but multipart or has only one cell, and cannot be processed by this method");
-				cell = (TextGrid.Cell) nextCells.getFirst();
-				if(workGrid.cellContainsDashedLineChar(cell)) s.setStrokeDashed(true);
-				if(DEBUG)
-					System.out.println("cell: " + cell);
-				if(workGrid.isPointCell(cell)) s.addToPoints(makePointForCell(cell, workGrid, cellWidth, cellHeight, allRound));
-				
-				boolean finished = false;
-				if(workGrid.isLinesEnd(cell)){
-					visitedEnds.add(cell);
-					finished = true;					
-				}
-				
-				while(!finished){
-					nextCells = workGrid.followCell(cell, previous);
-					if(nextCells.size() == 1) {
-						previous = cell;
-						cell = (TextGrid.Cell) nextCells.getFirst();
-						if(workGrid.cellContainsDashedLineChar(cell)) s.setStrokeDashed(true);
-						if(!cell.equals(start) && workGrid.isPointCell(cell))
-							s.addToPoints(makePointForCell(cell, workGrid, cellWidth, cellHeight, allRound));
-						if(DEBUG)
-							System.out.println("cell: " + cell);
-						if(workGrid.isLinesEnd(cell)){
-							visitedEnds.add(cell);
-							finished = true;
-						}
-					} else if(nextCells.size() > 1) {
-						finished = true;
-					}
-				}
-				if(s.getPoints().size() > 1) result.addToShapes(s);
-			}
-		}
-		if(result.getShapes().size() == 1)
-			return (DiagramShape) result.getShapes().get(0);
-		return result;
-	}
 
 	/**
 	 * Returns a new diagram component with the lines of
@@ -256,7 +163,7 @@ public class CompositeDiagramShape extends DiagramComponent {
 		CompositeDiagramShape result = new CompositeDiagramShape();
 
 		//find all lines
-		ArrayList lines = new ArrayList();
+		ArrayList<DiagramShape> lines = new ArrayList<DiagramShape>();
 		Iterator it = shapes.iterator();
 		while(it.hasNext()){
 			DiagramShape shape = (DiagramShape) it.next();

@@ -38,14 +38,10 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import org.stathissideris.ascii2image.core.ConversionOptions;
 import org.stathissideris.ascii2image.core.RenderingOptions;
@@ -115,7 +111,7 @@ public class BitmapRenderer {
 		RenderedImage renderedImage = image;
 		Graphics2D g2 = image.createGraphics();
 
-		Object antialiasSetting = antialiasSetting = RenderingHints.VALUE_ANTIALIAS_OFF;
+		Object antialiasSetting = RenderingHints.VALUE_ANTIALIAS_OFF;
 		if(options.performAntialias())
 			antialiasSetting = RenderingHints.VALUE_ANTIALIAS_ON;
 		

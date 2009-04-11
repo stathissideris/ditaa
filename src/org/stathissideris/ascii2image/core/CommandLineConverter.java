@@ -45,7 +45,7 @@ import org.stathissideris.ascii2image.text.TextGrid;
  */
 public class CommandLineConverter {
 		
-	private static String notice = "DiTAA version 0.7b, Copyright (C) 2004 Efstathios Sideris";
+	private static String notice = "DiTAA version 0.8, Copyright (C) 2004--2009  Efstathios Sideris";
 	
 	private static String[] markupModeAllowedValues = {"use", "ignore", "render"};
 	
@@ -93,12 +93,13 @@ public class CommandLineConverter {
 				.create('t')
 				);
 
-		cmdLnOptions.addOption(
-				OptionBuilder.withLongOpt("config")
-				.withDescription( "The shape configuration file." )
-				.hasArg()
-				.withArgName("CONFIG_FILE")
-				.create('c') );
+//TODO: uncomment this for next version:
+//		cmdLnOptions.addOption(
+//				OptionBuilder.withLongOpt("config")
+//				.withDescription( "The shape configuration file." )
+//				.hasArg()
+//				.withArgName("CONFIG_FILE")
+//				.create('c') );
 		
 		CommandLine cmdLine = null;
 		

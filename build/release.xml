@@ -14,8 +14,67 @@
 		<delete file="${rootDir}/releases/ditaa${version.string}-src.zip" />
 	</target>
 	
+	<target name="release-jar"
+		description="Creates the ditaa jar."
+		>
+		
+		<delete dir ="${rootDir}/jar-temp"/>
+		<delete file="${rootDir}/releases/ditaa${version.string}.jar" />
+		<mkdir dir ="${rootDir}/jar-temp"/>
+		
+		<manifest file="${rootDir}/MANIFEST.MF">
+			<attribute name="Main-Class" value="org.stathissideris.ascii2image.core.CommandLineConverter"/>
+		</manifest>
+
+		
+		<copy todir="${rootDir}/jar-temp">
+			<fileset dir="${rootDir}/bin">
+			</fileset>
+		</copy>
+
+		<unzip dest="${rootDir}/jar-temp">
+		    <filelist dir="${rootDir}/lib">
+		    	
+		    	<!-- TODO: uncomment for next version
+	        	<file name="batik-bridge.jar"/>
+	        	<file name="batik-css.jar"/>
+	        	<file name="batik-gvt.jar"/>
+	        	<file name="batik-parser.jar"/>
+	        	<file name="batik-script.jar"/>
+	        	<file name="batik-svg-dom.jar"/>
+	        	<file name="batik-svggen.jar"/>
+	        	<file name="batik-util.jar"/>
+	        	<file name="batik-xml.jar"/>
+	        	<file name="js.jar"/>
+		    	<file name="xerces_2_5_0.jar"/>
+	        	<file name="xml-apis.jar"/>
+	        	<file name="batik-ext.jar"/>
+	        	<file name="batik-dom.jar"/>
+	        	<file name="batik-awt-util.jar"/>
+	        	-->
+		    	
+	        	<file name="commons-cli-1.2.jar"/>
+	        	<file name="jericho-html-1.4.jar"/>
+		   	</filelist>
+		</unzip>
+		
+		<delete dir ="${rootDir}/jar-temp/license"/>
+		<delete dir ="${rootDir}/jar-temp/legal"/>
+		<delete dir ="${rootDir}/jar-temp/META-INF"/>
+		
+		<jar destfile="${rootDir}/releases/ditaa${version.string}.jar"
+			manifest="${rootDir}/MANIFEST.MF"
+			>
+			<fileset dir="${rootDir}/jar-temp" />
+	    </jar>
+
+		<delete file="${rootDir}/MANIFEST.MF"/>
+		<delete dir ="${rootDir}/jar-temp"/>
+	</target>
+	
 	<target name="release-zip"
-		description="Creates the ditaa zip that contains the jar and shapes (use fatjar for jar creation)."
+		depends="release-jar"
+		description="Creates the ditaa zip that contains the jar and shapes."
 		>
 		
 		<delete file="${rootDir}/releases/ditaa${version.string}.zip" />
@@ -24,7 +83,8 @@
 			<fileset dir="${rootDir}" casesensitive="yes">
 				<include name="shapes/**/*.*"/>
 			</fileset>
-			<fileset file="${rootDir}/releases/ditaa${version.string}.jar" />
+			<file file="${rootDir}/releases/ditaa${version.string}.jar" />
+			<file file="${rootDir}/COPYING" />
 		</zip>
 	</target>
 
@@ -41,9 +101,8 @@
 				<include name="lib/**/*"/>
 				<include name="text/**/*"/>
 				<include name=".classpath"/>
-				<include name=".fatjar"/>
 				<include name=".project"/>
-				<include name="copying"/>
+				<include name="COPYING"/>
 			</fileset>
 		</zip>
 	</target>

@@ -416,6 +416,7 @@ public class BitmapRenderer {
 //			g2.drawRect(bounds.x, bounds.y, bounds.width, bounds.height); //looks different!			
 		}
 		
+		//TODO: custom shape distintion relies on filename extension. Make this more intelligent
 		if(definition.getFilename().endsWith(".png")){
 			renderCustomPNGShape(shape, g2);
 		} else if(definition.getFilename().endsWith(".svg")){

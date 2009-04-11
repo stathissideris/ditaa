@@ -96,10 +96,12 @@
 		
 		<zip destfile="${rootDir}/releases/ditaa${version.string}-src.zip">
 			<fileset dir="${rootDir}" casesensitive="yes">
-				<include name="shapes/**/*"/>
+				<!-- TODO: uncomment this for next version <include name="shapes/**/*"/> -->
+				<include name="build/**/*"/>
 				<include name="src/**/*"/>
 				<include name="lib/**/*"/>
-				<include name="text/**/*"/>
+				<include name="lib-build/**/*"/>
+				<include name="tests/**/*.txt"/>
 				<include name=".classpath"/>
 				<include name=".project"/>
 				<include name="COPYING"/>

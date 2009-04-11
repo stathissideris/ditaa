@@ -85,6 +85,7 @@
 			</fileset>
 			<file file="${rootDir}/releases/ditaa${version.string}.jar" />
 			<file file="${rootDir}/COPYING" />
+			<file file="${rootDir}/HISTORY" />
 		</zip>
 	</target>
 
@@ -105,6 +106,7 @@
 				<include name=".classpath"/>
 				<include name=".project"/>
 				<include name="COPYING"/>
+				<include name="HISTORY"/>
 			</fileset>
 		</zip>
 	</target>

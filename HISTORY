@@ -1,0 +1,7 @@
+Version 0.8
+* Parsing optimisation (~90% faster)
+* Fixed line separation bugs
+* Fixed open shape rendering bugs (missing lines)
+* Generally more reliable
+* Tidying-up of command-line options (now using Apache commons-cli)
+* Streamlined release process

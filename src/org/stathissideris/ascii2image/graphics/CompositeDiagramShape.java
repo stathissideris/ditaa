@@ -20,10 +20,12 @@
  */
 package org.stathissideris.ascii2image.graphics;
 
-import java.awt.Color;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Iterator;
 
+
+import org.stathissideris.ascii2image.core.DebugUtils;
 import org.stathissideris.ascii2image.text.*;
 
 /**
@@ -51,6 +53,105 @@ public class CompositeDiagramShape extends DiagramComponent {
 						false);
 	}
 
+
+	public static DiagramComponent createOpenFromBoundaryCells(
+			final TextGrid grid,
+			final CellSet boundaryCells,
+			final int cellWidth,
+			final int cellHeight,
+			boolean allRound) {
+		
+		if(boundaryCells.getType(grid) != CellSet.TYPE_OPEN) throw new IllegalArgumentException("This shape is closed and cannot be handled by this method");
+		if(boundaryCells.size() == 0) return null;
+
+		
+		CompositeDiagramShape compositeShape = new CompositeDiagramShape();
+		TextGrid workGrid = new TextGrid(grid.getWidth(), grid.getHeight());
+		grid.copyCellsTo(boundaryCells, workGrid);
+
+		if(DEBUG) {
+			System.out.println("Making composite shape from grid:");
+			workGrid.printDebug();
+		}
+		
+		
+		CellSet visitedCells = new CellSet();
+		
+		List<DiagramShape> shapes = new ArrayList<DiagramShape>(100);
+		
+		for(TextGrid.Cell cell : boundaryCells) {
+			if(workGrid.isLinesEnd(cell)) {
+				CellSet nextCells = workGrid.followCell(cell);
+				shapes.addAll(growEdgesFromCell(workGrid, cellWidth, cellHeight, allRound, nextCells.getFirst(), cell, visitedCells));
+				break;
+			}
+		}
+		
+		//dashed shapes should "infect" the rest of the shapes
+		boolean dashedShapeExists = false;
+		for(DiagramShape shape : shapes)
+			if(shape.isStrokeDashed())
+				dashedShapeExists = true;
+		
+		for(DiagramShape shape : shapes) {
+			if(dashedShapeExists) shape.setStrokeDashed(true);
+			compositeShape.addToShapes(shape);
+		}
+		
+		return compositeShape;
+	}
+	
+	
+	private static List<DiagramShape> growEdgesFromCell(
+			TextGrid workGrid,
+			final int cellWidth,
+			final int cellHeight,
+			boolean allRound,
+			TextGrid.Cell cell, 
+			TextGrid.Cell previousCell, 
+			CellSet visitedCells) {
+		
+		List<DiagramShape> result = new ArrayList<DiagramShape>(50); 
+		
+		visitedCells.add(previousCell);
+		
+		DiagramShape shape = new DiagramShape();
+		
+		shape.addToPoints(makePointForCell(previousCell, workGrid, cellWidth, cellHeight, allRound));
+		if(DEBUG) System.out.println("point at "+previousCell+" (call from line: "+DebugUtils.getLineNumber()+")");
+		if(workGrid.cellContainsDashedLineChar(previousCell)) shape.setStrokeDashed(true);
+
+		boolean finished = false;
+		while(!finished) {
+			visitedCells.add(cell);
+			if(workGrid.isPointCell(cell)) {
+				if(DEBUG) System.out.println("point at "+cell+" (call from line: "+DebugUtils.getLineNumber()+")");
+				shape.addToPoints(makePointForCell(cell, workGrid, cellWidth, cellHeight, allRound));
+			}
+			
+			if(workGrid.cellContainsDashedLineChar(cell)) shape.setStrokeDashed(true);
+
+			if(workGrid.isLinesEnd(cell)){
+				finished = true;
+				if(DEBUG) System.out.println("finished shape");
+			}
+			
+			CellSet nextCells = workGrid.followCell(cell, previousCell);
+			if(nextCells.size() == 1) {
+				previousCell = cell;
+				cell = (TextGrid.Cell) nextCells.getFirst();
+			} else if(nextCells.size() > 1) {//3- or 4- way intersection
+				finished = true;
+				if(DEBUG) System.out.println("finished shape");
+				for(TextGrid.Cell nextCell : nextCells)
+					result.addAll(growEdgesFromCell(workGrid, cellWidth, cellHeight, allRound, nextCell, cell, visitedCells));
+			}
+		}
+		
+		result.add(shape);
+		return result;
+	}
+	
 	
 	/**
 	 * 
@@ -61,10 +162,13 @@ public class CompositeDiagramShape extends DiagramComponent {
 	 * The logic of this method is wrong, see ditaa_bug.txt in tests/ to
 	 * see exactly what the problem is.
 	 * 
+	 * This method starts with line ends. A better approach would be to start with intersections.
+	 * 
+	 * 
 	 *************************
 	 * 
 	 */
-	public static DiagramComponent createOpenFromBoundaryCells(
+	private static DiagramComponent createOpenFromBoundaryCellsOld(
 			final TextGrid grid,
 			final CellSet boundaryCells,
 			final int cellWidth,
@@ -89,11 +193,13 @@ public class CompositeDiagramShape extends DiagramComponent {
 			TextGrid.Cell start = (TextGrid.Cell) it.next();
 			if(workGrid.isLinesEnd(start) && !visitedEnds.contains(start)){
 				
-				if (DEBUG)
+				if(DEBUG)
 					System.out.println("Starting new subshape:");
 				
 				DiagramShape s = new DiagramShape();
 				
+				if(DEBUG)
+					System.out.println("cell: " + start);
 				if(workGrid.isPointCell(start)) s.addToPoints(makePointForCell(start, workGrid, cellWidth, cellHeight, allRound));
 				if(workGrid.cellContainsDashedLineChar(start)) s.setStrokeDashed(true);
 				TextGrid.Cell previous = start;
@@ -103,6 +209,8 @@ public class CompositeDiagramShape extends DiagramComponent {
 					throw new IllegalArgumentException("This shape is either open but multipart or has only one cell, and cannot be processed by this method");
 				cell = (TextGrid.Cell) nextCells.getFirst();
 				if(workGrid.cellContainsDashedLineChar(cell)) s.setStrokeDashed(true);
+				if(DEBUG)
+					System.out.println("cell: " + cell);
 				if(workGrid.isPointCell(cell)) s.addToPoints(makePointForCell(cell, workGrid, cellWidth, cellHeight, allRound));
 				
 				boolean finished = false;
@@ -119,6 +227,8 @@ public class CompositeDiagramShape extends DiagramComponent {
 						if(workGrid.cellContainsDashedLineChar(cell)) s.setStrokeDashed(true);
 						if(!cell.equals(start) && workGrid.isPointCell(cell))
 							s.addToPoints(makePointForCell(cell, workGrid, cellWidth, cellHeight, allRound));
+						if(DEBUG)
+							System.out.println("cell: " + cell);
 						if(workGrid.isLinesEnd(cell)){
 							visitedEnds.add(cell);
 							finished = true;

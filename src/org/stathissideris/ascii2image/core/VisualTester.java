@@ -101,11 +101,10 @@ public class VisualTester {
 			long a = java.lang.System.nanoTime();
 			long b;
 			try {
+				System.out.println("Rendering "+textFile+" to "+toFile);
 				
 				grid.loadFrom(textFile.toString());
 				Diagram diagram = new Diagram(grid, options);
-				
-				System.out.println("Rendering "+textFile+" to "+toFile);
 
 				RenderedImage image = new BitmapRenderer().renderToImage(diagram, options.renderingOptions);
 				
@@ -145,7 +144,7 @@ public class VisualTester {
 		s.close();
 		
 		
-		System.out.println("Wrote HTML report to " + reportFilename);
+		System.out.println("Wrote HTML report to " + new File(reportFilename).getAbsolutePath());
 		
 		return true;
 

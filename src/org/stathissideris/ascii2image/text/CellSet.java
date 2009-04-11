@@ -183,8 +183,14 @@ public class CellSet implements Iterable<TextGrid.Cell> {
 		
 		TextGrid workGrid = TextGrid.makeSameSizeAs(grid);
 		grid.copyCellsTo(this, workGrid);
+
+		//start with a line end if it exists or with a "random" cell if not
+		TextGrid.Cell start = null;
+		for(TextGrid.Cell cell : this)
+			if(workGrid.isLinesEnd(cell))
+				start = cell;
+		if(start == null) start = (TextGrid.Cell) getFirst();
 		
-		TextGrid.Cell start = (TextGrid.Cell) getFirst();
 		if (DEBUG)
 			System.out.println("Tracing:\nStarting at "+start+" ("+grid.getCellTypeAsString(start)+")");
 		TextGrid.Cell previous = start;

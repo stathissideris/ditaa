@@ -24,6 +24,6 @@
 	<classpathentry kind="lib" path="lib/pdf-transcoder.jar"/>
 	<classpathentry kind="lib" path="lib/xerces_2_5_0.jar"/>
 	<classpathentry kind="lib" path="lib/xml-apis.jar"/>
-	<classpathentry kind="var" path="JDK_LIB/tools.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

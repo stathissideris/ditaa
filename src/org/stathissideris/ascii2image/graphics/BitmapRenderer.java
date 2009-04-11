@@ -74,7 +74,7 @@ public class BitmapRenderer {
 		
 		TextGrid grid = new TextGrid();
 		
-		String filename = "art17.txt";
+		String filename = "ditaa_bug.txt";
 		
 		grid.loadFrom("tests/text/"+filename);
 		

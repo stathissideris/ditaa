@@ -336,7 +336,7 @@ public class Diagram {
 		sets = open.iterator();
 		while(sets.hasNext()){
 			CellSet set = (CellSet) sets.next();
-			if(set.size() == 1){
+			if(set.size() == 1){ //single cell "shape"
 				TextGrid.Cell cell = (TextGrid.Cell) set.getFirst();
 				if(!grid.cellContainsDashedLineChar(cell)) { 
 					DiagramShape shape = DiagramShape.createSmallLine(workGrid, cell, cellWidth, cellHeight); 
@@ -345,11 +345,11 @@ public class Diagram {
 						shape.connectEndsToAnchors(workGrid, this);
 					}
 				}
-			} else {
+			} else { //normal shape
 				DiagramComponent shape =
 					CompositeDiagramShape
-					.createOpenFromBoundaryCells(
-						workGrid, set, cellWidth, cellHeight, allCornersRound);
+						.createOpenFromBoundaryCells(
+								workGrid, set, cellWidth, cellHeight, allCornersRound);
 
 				if(shape != null){
 					if(shape instanceof CompositeDiagramShape){

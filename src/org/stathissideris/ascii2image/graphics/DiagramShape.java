@@ -45,6 +45,9 @@ public class DiagramShape extends DiagramComponent {
 	public static final int TYPE_DOCUMENT = 3;
 	public static final int TYPE_STORAGE = 4;
 	public static final int TYPE_IO = 5;
+	public static final int TYPE_DECISION = 6;
+	public static final int TYPE_MANUAL_OPERATION = 7; // upside-down trapezoid
+    public static final int TYPE_TRAPEZOID = 8; // rightside-up trapezoid
 	public static final int TYPE_CUSTOM = 9999;
 
 	protected int type = TYPE_SIMPLE;
@@ -406,7 +409,19 @@ public class DiagramShape extends DiagramComponent {
 		if(getType() == TYPE_IO && points.size() == 4){
 			return makeIOPath(diagram);
 		}
-		
+
+		if(getType() == TYPE_DECISION && points.size() == 4){
+			return makeDecisionPath(diagram);
+		}
+
+		if(getType() == TYPE_MANUAL_OPERATION && points.size() == 4){
+			return makeTrapezoidPath(diagram, true);
+		}
+
+		if(getType() == TYPE_TRAPEZOID && points.size() == 4){
+			return makeTrapezoidPath(diagram, false);
+		}
+
 		if(size < 2) return null;
 
 		GeneralPath path = new GeneralPath();
@@ -827,6 +842,48 @@ public class DiagramShape extends DiagramComponent {
 		path.quadTo(pointMid.x - controlDX, pointMid.y + controlDY, point4.x, point4.y);
 		path.closePath();
 		
+		return path;
+	}
+
+	private GeneralPath makeTrapezoidPath(Diagram diagram, boolean inverted) {
+		if(points.size() != 4) return null;
+		Rectangle bounds = makeIntoPath().getBounds();
+        float offset = 0.7f * diagram.getCellWidth(); // fixed slope
+        if (inverted) offset = -offset;
+		ShapePoint ul = new ShapePoint((float)bounds.getMinX() + offset, (float)bounds.getMinY());
+		ShapePoint ur = new ShapePoint((float)bounds.getMaxX() - offset, (float)bounds.getMinY());
+		ShapePoint br = new ShapePoint((float)bounds.getMaxX() + offset, (float)bounds.getMaxY());
+		ShapePoint bl = new ShapePoint((float)bounds.getMinX() - offset, (float)bounds.getMaxY());
+
+		ShapePoint pointMid = new ShapePoint((float)bounds.getCenterX(), (float)bounds.getMaxY());
+
+		GeneralPath path = new GeneralPath();
+		path.moveTo(ul.x, ul.y);
+		path.lineTo(ur.x, ur.y);
+		path.lineTo(br.x, br.y);
+		path.lineTo(bl.x, bl.y);
+		path.closePath();
+
+		return path;
+	}
+
+	private GeneralPath makeDecisionPath(Diagram diagram) {
+		if(points.size() != 4) return null;
+		Rectangle bounds = makeIntoPath().getBounds();
+        ShapePoint pointMid = new ShapePoint((float)bounds.getCenterX(), (float)bounds.getCenterY());
+		ShapePoint left = new ShapePoint((float)bounds.getMinX(), (float)pointMid.getY());
+		ShapePoint right = new ShapePoint((float)bounds.getMaxX(), (float)pointMid.getY());
+		ShapePoint top = new ShapePoint((float)pointMid.getX(), (float)bounds.getMinY());
+		ShapePoint bottom = new ShapePoint((float)pointMid.getX(), (float)bounds.getMaxY());
+
+		GeneralPath path = new GeneralPath();
+		path.moveTo(left.x, left.y);
+		path.lineTo(top.x, top.y);
+		path.lineTo(right.x, right.y);
+		path.lineTo(bottom.x, bottom.y);
+
+		path.closePath();
+
 		return path;
 	}
 

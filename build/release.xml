@@ -14,13 +14,35 @@
 		<delete file="${rootDir}/releases/ditaa${version.string}-src.zip" />
 	</target>
 	
-	<target name="release-jar"
-		description="Creates the ditaa jar."
-		>
-		
+	<target name="clean-tests">
+		<delete>
+			<fileset dir="${rootDir}/tests/images/" includes="*"/>
+		</delete>
+	</target>
+	
+	<path id="build.classpath">
+		<fileset dir="${rootDir}/lib">
+			<include name="**.jar" />
+		</fileset>
+	</path>
+
+	<target name="prep" description="Prepare to build release">
 		<delete dir ="${rootDir}/jar-temp"/>
 		<delete file="${rootDir}/releases/ditaa${version.string}.jar" />
+		<mkdir dir ="${rootDir}/releases"/>
 		<mkdir dir ="${rootDir}/jar-temp"/>
+	</target>
+
+	<target name="compile" depends="prep" description="Compiles ascii2image code">
+		<javac destdir="${rootDir}/jar-temp" source="1.6" classpathref="build.classpath">
+			<src path="${rootDir}/src" />
+			<include name="**/*.java" />
+		</javac>
+	</target>
+
+	<target name="release-jar" depends="prep,compile"
+		description="Creates the ditaa jar."
+		>
 		
 		<manifest file="${rootDir}/MANIFEST.MF">
 			<attribute name="Main-Class" value="org.stathissideris.ascii2image.core.CommandLineConverter"/>
@@ -28,8 +50,7 @@
 
 		
 		<copy todir="${rootDir}/jar-temp">
-			<fileset dir="${rootDir}/bin">
-			</fileset>
+			<fileset dir="${rootDir}/bin" />
 		</copy>
 
 		<unzip dest="${rootDir}/jar-temp">

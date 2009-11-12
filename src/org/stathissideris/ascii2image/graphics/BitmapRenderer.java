@@ -215,7 +215,9 @@ public class BitmapRenderer {
 			0
 		  );
 		
-
+		//TODO: at this stage we should draw the open shapes first in order to make sure they are at the bottom (this is useful for the {mo} shape) 
+		
+		
 		//find storage shapes
 		ArrayList storageShapes = new ArrayList();
 		shapesIt = shapes.iterator();

@@ -72,13 +72,16 @@ public class TextGrid {
 		
 	}
 
-	private static ArrayList<String> markupTags =
-		new ArrayList<String>();
+	private static HashSet<String> markupTags =
+		new HashSet<String>();
 
-	{
+	static {
 		markupTags.add("d");
 		markupTags.add("s");
 		markupTags.add("io");
+		markupTags.add("c");
+		markupTags.add("mo");
+		markupTags.add("tr");
 	}
 
 	public void addToMarkupTags(Collection<String> tags){
@@ -636,9 +639,9 @@ public class TextGrid {
 					char cR = s.charAt(1);
 					char cG = s.charAt(2);
 					char cB = s.charAt(3);
-					int r = Integer.valueOf(String.valueOf(cR), 16).intValue() * 16;
-					int g = Integer.valueOf(String.valueOf(cG), 16).intValue() * 16;
-					int b = Integer.valueOf(String.valueOf(cB), 16).intValue() * 16;
+					int r = Integer.valueOf(String.valueOf(cR), 16).intValue() * 17;
+					int g = Integer.valueOf(String.valueOf(cG), 16).intValue() * 17;
+					int b = Integer.valueOf(String.valueOf(cB), 16).intValue() * 17;
 					result.add(new CellColorPair(cell, new Color(r, g, b)));
 				}
 			}

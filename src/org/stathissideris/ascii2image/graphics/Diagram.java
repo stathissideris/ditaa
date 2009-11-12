@@ -409,7 +409,7 @@ public class Diagram {
 			//this tag is not within a shape, skip
 			if(containingShape == null) continue;
 			
-			
+			//TODO: the code below could be a lot more concise
 			if(pair.tag.equals("d")){
 				CustomShapeDefinition def =
 					options.processingOptions.getFromCustomShapes("d");
@@ -433,6 +433,33 @@ public class Diagram {
 					options.processingOptions.getFromCustomShapes("io");
 				if(def == null)
 					containingShape.setType(DiagramShape.TYPE_IO);
+				else {
+					containingShape.setType(DiagramShape.TYPE_CUSTOM);
+					containingShape.setDefinition(def);
+				}
+			} else if(pair.tag.equals("c")){
+				CustomShapeDefinition def =
+					options.processingOptions.getFromCustomShapes("c");
+				if(def == null)
+					containingShape.setType(DiagramShape.TYPE_DECISION);
+				else {
+					containingShape.setType(DiagramShape.TYPE_CUSTOM);
+					containingShape.setDefinition(def);
+				}
+			} else if(pair.tag.equals("mo")){
+				CustomShapeDefinition def =
+					options.processingOptions.getFromCustomShapes("mo");
+				if(def == null)
+					containingShape.setType(DiagramShape.TYPE_MANUAL_OPERATION);
+				else {
+					containingShape.setType(DiagramShape.TYPE_CUSTOM);
+					containingShape.setDefinition(def);
+				}
+			} else if(pair.tag.equals("tr")){
+				CustomShapeDefinition def =
+					options.processingOptions.getFromCustomShapes("tr");
+				if(def == null)
+					containingShape.setType(DiagramShape.TYPE_TRAPEZOID);
 				else {
 					containingShape.setType(DiagramShape.TYPE_CUSTOM);
 					containingShape.setDefinition(def);

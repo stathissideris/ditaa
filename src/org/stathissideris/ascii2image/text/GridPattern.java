@@ -22,6 +22,7 @@ package org.stathissideris.ascii2image.text;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 /**
  * This is a TextGrid (usually 3x3) that contains the equivalent of a
@@ -76,7 +77,7 @@ import java.util.Iterator;
  */
 public class GridPattern extends TextGrid {
 	
-	private ArrayList<String> regExps = new ArrayList<String>(); //TODO optimise: store as PatternS
+	private ArrayList<Pattern> regExps = new ArrayList<Pattern>(); //TODO optimise: store as PatternS
 	private boolean regExpsAreValid = false;
 	
 	private static final boolean DEBUG = false;
@@ -109,8 +110,8 @@ public class GridPattern extends TextGrid {
 
 		for(int i = 0; i < grid.getHeight(); i++) {
 			String row = grid.getRow(i).toString();
-			String regexp = (String) regExps.get(i);
-			if(!row.matches(regexp)) {
+			Pattern regexp = regExps.get(i);
+			if(!regexp.matcher(row).matches()) {
 				if(DEBUG)
 					System.out.println(row+" does not match "+regexp);
 				return false;
@@ -128,7 +129,7 @@ public class GridPattern extends TextGrid {
 			Iterator<StringBuffer> it = getRows().iterator();
 			while (it.hasNext()) {
 				String row = it.next().toString();
-				regExps.add(makeRegExp(row));
+				regExps.add(Pattern.compile(makeRegExp(row)));
 				if(DEBUG)
 					System.out.println(row+" becomes "+makeRegExp(row));
 			}			
@@ -136,7 +137,7 @@ public class GridPattern extends TextGrid {
 			Iterator<StringBuffer> it = getRows().iterator();
 			while (it.hasNext()) {
 				String row = it.next().toString();
-				regExps.add(row);
+				regExps.add(Pattern.compile(row));
 			}
 		}
 	}

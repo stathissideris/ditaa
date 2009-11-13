@@ -268,6 +268,9 @@ public class TextGrid {
 		return buffer.toString();
 	}
 
+	public String toString(){
+		return getDebugString();
+	}
 
 	/**
 	 * Adds grid to this. Space characters in this grid

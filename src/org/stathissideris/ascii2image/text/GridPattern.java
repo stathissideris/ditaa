@@ -76,7 +76,7 @@ import java.util.Iterator;
  */
 public class GridPattern extends TextGrid {
 	
-	private ArrayList regExps = new ArrayList();
+	private ArrayList<String> regExps = new ArrayList<String>(); //TODO optimise: store as PatternS
 	private boolean regExpsAreValid = false;
 	
 	private static final boolean DEBUG = false;
@@ -142,61 +142,61 @@ public class GridPattern extends TextGrid {
 	}
 	
 	private String makeRegExp(String pattern){
-		String result = "";
+		StringBuilder result = new StringBuilder();
 		int tokensHandled = 0;
 		for(int i = 0; i < pattern.length() && tokensHandled < 3; i++){
 			char c = pattern.charAt(i);
 			if(c == '[') {
-				result += "[^|:]";
+				result.append("[^|:]");
 			} else if(c == '|') {
-				result += "[|:]";
+				result.append("[|:]");
 			} else if(c == '-') {
-				result += "-";
+				result.append("-");
 			} else if(c == '!') {
-				result += "[^-=\\/\\\\+|:]";
+				result.append("[^-=\\/\\\\+|:]");
 			} else if(c == 'b') {
-				result += "[-=\\/\\\\+|:]";
+				result.append("[-=\\/\\\\+|:]");
 			} else if(c == '^') {
-				result += "[\\/\\\\+|:]";
+				result.append("[\\/\\\\+|:]");
 			} else if(c == '(') {
-				result += "[-=\\/\\\\+]";
+				result.append("[-=\\/\\\\+]");
 			} else if(c == '~') {
-				result += ".";
+				result.append(".");
 			} else if(c == '+') {
-				result += "\\+";
+				result.append("\\+");
 			} else if(c == '\\') {
-				result += "\\\\";
+				result.append("\\\\");
 			} else if(c == 's') {
-				result += "[-=+|:]";
+				result.append("[-=+|:]");
 			} else if(c == 'S') {
-				result += "[\\/\\\\]";
+				result.append("[\\/\\\\]");
 			} else if(c == '*') {
-				result += "\\*";
+				result.append("\\*");
 			
 			//entry points
 			} else if(c == '1') {
-				result += "[\\\\]";
+				result.append("[\\\\]");
 
 			} else if(c == '2') {
-				result += "[|:+\\/\\\\]";
+				result.append("[|:+\\/\\\\]");
 
 			} else if(c == '3') {
-				result += "[\\/]";
+				result.append("[\\/]");
 
 			} else if(c == '4') {
-				result += "[-=+\\/\\\\]";
+				result.append("[-=+\\/\\\\]");
 
 			} else if(c == '5') {
-				result += "[\\\\]";
+				result.append("[\\\\]");
 
 			} else if(c == '6') {
-				result += "[|:+\\/\\\\]";
+				result.append("[|:+\\/\\\\]");
 
 			} else if(c == '7') {
-				result += "[\\/]";
+				result.append("[\\/]");
 
 			} else if(c == '8') {
-				result += "[-=+\\/\\\\]";
+				result.append("[-=+\\/\\\\]");
 				
 			//entry point negations
 			} else if(c == '%') {
@@ -206,33 +206,33 @@ public class GridPattern extends TextGrid {
 				c = pattern.charAt(++i);
 				
 				if(c == '1') {
-					result += "[^\\\\]";
+					result.append("[^\\\\]");
 
 				} else if(c == '2') {
-					result += "[^|:+\\/\\\\]";
+					result.append("[^|:+\\/\\\\]");
 
 				} else if(c == '3') {
-					result += "[^\\/]";
+					result.append("[^\\/]");
 
 				} else if(c == '4') {
-					result += "[^-=+\\/\\\\]";
+					result.append("[^-=+\\/\\\\]");
 
 				} else if(c == '5') {
-					result += "[^\\\\]";
+					result.append("[^\\\\]");
 
 				} else if(c == '6') {
-					result += "[^|:+\\/\\\\]";
+					result.append("[^|:+\\/\\\\]");
 
 				} else if(c == '7') {
-					result += "[^\\/]";
+					result.append("[^\\/]");
 
 				} else if(c == '8') {
-					result += "[^-=+\\/\\\\]";
+					result.append("[^-=+\\/\\\\]");
 				}
-			} else result += String.valueOf(c);
+			} else result.append(String.valueOf(c));
 			tokensHandled++;
 		}
-		return result;
+		return result.toString();
 	}
 
 

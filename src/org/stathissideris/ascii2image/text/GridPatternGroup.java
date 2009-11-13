@@ -27,23 +27,28 @@ import java.util.Iterator;
  * 
  * @author Efstathios Sideris
  */
-public class GridPatternGroup extends ArrayList {
+public class GridPatternGroup extends ArrayList<GridPattern> {
 	public boolean areAllMatchedBy(TextGrid grid){
-		Iterator it = iterator();
+		Iterator<GridPattern> it = iterator();
 		while (it.hasNext()) {
-			GridPattern pattern = (GridPattern) it.next();
+			GridPattern pattern = it.next();
 			if(!pattern.isMatchedBy(grid)) return false;
 		}
 		return true;
 	}
 
 	public boolean isAnyMatchedBy(TextGrid grid){
-		Iterator it = iterator();
+		Iterator<GridPattern> it = iterator();
 		while (it.hasNext()) {
-			GridPattern pattern = (GridPattern) it.next();
+			GridPattern pattern = it.next();
 			if(pattern.isMatchedBy(grid)) return true;
 		}
 		return false;
+	}
+	
+	
+	public void add(GridPattern... patterns) {
+		for(GridPattern p : patterns) add(p);
 	}
 	
 	//TODO: define criteria for on-line type?

@@ -70,7 +70,7 @@ public class BitmapRenderer {
 		
 		TextGrid grid = new TextGrid();
 		
-		String filename = "ditaa_bug.txt";
+		String filename = "dak_orgstruktur_vs_be.ditaa.OutOfMemoryError.edit.txt";
 		
 		grid.loadFrom("tests/text/"+filename);
 		
@@ -81,7 +81,7 @@ public class BitmapRenderer {
 		System.out.println("Done in "+totalTime+"sec");
 		
 		File workDir = new File("tests/images");
-		Process p = Runtime.getRuntime().exec("display "+filename+".png", null, workDir);
+		//Process p = Runtime.getRuntime().exec("display "+filename+".png", null, workDir);
 	}
 
 	private boolean renderToPNG(Diagram diagram, String filename, RenderingOptions options){	

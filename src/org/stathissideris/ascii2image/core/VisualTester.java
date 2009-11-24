@@ -28,7 +28,9 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -54,19 +56,37 @@ public class VisualTester {
 		File textDirObj = new File(textDir);
 		ArrayList<File> textFiles
 			= new ArrayList<File>(Arrays.asList(textDirObj.listFiles()));
+	
+		Set<String> excludedFiles = new HashSet<String>();
+		excludedFiles.addAll( Arrays.asList(new String[]{
+			"dak_orgstruktur_vs_be.ditaa.OutOfMemoryError.txt",
+			"dak_orgstruktur_vs_be.ditaa.OutOfMemoryError.2.txt",
+			"dak_orgstruktur_vs_be.ditaa.OutOfMemoryError.3.txt",
+			"dak_orgstruktur_vs_be.ditaa.OutOfMemoryError.4.txt",
+			"dak_orgstruktur_vs_be.ditaa.OutOfMemoryError.edit.txt",
+			"dak_orgstruktur_vs_be.ditaa.txt"
+		}));
 		
 		Iterator<File> it = textFiles.iterator();
 		while(it.hasNext()){
-			if(!it.next().toString().matches(".+\\.txt$")){
+			String filename = it.next().toString();
+			if(!filename.matches(".+\\.txt$") || isInExcluded(filename, excludedFiles)){
 				it.remove();
 			}
 		}
-						
+		
 		tester.createHTMLTestReport(textFiles, reportDir, HTMLReportName);
 		
 		System.out.println("Tests completed");
 	}
 
+	private static boolean isInExcluded(String filename, Set<String> excludedSet) {
+		for(String excluded : excludedSet) {
+			if(filename.endsWith(excluded)) return true;
+		}
+		return false;
+	}
+	
 	public boolean createHTMLTestReport(ArrayList<File> textFiles, String reportDir, String reportName){
 
 		ConversionOptions options = new ConversionOptions();

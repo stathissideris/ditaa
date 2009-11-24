@@ -464,6 +464,15 @@ public class Diagram {
 					containingShape.setType(DiagramShape.TYPE_CUSTOM);
 					containingShape.setDefinition(def);
 				}
+			} else if(pair.tag.equals("o")){
+				CustomShapeDefinition def =
+					options.processingOptions.getFromCustomShapes("o");
+				if(def == null)
+					containingShape.setType(DiagramShape.TYPE_ELLIPSE);
+				else {
+					containingShape.setType(DiagramShape.TYPE_CUSTOM);
+					containingShape.setDefinition(def);
+				}
 			} else {
 				CustomShapeDefinition def =
 					options.processingOptions.getFromCustomShapes(pair.tag);

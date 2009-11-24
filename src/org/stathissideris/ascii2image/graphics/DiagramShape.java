@@ -47,7 +47,8 @@ public class DiagramShape extends DiagramComponent {
 	public static final int TYPE_IO = 5;
 	public static final int TYPE_DECISION = 6;
 	public static final int TYPE_MANUAL_OPERATION = 7; // upside-down trapezoid
-    public static final int TYPE_TRAPEZOID = 8; // rightside-up trapezoid
+	public static final int TYPE_TRAPEZOID = 8; // rightside-up trapezoid
+	public static final int TYPE_ELLIPSE = 9;
 	public static final int TYPE_CUSTOM = 9999;
 
 	protected int type = TYPE_SIMPLE;
@@ -422,6 +423,10 @@ public class DiagramShape extends DiagramComponent {
 			return makeTrapezoidPath(diagram, false);
 		}
 
+		if(getType() == TYPE_ELLIPSE && points.size() == 4){
+			return makeEllipsePath(diagram);
+		}
+
 		if(size < 2) return null;
 
 		GeneralPath path = new GeneralPath();
@@ -514,7 +519,7 @@ public class DiagramShape extends DiagramComponent {
 	 * Finds the point that represents the intersection between the cell edge
 	 * that contains pointInCell and the line connecting pointInCell and
 	 * otherPoint.
-     * 
+	 * 
   	 * Returns C, if A is point in cell and B is otherPoint:
 	 * <pre>
 	 *     Cell
@@ -523,8 +528,8 @@ public class DiagramShape extends DiagramComponent {
 	 *    |  *--*------------------*
 	 *    |     |
 	 *    +-----+
-     *</pre>
-     *
+	 *</pre>
+	 *
 	 * @param pointInCell
 	 * @param otherPoint
 	 * @return
@@ -845,6 +850,34 @@ public class DiagramShape extends DiagramComponent {
 		return path;
 	}
 
+	// to draw a circle with 4 Bezier curves, set the control points at this ratio of
+	// the radius above & below the side points
+	// thanks to G. Adam Stanislav, http://whizkidtech.redprince.net/bezier/circle/
+	private static final float KAPPA = 4f * ((float) Math.sqrt(2) - 1) / 3f;
+
+	private GeneralPath makeEllipsePath(Diagram diagram) {
+		if(points.size() != 4) return null;
+		Rectangle bounds = makeIntoPath().getBounds();
+		float xOff = (float) bounds.getWidth() * 0.5f * KAPPA;
+		float yOff = (float) bounds.getHeight() * 0.5f * KAPPA;
+		ShapePoint pointMid = new ShapePoint((float)bounds.getCenterX(), (float)bounds.getCenterY());
+
+		ShapePoint left = new ShapePoint((float)bounds.getMinX(), (float)pointMid.getY());
+		ShapePoint right = new ShapePoint((float)bounds.getMaxX(), (float)pointMid.getY());
+		ShapePoint top = new ShapePoint((float)pointMid.getX(), (float)bounds.getMinY());
+		ShapePoint bottom = new ShapePoint((float)pointMid.getX(), (float)bounds.getMaxY());
+
+		GeneralPath path = new GeneralPath();
+		path.moveTo(top.x, top.y);
+		path.curveTo(top.x + xOff, top.y, right.x, right.y - yOff, right.x, right.y);
+		path.curveTo(right.x, right.y + yOff, bottom.x + xOff, bottom.y, bottom.x, bottom.y);
+		path.curveTo(bottom.x - xOff, bottom.y, left.x, left.y + yOff, left.x, left.y);
+		path.curveTo(left.x, left.y - yOff, top.x - xOff, top.y, top.x, top.y);
+		path.closePath();
+
+		return path;
+	}
+
 	private GeneralPath makeTrapezoidPath(Diagram diagram, boolean inverted) {
 		if(points.size() != 4) return null;
 		Rectangle bounds = makeIntoPath().getBounds();
@@ -916,4 +949,3 @@ public class DiagramShape extends DiagramComponent {
 	}
 
 }
-

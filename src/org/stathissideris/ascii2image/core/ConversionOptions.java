@@ -65,8 +65,7 @@ public class ConversionOptions {
 		processingOptions.setAllCornersAreRound(cmdLine.hasOption("round-corners"));
 		processingOptions.setPerformSeparationOfCommonEdges(!cmdLine.hasOption("no-separation"));
 		renderingOptions.setAntialias(!cmdLine.hasOption("no-antialias"));
-
-
+		renderingOptions.setFixedSlope(cmdLine.hasOption("fixed-slope"));
 
 		if(cmdLine.hasOption("tabs")){
 			Integer tabSize = Integer.parseInt(cmdLine.getOptionValue("tabs"));

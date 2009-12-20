@@ -64,6 +64,7 @@ public class CommandLineConverter {
 		cmdLnOptions.addOption("o", "overwrite", false, "If the filename of the destination image already exists, an alternative name is chosen. If the overwrite option is selected, the image file is instead overwriten.");
 		cmdLnOptions.addOption("S", "no-shadows", false, "Turns off the drop-shadow effect.");
 		cmdLnOptions.addOption("A", "no-antialias", false, "Turns anti-aliasing off.");
+		cmdLnOptions.addOption("W", "fixed-slope", false, "Makes sides of parallelograms and trapezoids fixed slope instead of fixed width.");
 		cmdLnOptions.addOption("d", "debug", false, "Renders the debug grid over the resulting image.");
 		cmdLnOptions.addOption("r", "round-corners", false, "Causes all corners to be rendered as round corners.");
 		cmdLnOptions.addOption("E", "no-separation", false, "Prevents the separation of common edges of shapes.");

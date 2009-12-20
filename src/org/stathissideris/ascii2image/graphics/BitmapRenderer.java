@@ -140,7 +140,7 @@ public class BitmapRenderer {
 
 				//GeneralPath path = shape.makeIntoPath();
 				GeneralPath path;
-				path = shape.makeIntoRenderPath(diagram);			
+				path = shape.makeIntoRenderPath(diagram, options);			
 							
 				float offset = diagram.getMinimumOfCellDimension() / 3.333f;
 			
@@ -244,7 +244,7 @@ public class BitmapRenderer {
 			DiagramShape shape = (DiagramShape) shapesIt.next();
 
 			GeneralPath path;
-			path = shape.makeIntoRenderPath(diagram);
+			path = shape.makeIntoRenderPath(diagram, options);
 			
 			if(!shape.isStrokeDashed()) {
 				if(shape.getFillColor() != null)
@@ -285,7 +285,7 @@ public class BitmapRenderer {
 			int size = shape.getPoints().size();
 			
 			GeneralPath path;
-			path = shape.makeIntoRenderPath(diagram);
+			path = shape.makeIntoRenderPath(diagram, options);
 			
 			//fill
 			if(path != null && shape.isClosed() && !shape.isStrokeDashed()){
@@ -316,7 +316,7 @@ public class BitmapRenderer {
 			//if(shape.getType() != DiagramShape.TYPE_POINT_MARKER) continue;
 
 			GeneralPath path;
-			path = shape.makeIntoRenderPath(diagram);
+			path = shape.makeIntoRenderPath(diagram, options);
 			
 			g2.setColor(Color.white);
 			g2.fill(path);

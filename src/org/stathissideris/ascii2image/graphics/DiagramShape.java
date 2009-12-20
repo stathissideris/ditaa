@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.stathissideris.ascii2image.core.RenderingOptions;
 import org.stathissideris.ascii2image.text.*;
 
 /**
@@ -50,6 +51,9 @@ public class DiagramShape extends DiagramComponent {
 	public static final int TYPE_TRAPEZOID = 8; // rightside-up trapezoid
 	public static final int TYPE_ELLIPSE = 9;
 	public static final int TYPE_CUSTOM = 9999;
+
+	/** The slope of side lines on trapezoids (mo, tr) and parallelograms (io). */
+	public static final float SHAPE_SLOPE = 8;
 
 	protected int type = TYPE_SIMPLE;
 
@@ -392,7 +396,7 @@ public class DiagramShape extends DiagramComponent {
 		return bounds;
 	}
 	
-	public GeneralPath makeIntoRenderPath(Diagram diagram) {
+	public GeneralPath makeIntoRenderPath(Diagram diagram, RenderingOptions options) {
 		int size = getPoints().size();
 		
 		if(getType() == TYPE_POINT_MARKER){
@@ -408,7 +412,7 @@ public class DiagramShape extends DiagramComponent {
 		}
 
 		if(getType() == TYPE_IO && points.size() == 4){
-			return makeIOPath(diagram);
+			return makeIOPath(diagram, options);
 		}
 
 		if(getType() == TYPE_DECISION && points.size() == 4){
@@ -416,11 +420,11 @@ public class DiagramShape extends DiagramComponent {
 		}
 
 		if(getType() == TYPE_MANUAL_OPERATION && points.size() == 4){
-			return makeTrapezoidPath(diagram, true);
+			return makeTrapezoidPath(diagram, options, true);
 		}
 
 		if(getType() == TYPE_TRAPEZOID && points.size() == 4){
-			return makeTrapezoidPath(diagram, false);
+			return makeTrapezoidPath(diagram, options, false);
 		}
 
 		if(getType() == TYPE_ELLIPSE && points.size() == 4){
@@ -878,11 +882,11 @@ public class DiagramShape extends DiagramComponent {
 		return path;
 	}
 
-	private GeneralPath makeTrapezoidPath(Diagram diagram, boolean inverted) {
+	private GeneralPath makeTrapezoidPath(Diagram diagram, RenderingOptions options, boolean inverted) {
 		if(points.size() != 4) return null;
 		Rectangle bounds = makeIntoPath().getBounds();
-        float offset = 0.7f * diagram.getCellWidth(); // fixed slope
-        if (inverted) offset = -offset;
+		float offset = options.isFixedSlope() ? bounds.height / SHAPE_SLOPE : diagram.getCellWidth() * 0.5f;
+		if (inverted) offset = -offset;
 		ShapePoint ul = new ShapePoint((float)bounds.getMinX() + offset, (float)bounds.getMinY());
 		ShapePoint ur = new ShapePoint((float)bounds.getMaxX() - offset, (float)bounds.getMinY());
 		ShapePoint br = new ShapePoint((float)bounds.getMaxX() + offset, (float)bounds.getMaxY());
@@ -903,7 +907,7 @@ public class DiagramShape extends DiagramComponent {
 	private GeneralPath makeDecisionPath(Diagram diagram) {
 		if(points.size() != 4) return null;
 		Rectangle bounds = makeIntoPath().getBounds();
-        ShapePoint pointMid = new ShapePoint((float)bounds.getCenterX(), (float)bounds.getCenterY());
+		ShapePoint pointMid = new ShapePoint((float)bounds.getCenterX(), (float)bounds.getCenterY());
 		ShapePoint left = new ShapePoint((float)bounds.getMinX(), (float)pointMid.getY());
 		ShapePoint right = new ShapePoint((float)bounds.getMaxX(), (float)pointMid.getY());
 		ShapePoint top = new ShapePoint((float)pointMid.getX(), (float)bounds.getMinY());
@@ -920,7 +924,7 @@ public class DiagramShape extends DiagramComponent {
 		return path;
 	}
 
-	private GeneralPath makeIOPath(Diagram diagram) {
+	private GeneralPath makeIOPath(Diagram diagram, RenderingOptions options) {
 		if(points.size() != 4) return null;
 		Rectangle bounds = makeIntoPath().getBounds();
 		ShapePoint point1 = new ShapePoint((float)bounds.getMinX(), (float)bounds.getMinY());
@@ -928,7 +932,7 @@ public class DiagramShape extends DiagramComponent {
 		ShapePoint point3 = new ShapePoint((float)bounds.getMaxX(), (float)bounds.getMaxY());
 		ShapePoint point4 = new ShapePoint((float)bounds.getMinX(), (float)bounds.getMaxY());
 	
-		float offset = diagram.getCellWidth() / 2;
+        float offset = options.isFixedSlope() ? bounds.height / SHAPE_SLOPE : diagram.getCellWidth() * 0.5f;
 		
 		GeneralPath path = new GeneralPath();
 		path.moveTo(point1.x + offset, point1.y);

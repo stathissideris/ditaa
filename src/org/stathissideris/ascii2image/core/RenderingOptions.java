@@ -35,6 +35,7 @@ public class RenderingOptions {
 	private boolean dropShadows = true;
 	private boolean renderDebugLines = false;
 	private boolean antialias = true;
+    private boolean fixedSlope = false;
 
 	private int cellWidth = 10;
 	private int cellHeight = 14;
@@ -113,4 +114,21 @@ public class RenderingOptions {
 		antialias = b;
 	}
 
+    /**
+     * Should the sides of trapezoids and parallelograms have fixed width (false, default)
+     * or fixed slope (true)?
+     * @return true for fixed slope, false for fixed width
+     */
+    public boolean isFixedSlope() {
+        return fixedSlope;
+    }
+
+    /**
+     * Should the sides of trapezoids and parallelograms have fixed width (false, default)
+     * or fixed slope (true)?
+     * @param b true for fixed slope, false for fixed width
+     */
+    public void setFixedSlope(boolean b) {
+        this.fixedSlope = b;
+    }
 }

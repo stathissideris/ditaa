@@ -37,7 +37,7 @@ public class ProcessingOptions {
 	private boolean overwriteFiles = false;
 	private boolean performSeparationOfCommonEdges = true;
 	private boolean allCornersAreRound = false;
-	
+
 	public static final int USE_TAGS = 0;
 	public static final int RENDER_TAGS = 1;
 	public static final int IGNORE_TAGS = 2;
@@ -89,7 +89,7 @@ public class ProcessingOptions {
 		return performSeparationOfCommonEdges;
 	}
 
-	/**
+    /**
 	 * @return
 	 */
 	public int getTagProcessingMode() {
@@ -124,7 +124,7 @@ public class ProcessingOptions {
 		performSeparationOfCommonEdges = b;
 	}
 
-	/**
+    /**
 	 * @param i
 	 */
 	public void setTagProcessingMode(int i) {

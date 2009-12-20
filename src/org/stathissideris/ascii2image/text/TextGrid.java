@@ -82,6 +82,7 @@ public class TextGrid {
 		markupTags.add("c");
 		markupTags.add("mo");
 		markupTags.add("tr");
+		markupTags.add("o");
 	}
 
 	public void addToMarkupTags(Collection<String> tags){

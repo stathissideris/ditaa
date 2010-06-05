@@ -69,7 +69,7 @@ public class CommandLineConverter {
 		cmdLnOptions.addOption("r", "round-corners", false, "Causes all corners to be rendered as round corners.");
 		cmdLnOptions.addOption("E", "no-separation", false, "Prevents the separation of common edges of shapes.");
 		cmdLnOptions.addOption("h", "html", false, "In this case the input is an HTML file. The contents of the <pre class=\"textdiagram\"> tags are rendered as diagrams and saved in the images directory and a new HTML file is produced with the appropriate <img> tags.");
-		cmdLnOptions.addOption("T", "transparent", false, "Causes the diagram to be rendered on a transparent background.");
+		cmdLnOptions.addOption("T", "transparent", false, "Causes the diagram to be rendered on a transparent background. Overrides --background.");
 		
 		cmdLnOptions.addOption(
 				OptionBuilder.withLongOpt("encoding")
@@ -97,7 +97,7 @@ public class CommandLineConverter {
 		
 		cmdLnOptions.addOption(
 				OptionBuilder.withLongOpt("background")
-				.withDescription("The background colour of the image. The format should be a six-digit hexadecimal number (as in HTML). Pass an eight-digit hex to define transparency.")
+				.withDescription("The background colour of the image. The format should be a six-digit hexadecimal number (as in HTML, FF0000 for red). Pass an eight-digit hex to define transparency. This is overriden by --transparent.")
 				.hasArg()
 				.withArgName("BACKGROUND")
 				.create('b')
@@ -130,23 +130,27 @@ public class CommandLineConverter {
 			
 		} catch (org.apache.commons.cli.ParseException e) {
 			System.err.println(e.getMessage());
-			new HelpFormatter().printHelp("java -jar ditaa.jar <inpfile> [outfile]", cmdLnOptions, true);
+			new HelpFormatter().printHelp("java -jar ditaa.jar <INPFILE> [OUTFILE]", cmdLnOptions, true);
 			System.exit(2);
 		}
 		
 		
 		if(cmdLine.hasOption("help") || args.length == 0 ){
-			new HelpFormatter().printHelp("java -jar ditaa.jar <inpfile> [outfile]", cmdLnOptions, true);
+			new HelpFormatter().printHelp("java -jar ditaa.jar <INPFILE> [OUTFILE]", cmdLnOptions, true);
 			System.exit(0);			
 		}
-						
+		
 		ConversionOptions options = null;
 		try {
 			options = new ConversionOptions(cmdLine);
 		} catch (UnsupportedEncodingException e2) {
 			System.err.println("Error: " + e2.getMessage());
 			System.exit(2);
-		}  
+		} catch (IllegalArgumentException e2) {
+			System.err.println("Error: " + e2.getMessage());
+			new HelpFormatter().printHelp("java -jar ditaa.jar <INPFILE> [OUTFILE]", cmdLnOptions, true);
+			System.exit(2);
+		}
 		
 		args = cmdLine.getArgs();
 		

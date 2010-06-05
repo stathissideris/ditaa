@@ -81,7 +81,7 @@ public class ConversionOptions {
 					Integer.parseInt(b.substring(6,8), 16)
 				);
 			} else {
-				throw new IllegalArgumentException("Cannot interpret "+b+" as background colour. It needs to be a 6- or 8-digit hex number, depending on whether you have transparency or not (same as HTML).");
+				throw new IllegalArgumentException("Cannot interpret \""+b+"\" as background colour. It needs to be a 6- or 8-digit hex number, depending on whether you have transparency or not (same as HTML).");
 			}
 			renderingOptions.setBackgroundColor(background);
 		}

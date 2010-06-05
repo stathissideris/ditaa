@@ -20,6 +20,7 @@
  */
 package org.stathissideris.ascii2image.core;
 
+import java.awt.Color;
 import java.util.HashMap;
 
 import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
@@ -41,80 +42,64 @@ public class RenderingOptions {
 	private int cellHeight = 14;
 	
 	private float scale = 1;
+	
+	private Color backgroundColor = Color.white;
 
-	/**
-	 * @return
-	 */
 	public int getCellHeight() {
 		return cellHeight;
 	}
 
-	/**
-	 * @return
-	 */
 	public int getCellWidth() {
 		return cellWidth;
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean dropShadows() {
 		return dropShadows;
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean renderDebugLines() {
 		return renderDebugLines;
 	}
 
-	/**
-	 * @return
-	 */
 	public float getScale() {
 		return scale;
 	}
 
-	/**
-	 * @param b
-	 */
 	public void setDropShadows(boolean b) {
 		dropShadows = b;
 	}
 
-	/**
-	 * @param b
-	 */
 	public void setRenderDebugLines(boolean b) {
 		renderDebugLines = b;
 	}
 
-	/**
-	 * @param f
-	 */
 	public void setScale(float f) {
 		scale = f;
 		cellWidth *= scale;
 		cellHeight *= scale;
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean performAntialias() {
 		return antialias;
 	}
 
-	/**
-	 * @param b
-	 */
 	public void setAntialias(boolean b) {
 		antialias = b;
 	}
 
-    /**
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	public void setBackgroundColor(Color backgroundColor) {
+		this.backgroundColor = backgroundColor;
+	}
+	
+	public boolean needsTransparency() {
+		return backgroundColor.getAlpha() < 255;
+	}
+
+	/**
      * Should the sides of trapezoids and parallelograms have fixed width (false, default)
      * or fixed slope (true)?
      * @return true for fixed slope, false for fixed width

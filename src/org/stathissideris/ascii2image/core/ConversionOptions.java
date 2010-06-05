@@ -20,6 +20,7 @@
  */
 package org.stathissideris.ascii2image.core;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -66,6 +67,28 @@ public class ConversionOptions {
 		processingOptions.setPerformSeparationOfCommonEdges(!cmdLine.hasOption("no-separation"));
 		renderingOptions.setAntialias(!cmdLine.hasOption("no-antialias"));
 		renderingOptions.setFixedSlope(cmdLine.hasOption("fixed-slope"));
+
+		if(cmdLine.hasOption("background")) {
+			String b = cmdLine.getOptionValue("background");
+			Color background;
+			if(b.length() == 6) {
+				background = new Color(Integer.parseInt(b, 16));
+			} else if(b.length() == 8) {
+				background = new Color(
+					Integer.parseInt(b.substring(0,2), 16),
+					Integer.parseInt(b.substring(2,4), 16),
+					Integer.parseInt(b.substring(4,6), 16),
+					Integer.parseInt(b.substring(6,8), 16)
+				);
+			} else {
+				throw new IllegalArgumentException("Cannot interpret "+b+" as background colour. It needs to be a 6- or 8-digit hex number, depending on whether you have transparency or not (same as HTML).");
+			}
+			renderingOptions.setBackgroundColor(background);
+		}
+		
+		if(cmdLine.hasOption("transparent")) {
+			renderingOptions.setBackgroundColor(new Color(0,0,0,0));
+		}
 
 		if(cmdLine.hasOption("tabs")){
 			Integer tabSize = Integer.parseInt(cmdLine.getOptionValue("tabs"));

@@ -69,6 +69,7 @@ public class CommandLineConverter {
 		cmdLnOptions.addOption("r", "round-corners", false, "Causes all corners to be rendered as round corners.");
 		cmdLnOptions.addOption("E", "no-separation", false, "Prevents the separation of common edges of shapes.");
 		cmdLnOptions.addOption("h", "html", false, "In this case the input is an HTML file. The contents of the <pre class=\"textdiagram\"> tags are rendered as diagrams and saved in the images directory and a new HTML file is produced with the appropriate <img> tags.");
+		cmdLnOptions.addOption("T", "transparent", false, "Causes the diagram to be rendered on a transparent background.");
 		
 		cmdLnOptions.addOption(
 				OptionBuilder.withLongOpt("encoding")
@@ -93,7 +94,15 @@ public class CommandLineConverter {
 				.withArgName("TABS")
 				.create('t')
 				);
-
+		
+		cmdLnOptions.addOption(
+				OptionBuilder.withLongOpt("background")
+				.withDescription("The background colour of the image. The format should be a six-digit hexadecimal number (as in HTML). Pass an eight-digit hex to define transparency.")
+				.hasArg()
+				.withArgName("BACKGROUND")
+				.create('b')
+				);
+		
 //TODO: uncomment this for next version:
 //		cmdLnOptions.addOption(
 //				OptionBuilder.withLongOpt("config")

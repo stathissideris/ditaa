@@ -97,7 +97,7 @@ public class CommandLineConverter {
 		
 		cmdLnOptions.addOption(
 				OptionBuilder.withLongOpt("background")
-				.withDescription("The background colour of the image. The format should be a six-digit hexadecimal number (as in HTML, FF0000 for red). Pass an eight-digit hex to define transparency. This is overriden by --transparent.")
+				.withDescription("The background colour of the image. The format should be a six-digit hexadecimal number (as in HTML, FF0000 for red). Pass an eight-digit hex to define transparency. This is overridden by --transparent.")
 				.hasArg()
 				.withArgName("BACKGROUND")
 				.create('b')

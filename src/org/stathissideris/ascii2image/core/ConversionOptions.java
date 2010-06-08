@@ -20,18 +20,17 @@
  */
 package org.stathissideris.ascii2image.core;
 
-import java.awt.Color;
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
 import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 
 /**
  * 
@@ -50,6 +49,23 @@ public class ConversionOptions {
 	}
 	
 	public ConversionOptions(){}
+
+    /** Parse a color from a 6- or 8-digit hex string.  For example, FF0000 is red.
+     *  If eight digits, last two digits are alpha. */
+    public static Color parseColor(String hexString) {
+        if(hexString.length() == 6) {
+            return new Color(Integer.parseInt(hexString, 16));
+        } else if(hexString.length() == 8) {
+            return new Color(
+                Integer.parseInt(hexString.substring(0,2), 16),
+                Integer.parseInt(hexString.substring(2,4), 16),
+                Integer.parseInt(hexString.substring(4,6), 16),
+                Integer.parseInt(hexString.substring(6,8), 16)
+            );
+        } else {
+            throw new IllegalArgumentException("Cannot interpret \""+hexString+"\" as background colour. It needs to be a 6- or 8-digit hex number, depending on whether you have transparency or not (same as HTML).");
+        }
+    }
 	
 	public ConversionOptions(CommandLine cmdLine) throws UnsupportedEncodingException{
 		
@@ -70,19 +86,7 @@ public class ConversionOptions {
 
 		if(cmdLine.hasOption("background")) {
 			String b = cmdLine.getOptionValue("background");
-			Color background;
-			if(b.length() == 6) {
-				background = new Color(Integer.parseInt(b, 16));
-			} else if(b.length() == 8) {
-				background = new Color(
-					Integer.parseInt(b.substring(0,2), 16),
-					Integer.parseInt(b.substring(2,4), 16),
-					Integer.parseInt(b.substring(4,6), 16),
-					Integer.parseInt(b.substring(6,8), 16)
-				);
-			} else {
-				throw new IllegalArgumentException("Cannot interpret \""+b+"\" as background colour. It needs to be a 6- or 8-digit hex number, depending on whether you have transparency or not (same as HTML).");
-			}
+            Color background = parseColor(b);
 			renderingOptions.setBackgroundColor(background);
 		}
 		

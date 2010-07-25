@@ -271,7 +271,16 @@ public class BitmapRenderer {
 			g2.draw(path);
 		}
 
-
+		//filter-out single point shapes (how do these occur?)
+		Iterator<DiagramShape> itShape = shapes.iterator();
+		while(itShape.hasNext()) {
+			if(itShape.next().getPoints().size() < 2) {
+				itShape.remove();
+			}
+		}
+		
+		Collections.sort(shapes, new Shape3DOrderingComparator());
+		
 		//render the rest of the shapes
 		ArrayList<DiagramShape> pointMarkers = new ArrayList<DiagramShape>();
 		shapesIt = shapes.iterator();

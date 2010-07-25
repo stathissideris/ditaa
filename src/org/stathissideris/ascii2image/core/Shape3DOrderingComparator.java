@@ -35,6 +35,11 @@ public class Shape3DOrderingComparator implements Comparator<DiagramShape> {
 	 * 
 	 */
 	public int compare(DiagramShape shape1, DiagramShape shape2) {
+		
+		if(shape2.makeIntoPath() == null) {
+			System.out.println("NULL!");
+		}
+		
 		double y1 = shape1.makeIntoPath().getBounds().getCenterY();
 		double y2 = shape2.makeIntoPath().getBounds().getCenterY();
 		

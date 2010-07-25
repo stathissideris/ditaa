@@ -37,7 +37,7 @@ import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
  */
 public class TextGrid {
 
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 
 	private ArrayList<StringBuilder> rows;
 
@@ -614,8 +614,8 @@ public class TextGrid {
 		}
 	}
 
-	public ArrayList findArrowheads(){
-		ArrayList result = new ArrayList();
+	public ArrayList<Cell> findArrowheads(){
+		ArrayList<Cell> result = new ArrayList<Cell>();
 		int width = getWidth();
 		int height = getHeight();
 		for(int yi = 0; yi < height; yi++){

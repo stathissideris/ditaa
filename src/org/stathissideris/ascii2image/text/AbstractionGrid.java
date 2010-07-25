@@ -147,15 +147,15 @@ public class AbstractionGrid {
 		return result;
 	}
 
-	public ArrayList getDistinctShapes(){
-		ArrayList result = new ArrayList();
+	public ArrayList<CellSet> getDistinctShapes(){
+		ArrayList<CellSet> result = new ArrayList<CellSet>();
 		
 		CellSet nonBlank = grid.getAllNonBlank();
-		ArrayList distinct = nonBlank.breakIntoDistinctBoundaries();
+		ArrayList<CellSet> distinct = nonBlank.breakIntoDistinctBoundaries();
 		
-		Iterator it = distinct.iterator();
+		Iterator<CellSet> it = distinct.iterator();
 		while (it.hasNext()) {
-			CellSet set = (CellSet) it.next();
+			CellSet set = it.next();
 			AbstractionGrid temp = new AbstractionGrid(this.getWidth(), this.getHeight());
 			temp.fillCells(set);
 			result.add(temp.getAsTextGrid().getAllNonBlank());

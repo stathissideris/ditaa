@@ -305,7 +305,7 @@ public class CompositeDiagramShape extends DiagramComponent {
 	/**
 	 * @return
 	 */
-	public ArrayList getShapes() {
+	public ArrayList<DiagramShape> getShapes() {
 		return shapes;
 	}
 

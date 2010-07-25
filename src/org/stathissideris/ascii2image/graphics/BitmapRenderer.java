@@ -54,7 +54,8 @@ import org.stathissideris.ascii2image.text.TextGrid;
  */
 public class BitmapRenderer {
 
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
+	private static final boolean DEBUG_LINES = false;
 
 	private static final String IDREGEX = "^.+_vfill$";
 	
@@ -70,7 +71,7 @@ public class BitmapRenderer {
 		
 		TextGrid grid = new TextGrid();
 		
-		String filename = "dak_orgstruktur_vs_be.ditaa.OutOfMemoryError.edit.txt";
+		String filename = "bug16.txt";
 		
 		grid.loadFrom("tests/text/"+filename);
 		
@@ -133,16 +134,16 @@ public class BitmapRenderer {
 		
 		g2.setStroke(new BasicStroke(1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
 
-		ArrayList shapes = diagram.getAllDiagramShapes();
+		ArrayList<DiagramShape> shapes = diagram.getAllDiagramShapes();
 
 		if(DEBUG) System.out.println("Rendering "+shapes.size()+" shapes (groups flattened)");
 
-		Iterator shapesIt;
+		Iterator<DiagramShape> shapesIt;
 		if(options.dropShadows()){
 			//render shadows
 			shapesIt = shapes.iterator();
 			while(shapesIt.hasNext()){
-				DiagramShape shape = (DiagramShape) shapesIt.next();
+				DiagramShape shape = shapesIt.next();
 
 				if(shape.getPoints().isEmpty()) continue;
 
@@ -227,7 +228,7 @@ public class BitmapRenderer {
 		
 		
 		//find storage shapes
-		ArrayList storageShapes = new ArrayList();
+		ArrayList<DiagramShape> storageShapes = new ArrayList<DiagramShape>();
 		shapesIt = shapes.iterator();
 		while(shapesIt.hasNext()){
 			DiagramShape shape = (DiagramShape) shapesIt.next();
@@ -272,7 +273,7 @@ public class BitmapRenderer {
 
 
 		//render the rest of the shapes
-		ArrayList pointMarkers = new ArrayList();
+		ArrayList<DiagramShape> pointMarkers = new ArrayList<DiagramShape>();
 		shapesIt = shapes.iterator();
 		while(shapesIt.hasNext()){
 			DiagramShape shape = (DiagramShape) shapesIt.next();
@@ -336,9 +337,9 @@ public class BitmapRenderer {
 		//g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		//renderTextLayer(diagram.getTextObjects().iterator());
 		
-		Iterator textIt = diagram.getTextObjects().iterator();
+		Iterator<DiagramText> textIt = diagram.getTextObjects().iterator();
 		while(textIt.hasNext()){
-			DiagramText text = (DiagramText) textIt.next();
+			DiagramText text = textIt.next();
 			g2.setFont(text.getFont());
 			if(text.hasOutline()){
 				g2.setColor(text.getOutlineColor());
@@ -351,7 +352,7 @@ public class BitmapRenderer {
 			g2.drawString(text.getText(), text.getXPos(), text.getYPos());
 		}
 		
-		if(options.renderDebugLines() || DEBUG){
+		if(options.renderDebugLines() || DEBUG_LINES){
 			Stroke debugStroke =
 			  new BasicStroke(
 				1,
@@ -373,7 +374,7 @@ public class BitmapRenderer {
 		return renderedImage;
 	}
 	
-	private RenderedImage renderTextLayer(ArrayList textObjects, int width, int height){
+	private RenderedImage renderTextLayer(ArrayList<DiagramText> textObjects, int width, int height){
 		TextCanvas canvas = new TextCanvas(textObjects);
 		Image image = canvas.createImage(width, height);
 		Graphics g = image.getGraphics();
@@ -382,15 +383,15 @@ public class BitmapRenderer {
 	}
 	
 	private class TextCanvas extends Canvas {
-		ArrayList textObjects;
+		ArrayList<DiagramText> textObjects;
 		
-		public TextCanvas(ArrayList textObjects){
+		public TextCanvas(ArrayList<DiagramText> textObjects){
 			this.textObjects = textObjects;
 		}
 		
 		public void paint(Graphics g){
 			Graphics g2 = (Graphics2D) g;
-			Iterator textIt = textObjects.iterator();
+			Iterator<DiagramText> textIt = textObjects.iterator();
 			while(textIt.hasNext()){
 				DiagramText text = (DiagramText) textIt.next();
 				g2.setFont(text.getFont());

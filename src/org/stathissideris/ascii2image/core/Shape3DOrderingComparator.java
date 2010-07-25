@@ -28,20 +28,13 @@ import org.stathissideris.ascii2image.graphics.DiagramShape;
  * 
  * @author Efstathios Sideris
  */
-public class Shape3DOrderingComparator implements Comparator {
+public class Shape3DOrderingComparator implements Comparator<DiagramShape> {
 
 	/**
 	 * Puts diagram shapes in pseudo-3d order starting from back to front
 	 * 
 	 */
-	public int compare(Object object1, Object object2) {
-		if(!(object1 instanceof DiagramShape)
-				|| !(object2 instanceof DiagramShape))
-			throw new RuntimeException("This comparator can only compare DiagramShapeS");
-		
-		DiagramShape shape1 = (DiagramShape) object1;
-		DiagramShape shape2 = (DiagramShape) object2;
-		
+	public int compare(DiagramShape shape1, DiagramShape shape2) {
 		double y1 = shape1.makeIntoPath().getBounds().getCenterY();
 		double y2 = shape2.makeIntoPath().getBounds().getCenterY();
 		

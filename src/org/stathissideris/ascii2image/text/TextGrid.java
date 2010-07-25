@@ -39,7 +39,7 @@ public class TextGrid {
 
 	private static final boolean DEBUG = false;
 
-	private ArrayList<StringBuffer> rows;
+	private ArrayList<StringBuilder> rows;
 
 	private static char[] boundaries = {'/', '\\', '|', '-', '*', '=', ':'};
 	private static char[] undisputableBoundaries = {'|', '-', '*', '=', ':'};
@@ -106,14 +106,14 @@ public class TextGrid {
 
 
 	public TextGrid(){
-		rows = new ArrayList<StringBuffer>();
+		rows = new ArrayList<StringBuilder>();
 	}
 	
 	public TextGrid(int width, int height){
 		String space = StringUtils.repeatString(" ", width);
-		rows = new ArrayList<StringBuffer>();
+		rows = new ArrayList<StringBuilder>();
 		for(int i = 0; i < height; i++)
-			rows.add(new StringBuffer(space));
+			rows.add(new StringBuilder(space));
 	}
 
 	public static TextGrid makeSameSizeAs(TextGrid grid){
@@ -122,9 +122,9 @@ public class TextGrid {
 
 
 	public TextGrid(TextGrid otherGrid){
-		rows = new ArrayList<StringBuffer>();
-		for(StringBuffer row : otherGrid.getRows()) {
-			rows.add(new StringBuffer(row));
+		rows = new ArrayList<StringBuilder>();
+		for(StringBuilder row : otherGrid.getRows()) {
+			rows.add(new StringBuilder(row));
 		}		
 	}
 
@@ -133,7 +133,7 @@ public class TextGrid {
 		int height = getHeight();
 		rows.clear();
 		for(int i = 0; i < height; i++)
-			rows.add(new StringBuffer(blank)); 
+			rows.add(new StringBuilder(blank)); 
 	}
 
 //	duplicated code due to lots of hits to this function
@@ -154,14 +154,14 @@ public class TextGrid {
 		return rows.get(cell.y).charAt(cell.x);
 	}
 	
-	public StringBuffer getRow(int y){
+	public StringBuilder getRow(int y){
 		return rows.get(y);
 	}
 
 	public TextGrid getSubGrid(int x, int y, int width, int height){
 		TextGrid grid = new TextGrid(width, height);
 		for(int i = 0; i < height; i++){
-			grid.setRow(i, new StringBuffer(getRow(y + i).subSequence(x, x + width)));
+			grid.setRow(i, new StringBuilder(getRow(y + i).subSequence(x, x + width)));
 		}
 		return grid;
 	}
@@ -210,17 +210,17 @@ public class TextGrid {
 
 	public void set(int x, int y, char c){
 		if(x > getWidth() - 1 || y > getHeight() - 1) return;
-		StringBuffer row = rows.get(y);
+		StringBuilder row = rows.get(y);
 		row.setCharAt(x, c);
 	}
 	
 	public void setRow(int y, String row){
 		if(y > getHeight() || row.length() != getWidth())
 			throw new IllegalArgumentException("setRow out of bounds or string wrong size");
-		rows.set(y, new StringBuffer(row));
+		rows.set(y, new StringBuilder(row));
 	}
 
-	public void setRow(int y, StringBuffer row){
+	public void setRow(int y, StringBuilder row){
 		if(y > getHeight() || row.length() != getWidth())
 			throw new IllegalArgumentException("setRow out of bounds or string wrong size");
 		rows.set(y, row);
@@ -236,7 +236,7 @@ public class TextGrid {
 	}
 
 	public void printDebug(){
-		Iterator<StringBuffer> it = rows.iterator();
+		Iterator<StringBuilder> it = rows.iterator();
 		int i = 0;
 		System.out.println(
 			"    "
@@ -251,8 +251,8 @@ public class TextGrid {
 	}
 
 	public String getDebugString(){
-		StringBuffer buffer = new StringBuffer();
-		Iterator<StringBuffer> it = rows.iterator();
+		StringBuilder buffer = new StringBuilder();
+		Iterator<StringBuilder> it = rows.iterator();
 		int i = 0;
 		buffer.append(
 			"    "
@@ -390,7 +390,7 @@ public class TextGrid {
 					humanCode = "c" + humanCode;
 					hexCode = "c" + hexCode;
 					row = row.replaceAll(humanCode, hexCode);
-					rows.set(y, new StringBuffer(row)); //TODO: this is not the most efficient way to do this
+					rows.set(y, new StringBuilder(row)); //TODO: this is not the most efficient way to do this
 					row = rows.get(y).toString();
 				}
 			}
@@ -1506,34 +1506,34 @@ public class TextGrid {
 	{
 				
 		String encoding = (options == null) ? null : options.getCharacterEncoding();
-		ArrayList<StringBuffer> lines = new ArrayList<StringBuffer>();
+		ArrayList<StringBuilder> lines = new ArrayList<StringBuilder>();
 		String[] linesArray = FileUtils.readFile(new File(filename), encoding).split("(\r)?\n");
 		for(int i = 0; i  < linesArray.length; i++)
-			lines.add(new StringBuffer(linesArray[i]));
+			lines.add(new StringBuilder(linesArray[i]));
 		
 		return initialiseWithLines(lines, options);
 	}
 
 	public boolean initialiseWithText(String text, ProcessingOptions options) throws UnsupportedEncodingException {
 
-		ArrayList<StringBuffer> lines = new ArrayList<StringBuffer>();
+		ArrayList<StringBuilder> lines = new ArrayList<StringBuilder>();
 		String[] linesArray = text.split("(\r)?\n");
 		for(int i = 0; i  < linesArray.length; i++)
-			lines.add(new StringBuffer(linesArray[i]));
+			lines.add(new StringBuilder(linesArray[i]));
 
 		return initialiseWithLines(lines, options);
 	}
 
-	public boolean initialiseWithLines(ArrayList<StringBuffer> lines, ProcessingOptions options) throws UnsupportedEncodingException {
+	public boolean initialiseWithLines(ArrayList<StringBuilder> lines, ProcessingOptions options) throws UnsupportedEncodingException {
 
 		//remove blank rows at the bottom
 		boolean done = false;
 		int i;
 		for(i = lines.size() - 1; !done; i--){
-			StringBuffer row = lines.get(i);
+			StringBuilder row = lines.get(i);
 			if(!StringUtils.isBlank(row.toString())) done = true;
 		}
-		rows = new ArrayList<StringBuffer>(lines.subList(0, i + 2));
+		rows = new ArrayList<StringBuilder>(lines.subList(0, i + 2));
 
 		if(options != null) fixTabs(options.getTabSize());
 		else fixTabs(options.DEFAULT_TAB_SIZE);
@@ -1551,7 +1551,7 @@ public class TextGrid {
 		String encoding = null;
 		if(options != null) encoding = options.getCharacterEncoding();
 		
-		Iterator<StringBuffer> it = rows.iterator();
+		Iterator<StringBuilder> it = rows.iterator();
 		while(it.hasNext()){
 			String row = it.next().toString();
 			if(encoding != null){
@@ -1559,25 +1559,25 @@ public class TextGrid {
 				row = new String(bytes, encoding);
 			}
 			if(row.length() > maxLength) maxLength = row.length();
-			rows.set(index, new StringBuffer(row));
+			rows.set(index, new StringBuilder(row));
 			index++;
 		}
 
 		it = rows.iterator();
-		ArrayList<StringBuffer> newRows = new ArrayList<StringBuffer>();
+		ArrayList<StringBuilder> newRows = new ArrayList<StringBuilder>();
 		//TODO: make the following depend on blankBorderSize
 		
-		StringBuffer topBottomRow =
-			new StringBuffer(StringUtils.repeatString(" ", maxLength + blankBorderSize * 2));
+		StringBuilder topBottomRow =
+			new StringBuilder(StringUtils.repeatString(" ", maxLength + blankBorderSize * 2));
 		
 		newRows.add(topBottomRow);
 		newRows.add(topBottomRow);
 		while(it.hasNext()){
-			StringBuffer row = it.next();
+			StringBuilder row = it.next();
 			
 			if(row.length() < maxLength) {
 				String borderString = StringUtils.repeatString(" ", blankBorderSize);
-				StringBuffer newRow = new StringBuffer();
+				StringBuilder newRow = new StringBuilder();
 				
 				newRow.append(borderString);
 				newRow.append(row);
@@ -1586,7 +1586,7 @@ public class TextGrid {
 				
 				newRows.add(newRow);
 			} else { //TODO: why is the following line like that?
-				newRows.add(new StringBuffer("  ").append(row).append("  "));
+				newRows.add(new StringBuilder("  ").append(row).append("  "));
 			}
 		}
 		//TODO: make the following depend on blankBorderSize
@@ -1603,11 +1603,11 @@ public class TextGrid {
 	private void fixTabs(int tabSize){
 
 		int rowIndex = 0;
-		Iterator<StringBuffer> it = rows.iterator();
+		Iterator<StringBuilder> it = rows.iterator();
 
 		while(it.hasNext()){
 			String row = it.next().toString();
-			StringBuffer newRow = new StringBuffer();
+			StringBuilder newRow = new StringBuilder();
 			
 			char[] chars = row.toCharArray();
 			for(int i = 0; i < chars.length; i++){
@@ -1631,7 +1631,7 @@ public class TextGrid {
 	/**
 	 * @return
 	 */
-	protected ArrayList<StringBuffer> getRows() {
+	protected ArrayList<StringBuilder> getRows() {
 		return rows;
 	}
 	

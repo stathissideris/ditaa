@@ -37,7 +37,7 @@ public class PerformanceTester {
 		String inputFilename = "tests/text/ditaa_bug.txt";
 		ConversionOptions options = new ConversionOptions();
 
-		int iterations = 10;
+		int iterations = 30;
 		
 		try {
 			long a = java.lang.System.currentTimeMillis();

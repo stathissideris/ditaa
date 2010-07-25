@@ -63,7 +63,7 @@ public class DiagramShape extends DiagramComponent {
 	private boolean isClosed = false;
 	private boolean isStrokeDashed = false;
 
-	protected ArrayList points = new ArrayList();
+	protected ArrayList<ShapePoint> points = new ArrayList<ShapePoint>();
 
 	CustomShapeDefinition definition = null;
 
@@ -952,4 +952,28 @@ public class DiagramShape extends DiagramComponent {
 		this.definition = definition;
 	}
 
+	/**
+	 * See http://mathworld.wolfram.com/PolygonArea.html
+	 * 
+	 * @return the overall area of the shape
+	 */
+	public double calculateArea() {
+		if(points.size() == 0) return 0;
+		
+		double area = 0;
+		
+		for(int i = 0; i < points.size() - 1; i++){
+			ShapePoint point1 = points.get(i);
+			ShapePoint point2 = points.get(i + 1);
+			area += point1.x * point2.y;
+			area -= point2.x * point1.y;
+		}
+		ShapePoint point1 = points.get(points.size() - 1);
+		ShapePoint point2 = points.get(0);
+		area += point1.x * point2.y;
+		area -= point2.x * point1.y;
+		
+		return Math.abs(area / 2);
+	}
+	
 }

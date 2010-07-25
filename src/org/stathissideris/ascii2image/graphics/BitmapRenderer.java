@@ -46,6 +46,7 @@ import javax.imageio.ImageIO;
 import org.stathissideris.ascii2image.core.ConversionOptions;
 import org.stathissideris.ascii2image.core.RenderingOptions;
 import org.stathissideris.ascii2image.core.Shape3DOrderingComparator;
+import org.stathissideris.ascii2image.core.ShapeAreaComparator;
 import org.stathissideris.ascii2image.text.TextGrid;
 
 /**
@@ -271,15 +272,8 @@ public class BitmapRenderer {
 			g2.draw(path);
 		}
 
-		//filter-out single point shapes (how do these occur?)
-		Iterator<DiagramShape> itShape = shapes.iterator();
-		while(itShape.hasNext()) {
-			if(itShape.next().getPoints().size() < 2) {
-				itShape.remove();
-			}
-		}
-		
-		Collections.sort(shapes, new Shape3DOrderingComparator());
+		//sort so that the largest shapes are rendered first
+		Collections.sort(shapes, new ShapeAreaComparator());
 		
 		//render the rest of the shapes
 		ArrayList<DiagramShape> pointMarkers = new ArrayList<DiagramShape>();

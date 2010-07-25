@@ -37,7 +37,7 @@ import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
  */
 public class TextGrid {
 
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	private ArrayList<StringBuilder> rows;
 

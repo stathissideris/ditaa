@@ -11,7 +11,6 @@
 	<classpathentry kind="lib" path="lib/batik-svggen.jar"/>
 	<classpathentry kind="lib" path="lib/batik-util.jar"/>
 	<classpathentry kind="lib" path="lib/batik-xml.jar"/>
-	<classpathentry kind="lib" path="lib/jericho-html-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/js.jar"/>
 	<classpathentry kind="lib" path="lib/xerces_2_5_0.jar"/>
 	<classpathentry kind="lib" path="lib/xml-apis.jar"/>
@@ -20,5 +19,6 @@
 	<classpathentry kind="lib" path="lib/batik-dom.jar"/>
 	<classpathentry kind="lib" path="lib/batik-awt-util.jar"/>
 	<classpathentry kind="lib" path="lib/commons-cli-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/jericho-html-3.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

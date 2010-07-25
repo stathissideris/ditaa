@@ -41,8 +41,8 @@ import org.stathissideris.ascii2image.text.TextGrid.CellTagPair;
  */
 public class Diagram {
 
-	private static final boolean DEBUG = false;
-	private static final boolean DEBUG_VERBOSE = false;
+	private static final boolean DEBUG = true;
+	private static final boolean DEBUG_VERBOSE = true;
 	private static final boolean DEBUG_MAKE_SHAPES = false;
 
 	private ArrayList<DiagramShape> shapes = new ArrayList<DiagramShape>();
@@ -358,6 +358,8 @@ public class Diagram {
 					}
 				}
 			} else { //normal shape
+				System.out.println(set.getCellsAsString());				
+				
 				DiagramComponent shape =
 					CompositeDiagramShape
 						.createOpenFromBoundaryCells(

@@ -24,32 +24,24 @@ import java.awt.image.RenderedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.HTML.Tag;
+
+import net.htmlparser.jericho.Attribute;
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.OutputDocument;
+import net.htmlparser.jericho.Source;
+import net.htmlparser.jericho.StartTag;
 
 import org.stathissideris.ascii2image.graphics.BitmapRenderer;
 import org.stathissideris.ascii2image.graphics.Diagram;
-import org.stathissideris.ascii2image.text.StringUtils;
 import org.stathissideris.ascii2image.text.TextGrid;
-
-import au.id.jericho.lib.html.Attribute;
-import au.id.jericho.lib.html.Element;
-import au.id.jericho.lib.html.OutputDocument;
-import au.id.jericho.lib.html.Source;
-import au.id.jericho.lib.html.StartTag;
-import au.id.jericho.lib.html.StringOutputSegment;
 
 /**
  * 
@@ -60,11 +52,27 @@ import au.id.jericho.lib.html.StringOutputSegment;
 public class HTMLConverter extends HTMLEditorKit {
 
 	private static final String TAG_CLASS = "textdiagram";
-
-	public static void main(String[] args){
-		new HTMLConverter().convertHTMLFile("index.html", "index2.html", "ditaa_diagram", "images", null);
+	private static final String testDir = "tests/html-converter/";
+	
+	
+	public static void main(String[] args){		
+		new HTMLConverter().convertHTMLFile(
+			testDir + "index.html", 
+			testDir + "index2.html", 
+			"ditaa_diagram", 
+			"images", 
+			null);
 	}
 
+	/**
+	 * 
+	 * @param filename
+	 * @param targetFilename
+	 * @param imageBaseFilename
+	 * @param imageDirName relative to the location of the target HTML document
+	 * @param options
+	 * @return
+	 */
 	public boolean convertHTMLFile(
 			String filename,
 			String targetFilename,
@@ -75,15 +83,7 @@ public class HTMLConverter extends HTMLEditorKit {
 		if(options == null){
 			options = new ConversionOptions();
 		}
-		
-		File imageDir = new File(imageDirName);
-		if(!imageDir.exists()){
-			if(!imageDir.mkdir()){
-				System.err.println("Could not create directory " + imageDirName);
-				return false;
-			}
-		}
-		
+				
 		BufferedReader in = null;
 		try {
 			in = new BufferedReader(new FileReader(filename));
@@ -109,15 +109,11 @@ public class HTMLConverter extends HTMLEditorKit {
 		System.out.print("Convering HTML file ("+filename+" -> "+targetFilename+")... ");
 		
 		Source source = new Source(htmlText);
-		OutputDocument outputDocument = new OutputDocument(htmlText);
+		OutputDocument outputDocument = new OutputDocument(source);
 		
 		int index = 1;
-		HashMap diagramList = new HashMap();
-		
-		List linkStartTags = source.findAllElements("pre");
-		Iterator it = linkStartTags.iterator();
-		while (it.hasNext()) {
-			Element element = (Element) it.next();
+		HashMap<String, String> diagramList = new HashMap<String, String>();
+		for(Element element : source.getAllElements("pre")) {
 			StartTag tag = element.getStartTag();
 			Attribute classAttr = tag.getAttributes().get("class");
 			if(classAttr != null
@@ -137,8 +133,8 @@ public class HTMLConverter extends HTMLEditorKit {
 					index++;
 				}
 
-				outputDocument.add(new StringOutputSegment(element, "<img src=\""+URL+"\" />"));
-				diagramList.put(URL, element.getContent().getSourceText());
+				outputDocument.replace(element, "<img src=\""+URL+"\" />");
+				diagramList.put(URL, element.getContent().toString());
 			}
 		}
 		
@@ -152,7 +148,7 @@ public class HTMLConverter extends HTMLEditorKit {
 		FileWriter out;
 		try {
 			out = new FileWriter(targetFilename);
-			outputDocument.output(out);
+			outputDocument.writeTo(out);
 			//out.flush();
 			//out.close();
 		} catch (IOException e2) {
@@ -166,17 +162,22 @@ public class HTMLConverter extends HTMLEditorKit {
 		
 		System.out.println("Generating diagrams... ");
 		
-		it = diagramList.keySet().iterator();
-		while (it.hasNext()) {
-			String URL = (String) it.next();
+		File imageDir = new File(new File(targetFilename).getParent() + File.separator + imageDirName);
+		if(!imageDir.exists()){
+			if(!imageDir.mkdir()){
+				System.err.println("Could not create directory " + imageDirName);
+				return false;
+			}
+		}
+		
+		for(String URL : diagramList.keySet()) {
 			String text = (String) diagramList.get(URL);
-			if(new File(URL).exists() && !options.processingOptions.overwriteFiles()){
-				System.out.println("Error: Cannot overwrite to file "+URL+", file already exists." +					" Use the --overwrite option if you would like to allow file overwrite.");
+			String imageFilename = new File(targetFilename).getParent() + File.separator + URL;
+			if(new File(imageFilename).exists() && !options.processingOptions.overwriteFiles()){
+				System.out.println("Error: Cannot overwrite file "+URL+", file already exists." +					" Use the --overwrite option if you would like to allow file overwrite.");
 				continue;
 			}
 	
-
-
 			TextGrid grid = new TextGrid();
 			grid.addToMarkupTags(options.processingOptions.getCustomShapes().keySet());
 
@@ -191,7 +192,7 @@ public class HTMLConverter extends HTMLEditorKit {
 			RenderedImage image = new BitmapRenderer().renderToImage(diagram, options.renderingOptions);
 
 			try {
-				File file = new File(URL);
+				File file = new File(imageFilename);
 				ImageIO.write(image, "png", file);
 			} catch (IOException e) {
 				//e.printStackTrace();
@@ -199,13 +200,19 @@ public class HTMLConverter extends HTMLEditorKit {
 				continue;
 			}
 			
-			System.out.println("\t"+URL);
+			System.out.println("\t"+imageFilename);
 		}
 		
 		System.out.println("\n...done");
 		
 		return true;
 	}
+	
+	/*
+	private static String relativizePath(String base, String path) {
+		return new File(base).toURI().relativize(new File(path).toURI()).getPath();
+	}
+	*/
 	
 	private String makeFilenameFromTagName(String tagName){
 		tagName = tagName.replace(' ', '_');

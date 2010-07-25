@@ -72,7 +72,7 @@ public class BitmapRenderer {
 		
 		TextGrid grid = new TextGrid();
 		
-		String filename = "bug16.txt";
+		String filename = "bug17.txt";
 		
 		grid.loadFrom("tests/text/"+filename);
 		

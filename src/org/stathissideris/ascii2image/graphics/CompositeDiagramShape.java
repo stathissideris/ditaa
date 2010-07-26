@@ -140,9 +140,9 @@ public class CompositeDiagramShape extends DiagramComponent {
 			if(nextCells.size() == 1) {
 				previousCell = cell;
 				cell = (TextGrid.Cell) nextCells.getFirst();
-			} else if(nextCells.size() > 1) {//3- or 4- way intersection
+				if(DEBUG) System.out.println("tracing at "+cell+" (call from line: "+DebugUtils.getLineNumber()+")");
+			} else if(nextCells.size() > 1 || nextCells.size() == 0) {//3- or 4- way intersection
 				finished = true;
-				if(DEBUG) System.out.println("finished shape");
 				for(TextGrid.Cell nextCell : nextCells)
 					result.addAll(growEdgesFromCell(workGrid, cellWidth, cellHeight, allRound, nextCell, cell, visitedCells));
 			}

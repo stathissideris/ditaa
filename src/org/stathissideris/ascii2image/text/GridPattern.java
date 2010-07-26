@@ -152,7 +152,7 @@ public class GridPattern extends TextGrid {
 			} else if(c == '|') {
 				result.append("[|:]");
 			} else if(c == '-') {
-				result.append("-");
+				result.append("[-=]");
 			} else if(c == '!') {
 				result.append("[^-=\\/\\\\+|:]");
 			} else if(c == 'b') {

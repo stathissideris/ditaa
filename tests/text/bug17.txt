@@ -33,9 +33,5 @@
                                |         |
                                +---------+
                                                                        
-
-                                                                                 
-
-                                                          
-                                                                                
+FIXED
 reported here: https://mail.google.com/mail/?shva=1#label/ditaa/12482376ad2530f4

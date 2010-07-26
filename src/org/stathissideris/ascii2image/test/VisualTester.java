@@ -79,8 +79,13 @@ public class VisualTester {
 		ConversionOptions options = new ConversionOptions();
 		File actualFile = new File(actualDir + File.separator + textFile.getName() + ".png");
 		File expectedFile = new File(expectedDir + File.separator + textFile.getName() + ".png");
-		
+				
 		System.out.println(index + ") Rendering "+textFile+" to "+actualFile);
+		
+		if(!expectedFile.exists()){
+			System.out.println("Skipping " + textFile + " -- reference image does not exist");
+			throw new FileNotFoundException("Reference image "+expectedFile+" does not exist");
+		}
 		
 		TextGrid grid = new TextGrid();
 		grid.loadFrom(textFile.toString());

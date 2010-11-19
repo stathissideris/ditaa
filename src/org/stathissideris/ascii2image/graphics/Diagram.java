@@ -358,7 +358,8 @@ public class Diagram {
 					}
 				}
 			} else { //normal shape
-				System.out.println(set.getCellsAsString());				
+                if (DEBUG)
+                    System.out.println(set.getCellsAsString());				
 				
 				DiagramComponent shape =
 					CompositeDiagramShape

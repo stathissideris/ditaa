@@ -22,6 +22,7 @@ package org.stathissideris.ascii2image.graphics;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -382,19 +383,18 @@ public class Diagram {
 
 		//assign color codes to shapes
 		//TODO: text on line should not change its color
-		//TODO: each color tag should be assigned to the smallest containing shape (like shape tags)
 		
 		Iterator<CellColorPair> cellColorPairs = grid.findColorCodes().iterator();
 		while(cellColorPairs.hasNext()){
 			TextGrid.CellColorPair pair =
 				(TextGrid.CellColorPair) cellColorPairs.next();
+			
 			ShapePoint point =
 				new ShapePoint(getCellMidX(pair.cell), getCellMidY(pair.cell));
-			Iterator<DiagramShape> shapes = getShapes().iterator();
-			while(shapes.hasNext()){
-				DiagramShape shape = (DiagramShape) shapes.next();
-				if(shape.contains(point)) shape.setFillColor(pair.color);  
-			}
+			DiagramShape containingShape = findSmallestShapeContaining(point);
+			
+			if(containingShape != null)
+				containingShape.setFillColor(pair.color);
 		}
 
 		//assign markup to shapes
@@ -402,24 +402,11 @@ public class Diagram {
 		while(cellTagPairs.hasNext()){
 			TextGrid.CellTagPair pair =
 				(TextGrid.CellTagPair) cellTagPairs.next();
+			
 			ShapePoint point =
 				new ShapePoint(getCellMidX(pair.cell), getCellMidY(pair.cell));
-
-			//find the smallest shape that contains the tag
-			DiagramShape containingShape = null;
-			Iterator<DiagramShape> shapes = getShapes().iterator();
-			while(shapes.hasNext()){
-				DiagramShape shape = shapes.next();
-				if(shape.contains(point)){
-					if(containingShape == null){
-						containingShape = shape;
-					} else {
-						if(shape.isSmallerThan(containingShape)){
-							containingShape = shape;
-						}
-					}
-				}
-			}
+			
+			DiagramShape containingShape = findSmallestShapeContaining(point);
 			
 			//this tag is not within a shape, skip
 			if(containingShape == null) continue;
@@ -597,26 +584,17 @@ public class Diagram {
 		
 		//correct the color of the text objects according
 		//to the underlying color
-		Iterator<DiagramShape> shapes = this.getAllDiagramShapes().iterator();
-		while(shapes.hasNext()){
-			DiagramShape shape = shapes.next();
-			Color fillColor = shape.getFillColor();
-			if(shape.isClosed()
-					&& shape.getType() != DiagramShape.TYPE_ARROWHEAD
-					&& fillColor != null
-					&& BitmapRenderer.isColorDark(fillColor)){
-				Iterator<DiagramText> textObjects = getTextObjects().iterator();
-				while(textObjects.hasNext()){
-					DiagramText textObject = textObjects.next();
-					if(shape.intersects(textObject.getBounds())){
-						textObject.setColor(Color.white);
-					}
-				}
+		for(DiagramText textObject : getTextObjects()) {
+			DiagramShape shape = findSmallestShapeIntersecting(textObject.getBounds());
+			if(shape != null 
+					&& shape.getFillColor() != null 
+					&& BitmapRenderer.isColorDark(shape.getFillColor())) {
+				textObject.setColor(Color.white);
 			}
 		}
 
 		//set outline to true for test within custom shapes
-		shapes = this.getAllDiagramShapes().iterator();
+		Iterator<DiagramShape> shapes = this.getAllDiagramShapes().iterator();
 		while(shapes.hasNext()){
 			DiagramShape shape = (DiagramShape) shapes.next();
 			if(shape.getType() == DiagramShape.TYPE_CUSTOM){
@@ -863,6 +841,42 @@ public class Diagram {
 
 		shapes.clear();
 		shapes.addAll(originalShapes);
+	}
+	
+	private DiagramShape findSmallestShapeContaining(ShapePoint point) {
+		DiagramShape containingShape = null;
+		Iterator<DiagramShape> shapes = getShapes().iterator();
+		while(shapes.hasNext()){
+			DiagramShape shape = shapes.next();
+			if(shape.contains(point)){
+				if(containingShape == null){
+					containingShape = shape;
+				} else {
+					if(shape.isSmallerThan(containingShape)){
+						containingShape = shape;
+					}
+				}
+			}
+		}
+		return containingShape;
+	}
+	
+	private DiagramShape findSmallestShapeIntersecting(Rectangle2D rect) {
+		DiagramShape intersectingShape = null;
+		Iterator<DiagramShape> shapes = getShapes().iterator();
+		while(shapes.hasNext()){
+			DiagramShape shape = shapes.next();
+			if(shape.intersects(rect)){
+				if(intersectingShape == null){
+					intersectingShape = shape;
+				} else {
+					if(shape.isSmallerThan(intersectingShape)){
+						intersectingShape = shape;
+					}
+				}
+			}
+		}
+		return intersectingShape;
 	}
 	
 	private void addToTextObjects(DiagramText shape){

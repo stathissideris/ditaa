@@ -1,0 +1,89 @@
+<project name="ditaa" basedir="." default="deploy">
+<property file="build.properties" />
+<property file="build.static.properties" />
+
+<path id="build.classpath">
+	<fileset dir="${lib.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset file="${tomcat.servlet.jar}" />
+</path>
+
+<path id="js.build.classpath">
+        <pathelement location="${src.dir}"/>
+	<path refid="build.classpath"/>
+</path>
+	
+<target name="compile">
+	<mkdir dir="${classes.dir}" />
+	<javac destdir="${classes.dir}" debug="on" source="1.5" deprecation="on"
+               optimize="off" classpathref="build.classpath">
+		<src path="${src.dir}" />
+		<include name="**/*.java" />
+	</javac>
+	<copy todir="${classes.dir}">
+		<fileset dir="${src.dir}">
+			<include name="**/*.properties"/>
+		</fileset>
+	</copy>
+</target>
+	
+<target name="ditaa" description="build ditaa JAR and copy it here">
+	<ant antfile="${ditaa.dir}/build/release.xml" target="release-jar" inheritAll="false" />
+	<copy todir="${lib.dir}" file="${ditaa.dir}/releases/ditaa0_9.jar" />
+</target>
+
+<target name="webapp" depends="clean.webapp,compile">
+	<mkdir dir="${build.war.dir}"/>
+	<copy todir="${build.war.dir}">
+		<fileset dir="${src.war.dir}" includes="**/*"/>
+	</copy>
+<echo file="${web-inf.dir}/automatic.properties" append="false"># This file is created automatically
+external_render_classpath = ${deploy.webapp.dir}/WEB-INF/lib
+</echo>
+</target>
+
+<target name="clean.webapp">
+	<delete dir="${build.war.dir}" />
+</target>
+	
+<target name="lib" depends="compile">
+	<mkdir dir="${build.lib.dir}" />
+	<jar jarfile="${build.lib.dir}/${lib.name}">
+		<fileset dir="${classes.dir}" includes="**/*">
+			<include name="**/*"/>
+		</fileset>
+	</jar>
+	<copy todir="${build.lib.dir}">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+	</copy>
+</target>
+
+<target name="war" depends="lib, webapp">
+<!-- <target name="war" depends="lib"> -->
+	<mkdir dir="${web-inf.dir}" />
+
+	<war warfile="${war.file}" webxml="${web.xml}">
+		<fileset dir="${build.war.dir}" />
+		<lib dir="${build.lib.dir}" />
+	</war>
+</target>
+
+<target name="clean">
+	<delete dir="${build.dir}"/>
+</target>
+
+<target name="clean.all" depends="clean, cleanTomcatWebappExtracted">
+	<delete dir="${build.dir}"/>
+</target>
+
+<target name="deploy" depends="war">
+	<copy file="${war.file}" todir="${deploy.dir}"/>
+</target>
+
+<target name="cleanTomcatWebappExtracted">
+	<delete dir="${deploy.webapp.dir}"/>
+</target>
+</project>

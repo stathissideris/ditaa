@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="web" name="Web">
+      <configuration>
+        <descriptors>
+          <deploymentDescriptor name="web.xml" url="file://$USER_HOME$/source/lsst/local/ditaa/web/war/WEB-INF/web.xml" />
+        </descriptors>
+        <webroots>
+          <root url="file://$USER_HOME$/source/lsst/local/ditaa/web/war" relative="/" />
+        </webroots>
+        <context-artifact name="Ditaa Web:war exploded" />
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$USER_HOME$/source/lsst/local/ditaa/web">
+      <sourceFolder url="file://$USER_HOME$/source/lsst/local/ditaa/web/src" isTestSource="false" />
+      <excludeFolder url="file://$USER_HOME$/source/lsst/local/ditaa/web/build" />
+      <excludeFolder url="file://$USER_HOME$/source/lsst/local/ditaa/web/ide" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="Ditaa Library" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/source/lsst/local/ditaa/web/lib/commons-io-1.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar:///usr/local/tomcat/default/lib/servlet-api.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+  </component>
+</module>
+

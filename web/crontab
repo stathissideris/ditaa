@@ -1,0 +1,1 @@
+* * * * * root test -f /var/run/tomcat5/restart && service tomcat stop && sleep 8 && service tomcat start && rm -f /var/run/tomcat5/restart

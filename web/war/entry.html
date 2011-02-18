@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>ditaa - DIagrams Through Ascii Art</title>
+<link rel="stylesheet" href="org.ditaa.web.Ditaa/ditaa.css">
+<link rel="stylesheet" href="org.ditaa.web.Ditaa/gwt.css">
+<script language="javascript">
+    function autosub() { document.getElementById("goForm").submit(); }
+</script>
+</head>
+<body onload="autosub()" style="background:#eee">
+
+<h2>Create a diagram from ASCII using 
+<a target="_parent" href="http://ditaa.sourceforge.net/">ditaa</a></h2>
+
+<blockquote style="margin-left: 1em">
+<a target="_parent" href="http://ditaa.sourceforge.net/">ditaa library</a> by
+<a target="_parent" href="http://www.stathis.co.uk/">Stathis Sideris</a>, web service by
+<a target="_parent" href="http://billbaker.net/">Bill Baker</a>.
+</blockquote>
+
+<hr>
+
+<form style="margin:0" action="render" target="chart" id="goForm">
+
+<p>
+<b>ditaa</b> transforms <b>ASCII art</b> into graphical diagrams.<br>
+To see it in action, make changes to the text below and click
+<input style="white-space:nowrap" type="submit" value="update the chart">.
+</p>
+
+<p>
+<label><textarea name="grid" cols="60" rows="30" style="background:#fff">
+     +--------+   +-------+    +-------+
+     | c897   +---+ ditaa +--->*       |
+     |  Text  |   +-------+    |diagram|
+     |Document|   |!magic!|    |       |
+     |     {d}|   |  c978 |    | c789  |
+     +---+----+   +-------+    +-------+
+         :                         ^
+         |       Lots of work      |
+         +-------------------------/
+
+          ^
+          |                     +-----------------+
+ /--------+   /----*<-+----\    | Things to do    |
+ |   cRED |   |cBLU|  |cEEE|    | cFB9            |
+ |   +----+   +----+--+----/    | * Cut the grass |
+ |   |cYEL|        |  |         | * Buy jam       |
+ \---+----+        \--+-->      | * Make website  |
+                      |         +-----------------+
+/--\/--\/--\          v        
+|  ||  ||  |                         ^  /-\
+|  ++  ++  |  +-----+  /-------\     |  | |
+\\  cDB6  //  | cFAA|  | c39F  |     |  | |
+ | /----\ |   | {io}|  |  Foo  |  <--+--/ \-->
+ | |c733| |   +-----+  | {s}   |     |
+ +-+----+-+            \-------/     v
+
+  /-\                               +---------+
+  | |                               |save c9FB|
+/-+-+-\ /--=-\          /-\         |planet   |
+|     | |    |      /-\ | | /-\     +------+--+
+\-+-+-+-+-\  |      | | | | | |            ^
+  | | cFFF|  v   <--/ | | | | | /-->       |
+/-+-+-+-+-/  ^        | | | | | |      +---+-+
+|cEEE | |    |        \-/ | | \-/      |catch|
+\-+-+-+-+-\  |            \-/          |bus  |
+  | |cDDD |  |                         +-+---+
+/-+-+-+-+-/  |  /-------\   +---------+  ^
+| cCCC| |    |  |wake up+-->+eat cFF8 |  |
+\-+-+-+ +-->-/  \-------/   |breakfast+--+
+  | | | |                   +---------+
+  \-/ \-/
+
+/--\ +--\  /--- +--\ +--- +--- /--- |  | -+-  -+- | |  |
+|  | |  |  |    |  | |    |    |    |  |  |    |  | |  |
++--+ +--+\ |    |  | +--  +--  |--+ +--+  |    |  +-+\ |
+|  | |   | |    |  | |    |    |  | |  |  |  | |  |  | |
+|  | +---/ \--- +--/ +--- |    \--/ |  | -+- \-/  |  | +---
+
++\/+ +\| /\ +\ /\ +\ /- -+- || |  | |/\| \ / | | -+
+|\/| ||| || +/ || ++ \\  |  || \\// ||||  X  \+/ //
+|  | |\+ \/ |  \+ || -/  |  \/  \/  +/\+ / \  |  +-
+</textarea></label>
+<br>
+
+<label title="Turn off antialiasing"><input type="checkbox" name="A">No Antialiasing</label>
+<label title="Turn off shadows"><input type="checkbox" name="S">No Shadows</label>
+<label title="Make all corners rounded, instead of square"><input type="checkbox" name="r">Round all corners</label>
+<label title="Don't leave any space between neighboring elements"><input type="checkbox" name="E" checked>Don't separate</label><br>
+&nbsp;<label title="Magnification factor">Scale <input type="text" name="scale" value="1"></label>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input title="Update the chart with your changes" value="Update the chart" type="submit">
+</p>
+
+</form>
+
+<hr>
+<p>For more details, see <a target="_parent" href="http://ditaa.sourceforge.net/">the main ditaa webpage</a>.</p>
+
+<form style="margin:0" action="restart" target="chart" id="restartForm">
+<p>Apologies if the site is down.  If instead of a chart you see an exception report
+<i>(500 blah blah blah <b>Out of Memory</b> whine whine)</i>,
+<input type="submit" value="reset the service">.</p>
+</form>
+
+</body>
+</html>

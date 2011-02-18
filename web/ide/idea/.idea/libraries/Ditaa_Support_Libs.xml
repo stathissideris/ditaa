@@ -1,0 +1,32 @@
+<component name="libraryTable">
+  <library name="Ditaa Support Libs">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/batik-extension.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/batik-ext.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/batik-gvt.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/batik-gui-util.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/batik-bridge.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/batik-awt-util.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/batik-dom.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/batik-css.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/batik-transcoder.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/batik-swing.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/batik-xml.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/batik-util.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/batik-script.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/batik-parser.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/jericho-html-3.1.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/batik-svggen.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/batik-svg-dom.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/commons-cli-1.2.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/xml-apis.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/junit-4.1.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/pdf-transcoder.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/xerces_2_5_0.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/commons-cli-1.0.jar!/" />
+      <root url="jar://$USER_HOME$/source/ditaa/trunk/lib/js.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$USER_HOME$/source/ditaa/trunk/ide/idea/Ditaa Library.iml" filepath="$USER_HOME$/source/ditaa/trunk/ide/idea/Ditaa Library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Ditaa Web.iml" filepath="$PROJECT_DIR$/Ditaa Web.iml" />
+    </modules>
+  </component>
+</project>
+

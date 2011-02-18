@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="Ditaa Web:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/Ditaa_Web_war_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="Ditaa Web/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="Ditaa Web" />
+        </element>
+      </element>
+      <element id="gwt-compiler-output" facet="Ditaa Web/gwt/GWT" />
+    </root>
+  </artifact>
+</component>

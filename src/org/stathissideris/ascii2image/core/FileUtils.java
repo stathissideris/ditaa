@@ -25,6 +25,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 
 /**
  * 
@@ -82,37 +84,58 @@ public class FileUtils {
 	}
 	
 	public static String readFile(File file, String encoding) throws IOException {
-		InputStream is = new FileInputStream(file);
         long length = file.length();
         
         if (length > Integer.MAX_VALUE) {
             // File is too large
         	// TODO: we need some feedback for the case of the file being too large
         }
+
+		return readFile(new FileInputStream(file), file.getName(), encoding, length);
+	}
+
+	public static String readFile(InputStream is, String name, String encoding) throws IOException {
+		return readFile(is, name, encoding, -1);
+	}
+
+	public static String readFile(InputStream is, String name, String encoding, long length) throws IOException {
+
+		if (length < 0) {
+			LineNumberReader reader = new LineNumberReader(new InputStreamReader(is));
+			StringBuilder builder = new StringBuilder();
+			while (true) {
+				String line = reader.readLine();
+				if (line == null) break;
+				else builder.append(line).append("\n");
+			}
+			return builder.toString();
+		}
+
+		else {
+			// Create the byte array to hold the data
+			byte[] bytes = new byte[(int)length];
     
-        // Create the byte array to hold the data
-        byte[] bytes = new byte[(int)length];
+			// Read in the bytes
+			int offset = 0;
+			int numRead = 0;
+			while (offset < bytes.length
+				   && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+				offset += numRead;
+			}
     
-        // Read in the bytes
-        int offset = 0;
-        int numRead = 0;
-        while (offset < bytes.length
-               && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
-            offset += numRead;
-        }
+			// Ensure all the bytes have been read in
+			if (offset < bytes.length) {
+				throw new IOException("Could not completely read file "+name);
+			}
     
-        // Ensure all the bytes have been read in
-        if (offset < bytes.length) {
-            throw new IOException("Could not completely read file "+file.getName());
-        }
-    
-        // Close the input stream and return bytes
-        is.close();
-        if(encoding == null){
+			// Close the input stream and return bytes
+			is.close();
+			if(encoding == null){
         		return new String(bytes);
-        } else {
+			} else {
         		return new String(bytes, encoding);
-        }
+			}
+		}
 	}
 		
 	public static void main(String[] args){

@@ -23,7 +23,9 @@ package org.stathissideris.ascii2image.core;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 import javax.imageio.ImageIO;
@@ -52,8 +54,6 @@ public class CommandLineConverter {
 	public static void main(String[] args){
 		
 		long startTime = System.currentTimeMillis();
-		
-		System.out.println("\n"+notice+"\n");
 		
 		Options cmdLnOptions = new Options();
 		cmdLnOptions.addOption(
@@ -160,22 +160,9 @@ public class CommandLineConverter {
 			System.exit(2);
 		} 
 		
-		/////// print options before running
-		System.out.println("Running with options:");
-		Option[] opts = cmdLine.getOptions();
-		for (Option option : opts) {
-			if(option.hasArgs()){
-				for(String value:option.getValues()){
-					System.out.println(option.getLongOpt()+" = "+value);
-				}
-			} else if(option.hasArg()){
-				System.out.println(option.getLongOpt()+" = "+option.getValue());
-			} else {
-				System.out.println(option.getLongOpt());
-			}
-		}
-		
 		if(cmdLine.hasOption("html")){
+			/////// print options before running
+			printRunInfo(cmdLine);
 			String filename = args[0];
 			
 			boolean overwrite = false;
@@ -202,49 +189,68 @@ public class CommandLineConverter {
 			if(options.processingOptions.getCustomShapes() != null){
 				grid.addToMarkupTags(options.processingOptions.getCustomShapes().keySet());
 			}
-			String filename = args[0];
-			System.out.println("Reading file: "+filename);
+
+			// "-" means stdin / stdout
+			String fromFilename = args[0];
+			boolean stdIn = "-".equals(fromFilename);
+
+			String toFilename;
+			boolean stdOut;
+
+			boolean overwrite = false;
+			if(options.processingOptions.overwriteFiles()) overwrite = true;
+			
+			if(args.length == 1){
+				if (stdIn) { // if using stdin and no output specified, use stdout
+					stdOut = true;
+					toFilename = "-";
+				} else {
+					toFilename = FileUtils.makeTargetPathname(fromFilename, "png", overwrite);
+					stdOut = false;
+				}
+			} else {
+				toFilename = args[1];
+				stdOut = "-".equals(toFilename);
+			}
+
+			if (!stdOut) {
+				/////// print options before running
+				printRunInfo(cmdLine);
+				System.out.println("Reading "+ (stdIn ? "standard input" : "file: " + fromFilename));
+			}
+
 			try {
-				if(!grid.loadFrom(filename, options.processingOptions)){
-					System.err.println("Cannot open file "+filename+" for reading");
+				if(!grid.loadFrom(fromFilename, options.processingOptions)){
+					System.err.println("Cannot open file "+fromFilename+" for reading");
 				}
 			} catch (UnsupportedEncodingException e1){
 				System.err.println("Error: "+e1.getMessage());
 				System.exit(1);
 			} catch (FileNotFoundException e1) {
-				System.err.println("Error: File "+filename+" does not exist");
+				System.err.println("Error: File "+fromFilename+" does not exist");
 				System.exit(1);
 			} catch (IOException e1) {
-				System.err.println("Error: Cannot open file "+filename+" for reading");
+				System.err.println("Error: Cannot open file "+fromFilename+" for reading");
 				System.exit(1);
 			}
 			
 			if(options.processingOptions.printDebugOutput()){
-				System.out.println("Using grid:");
+				if (!stdOut) System.out.println("Using grid:");
 				grid.printDebug();
 			}
 			
-			boolean overwrite = false;
-			if(options.processingOptions.overwriteFiles()) overwrite = true;
-			String toFilename;
-			if(args.length == 1){
-				toFilename = FileUtils.makeTargetPathname(filename, "png", overwrite);
-			} else {
-				toFilename = args[1];
-			}
-			
 			Diagram diagram = new Diagram(grid, options);
-			System.out.println("Rendering to file: "+toFilename);
+			if (!stdOut) System.out.println("Rendering to file: "+toFilename);
 			
 			
 			RenderedImage image = new BitmapRenderer().renderToImage(diagram, options.renderingOptions);
 			
 			try {
-				File file = new File(toFilename);
-				ImageIO.write(image, "png", file);
+				OutputStream os = stdOut ? System.out : new FileOutputStream(toFilename);
+				ImageIO.write(image, "png", os);
 			} catch (IOException e) {
 				//e.printStackTrace();
-				System.err.println("Error: Cannot write to file "+filename);
+				System.err.println("Error: Cannot write to file "+toFilename);
 				System.exit(1);
 			}
 			
@@ -252,7 +258,7 @@ public class CommandLineConverter {
 			
 			long endTime = System.currentTimeMillis();
 			long totalTime  = (endTime - startTime) / 1000;
-			System.out.println("Done in "+totalTime+"sec");
+			if (!stdOut) System.out.println("Done in "+totalTime+"sec");
 			
 //			try {
 //			Thread.sleep(Long.MAX_VALUE);
@@ -262,4 +268,22 @@ public class CommandLineConverter {
 			
 		}
 	}	
+
+	private static void printRunInfo(CommandLine cmdLine) {
+		System.out.println("\n"+notice+"\n");
+		
+		System.out.println("Running with options:");
+		Option[] opts = cmdLine.getOptions();
+		for (Option option : opts) {
+			if(option.hasArgs()){
+				for(String value:option.getValues()){
+					System.out.println(option.getLongOpt()+" = "+value);
+				}
+			} else if(option.hasArg()){
+				System.out.println(option.getLongOpt()+" = "+option.getValue());
+			} else {
+				System.out.println(option.getLongOpt());
+			}
+		}
+	}
 }

@@ -51,7 +51,7 @@ public class FontMeasurer {
 		BufferedImage image = new BufferedImage(1,1, BufferedImage.TYPE_INT_RGB);
 		fakeGraphics = image.createGraphics();
 		
-		System.out.println("Locale: "+Locale.getDefault());
+		if(DEBUG) System.out.println("Locale: "+Locale.getDefault());
 		
 		fakeRenderContext = fakeGraphics.getFontRenderContext();
 	}		 
@@ -143,7 +143,7 @@ public class FontMeasurer {
 		float size = 12;
 		Font currentFont = new Font(fontFamilyName, Font.BOLD, (int) size);
 //		Font currentFont = new Font("Times", Font.BOLD, (int) size);
-		System.out.println(currentFont.getFontName());
+		if(DEBUG) System.out.println(currentFont.getFontName());
 		//ascent is the distance between the baseline and the tallest character
 		int ascent = getAscent(currentFont);
 
@@ -187,7 +187,7 @@ public class FontMeasurer {
 		//FontMeasurer.instance().getFontFor(7);
 		float size = 12;
 		Font currentFont = new Font("Sans", Font.BOLD, (int) size);
-		System.out.println(currentFont.getSize());
+		if(DEBUG) System.out.println(currentFont.getSize());
 		currentFont = currentFont.deriveFont(--size);
 		System.out.println(currentFont.getSize());
 		currentFont = currentFont.deriveFont(--size);

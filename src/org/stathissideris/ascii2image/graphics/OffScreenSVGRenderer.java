@@ -41,6 +41,8 @@ import org.w3c.dom.svg.SVGElement;
 
 public class OffScreenSVGRenderer {
 		
+	private static final boolean DEBUG = false;
+	
 	public BufferedImage renderXMLToImage(String xmlContent, int width, int height) throws IOException {
 		return renderXMLToImage(xmlContent, width, height, false, null, null);
 	}
@@ -77,17 +79,17 @@ public class OffScreenSVGRenderer {
 	public void replaceFill(SVGDocument document, String idRegex, Color color){
 		String colorCode = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()); 
 		
-		System.out.println("color code: "+colorCode);
+		if(DEBUG) System.out.println("color code: "+colorCode);
 		
 		NodeList children = document.getElementsByTagName("*");
 		for(int i = 0; i < children.getLength(); i++){
 			if(children.item(i) instanceof SVGElement){
 				SVGElement element = (SVGElement) children.item(i);
 				if(element.getId().matches(idRegex)){
-					System.out.println("child>>> "+element+", "+element.getId());
+					if(DEBUG) System.out.println("child>>> "+element+", "+element.getId());
 					String style = element.getAttributeNS(null, "style");
 					style = style.replaceFirst("fill:#[a-zA-z0-9]+", "fill:"+colorCode);
-					System.out.println(style);
+					if(DEBUG) System.out.println(style);
 					element.setAttributeNS(null, "style", style);
 				}
 			}

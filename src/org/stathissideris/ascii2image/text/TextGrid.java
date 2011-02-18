@@ -1507,7 +1507,12 @@ public class TextGrid {
 				
 		String encoding = (options == null) ? null : options.getCharacterEncoding();
 		ArrayList<StringBuilder> lines = new ArrayList<StringBuilder>();
-		String[] linesArray = FileUtils.readFile(new File(filename), encoding).split("(\r)?\n");
+		InputStream is;
+		if ("-".equals(filename))
+		    is = System.in;
+		else
+		    is = new FileInputStream(filename);
+		String[] linesArray = FileUtils.readFile(is, filename, encoding).split("(\r)?\n");
 		for(int i = 0; i  < linesArray.length; i++)
 			lines.add(new StringBuilder(linesArray[i]));
 		

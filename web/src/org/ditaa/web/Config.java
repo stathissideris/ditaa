@@ -13,6 +13,7 @@ public class Config {
     public static final String KEY_RESTART_TIME = "restart_time";
     public static final String KEY_RENDER_EXTERNAL_PROCESS = "render_external";
     public static final String KEY_EXTERNAL_RENDER_CP = "external_render_classpath";
+    public static final String KEY_JAVA_EXECUTABLE = "java_executable";
 
     /** Load all values from .properties files in WEB-INF into a single hash map. */
     public static HashMap<String,String> getAllProperties(ServletContext context) throws IOException {
@@ -49,6 +50,14 @@ public class Config {
     /** The file whose existence is polled by cron to trigger a reset. */
     public static String getRestartFilename(ServletContext context) throws IOException {
         return getAllProperties(context).get(KEY_RESTART_FILE);
+    }
+
+    /** The file whose existence is polled by cron to trigger a reset. */
+    public static String getJavaExecutable(ServletContext context) throws IOException {
+        String result = getAllProperties(context).get(KEY_JAVA_EXECUTABLE);
+	if (result == null)
+	    result = "java";
+	return result;
     }
 
     /** The classpath for rendering externally. */

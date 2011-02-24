@@ -93,12 +93,14 @@ public class ExternalRenderer {
 
         File workingDir = new File("/tmp");
         String classPath = Config.getExternalRenderClasspath(context);
+        String javaExecutable = Config.getJavaExecutable(context);
         String className = org.stathissideris.ascii2image.core.CommandLineConverter.class
                 .getCanonicalName();
         if (classPath == null) throw new IOException
                 ("Missing configuration: " + Config.KEY_EXTERNAL_RENDER_CP
                         + " (should be written during build to automatic.properties).");
-        List<String> command = new ArrayList<String>(Arrays.asList("java", "-cp", classPath, className));
+        List<String> command = new ArrayList<String>
+	    (Arrays.asList(javaExecutable, "-cp", classPath, className));
         command.addAll(getCommandLineOptions());
         command.add("-"); // tell the renderer to use standard input & output
         debug("Command = " + command);

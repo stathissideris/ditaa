@@ -1533,7 +1533,7 @@ public class TextGrid {
 		//remove blank rows at the bottom
 		boolean done = false;
 		int i;
-		for(i = lines.size() - 1; !done; i--){
+		for(i = lines.size() - 1; i >= 0 && !done; i--){
 			StringBuilder row = lines.get(i);
 			if(!StringUtils.isBlank(row.toString())) done = true;
 		}

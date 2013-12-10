@@ -154,8 +154,14 @@ public class BitmapRenderer {
 				float offset = diagram.getMinimumOfCellDimension() / 3.333f;
 			
 				if(path != null
-						&& shape.dropsShadow()
-						&& shape.getType() != DiagramShape.TYPE_CUSTOM){
+						&& shape.dropsShadow()){
+					
+					// X -> && shape.getType() != DiagramShape.TYPE_CUSTOM
+					// Custom types will in general return null for the 
+					// GeneralPath. This condition was therefore superfluous
+					// and in the way to allow the CustomShapeDefinition object
+					// to provide a path
+					
 					GeneralPath shadow = new GeneralPath(path);
 					AffineTransform translate = new AffineTransform();
 					translate.setToTranslation(offset, offset);
@@ -286,7 +292,11 @@ public class BitmapRenderer {
 			if(shape.getType() == DiagramShape.TYPE_STORAGE) {
 				continue;
 			} 
-			if(shape.getType() == DiagramShape.TYPE_CUSTOM){
+			if(shape.getType() == DiagramShape.TYPE_CUSTOM && shape.getDefinition().getPath(shape)==null){
+				
+				// Only render custom shapes when they do not provide 
+				// a path. I.e. getDefinition().getPath() == null
+				
 				renderCustomShape(shape, g2);
 				continue;
 			}
@@ -428,6 +438,16 @@ public class BitmapRenderer {
 			
 //			g2.drawRect(bounds.x, bounds.y, bounds.width, bounds.height); //looks different!			
 		}
+		
+		//
+		// Check if the CustomShapeDefinition can render for us.
+		//
+		if ( definition.render(g2, shape))
+			return;
+
+		//
+		// Try to the svg and png files registered with the ConfigurationParser
+		//
 		
 		//TODO: custom shape distintion relies on filename extension. Make this more intelligent
 		if(definition.getFilename().endsWith(".png")){

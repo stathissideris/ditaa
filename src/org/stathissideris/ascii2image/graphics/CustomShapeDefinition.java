@@ -19,6 +19,9 @@
  */
 package org.stathissideris.ascii2image.graphics;
 
+import java.awt.*;
+import java.awt.geom.*;
+
 public class CustomShapeDefinition {
 	private String tag;
 	private boolean stretch = false;
@@ -65,6 +68,42 @@ public class CustomShapeDefinition {
 		this.comment = comment;
 	}
 	
+	/**
+	 * This method can be overridden to provide a custom path back. The
+	 * {@link ProcessingOptions} store {@link CustomShapeDefinition} objects by
+	 * name. In general, these custom shape definitions are read with the
+	 * {@link ConfigurationParser} and consist of pure data. However, this makes
+	 * it hard to extend DITAA with custom shapes from the caller. This method
+	 * is called for Custom Shapes to see if it has a GeneralPath. If this
+	 * returns null, the normal behavior is followed. If not, the path is used
+	 * to provide shadow, stroke, and fill just like the built-in shapes.
+	 * 
+	 * @param shape
+	 *            The shape for which to create a {@link GeneralPath}
+	 */
+	public GeneralPath getPath(DiagramShape shape) {
+		return null;
+	}
+
+	/**
+	 * This method can be overridden to customize the rendering. The
+	 * {@link ProcessingOptions} store {@link CustomShapeDefinition} objects by
+	 * name. In general, these custom shape definitions are read with the
+	 * {@link ConfigurationParser} and consist of pure data. However, this makes
+	 * it hard to extend DITAA with custom shapes from the caller. This method
+	 * is called for Custom Shapes. If it returns {@code false} then the default
+	 * behavior for custom shapes is followed, otherwise the caller must assume
+	 * that the shape has been rendered.
+	 * 
+	 * @param shape
+	 *            The shape for which to create a {@link GeneralPath}
+	 * @param g2
+	 *            The Graphics pen
+	 */
+	public boolean render(Graphics2D g2, DiagramShape shape) {
+		return false;
+	}
+
 	public String toString(){
 		return
 			"Custom shape: \""+getTag()+"\":\n"

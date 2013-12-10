@@ -396,6 +396,17 @@ public class DiagramShape extends DiagramComponent {
 	}
 	
 	public GeneralPath makeIntoRenderPath(Diagram diagram, RenderingOptions options) {
+		
+		//
+		// Allow the CustomShapeDefinition to override
+		// the path for this shape. 
+		//
+		if ( definition != null) {
+			GeneralPath customPath = definition.getPath(this);
+			if ( customPath != null)
+				return customPath;
+		}
+		
 		int size = getPoints().size();
 		
 		if(getType() == TYPE_POINT_MARKER){

@@ -54,7 +54,7 @@ import org.stathissideris.ascii2image.text.TextGrid;
  */
 public class BitmapRenderer {
 
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	private static final boolean DEBUG_LINES = false;
 
 	private static final String IDREGEX = "^.+_vfill$";

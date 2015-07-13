@@ -35,7 +35,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class ConfigurationParser {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private static final String INLCUDE_TAG_NAME = "include";
     private static final String SHAPE_TAG_NAME = "shape";

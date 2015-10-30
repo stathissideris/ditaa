@@ -1,0 +1,7 @@
+Building:
+
+  * Install a java webserver (Tomcat etc.)
+  * Update build.properties to match your server configuration
+  * Runtime settings in war/WEB-INF/ditaa.properties
+    (mostly messy ways to deal with bugs)
+  * ant (default target is "deploy", see also "compile" and "clean")

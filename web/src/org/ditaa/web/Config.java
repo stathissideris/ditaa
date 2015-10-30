@@ -55,9 +55,9 @@ public class Config {
     /** The file whose existence is polled by cron to trigger a reset. */
     public static String getJavaExecutable(ServletContext context) throws IOException {
         String result = getAllProperties(context).get(KEY_JAVA_EXECUTABLE);
-	if (result == null)
-	    result = "java";
-	return result;
+        if (result == null)
+            result = "java";
+        return result;
     }
 
     /** The classpath for rendering externally. */
@@ -85,7 +85,16 @@ public class Config {
 
     public static File getWebInfDir(ServletContext context) throws IOException {
         String path = context.getRealPath("WEB-INF");
-        File result = new File(path);
+        File result;
+
+        // sometimes the WEB-INF dir "can't be found" even though it exists.
+        if (path == null || path.length() == 0) {
+            File rootDir = new File(context.getRealPath(""));
+            result = new File(rootDir, "WEB-INF");
+        }
+        else
+            result = new File(path);
+
         if (!result.exists()) throw new IOException(path + " doesn't exist.");
         return result;
     }

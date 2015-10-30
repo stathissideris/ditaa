@@ -57,7 +57,7 @@ public class RestartServlet extends HttpServlet {
             File file = new File(Config.getRestartFilename(context));
             try {
                 FileUtils.touch(file);
-                return new RestartResult(true, "The service will reset within " + Config.getRestartTimePeriod(context) + ".");
+                return new RestartResult(true, "The service will reset " + Config.getRestartTimePeriod(context) + ".");
             } catch(IOException e) {
                 e.printStackTrace();
                 return new RestartResult(false, "Unable to reset the service: " + e.getMessage());

@@ -6,7 +6,7 @@
 	<fileset dir="${lib.dir}">
 		<include name="**/*.jar" />
 	</fileset>
-	<fileset file="${tomcat.servlet.jar}" />
+	<fileset file="${servlet-api.jar}" />
 </path>
 
 <path id="js.build.classpath">
@@ -16,8 +16,9 @@
 	
 <target name="compile">
 	<mkdir dir="${classes.dir}" />
-	<javac destdir="${classes.dir}" debug="on" source="1.5" deprecation="on"
-               optimize="off" classpathref="build.classpath">
+	<javac destdir="${classes.dir}" debug="on" source="1.6" deprecation="on"
+               optimize="off" classpathref="build.classpath"
+	       includeantruntime="false" target="1.6">
 		<src path="${src.dir}" />
 		<include name="**/*.java" />
 	</javac>
@@ -75,7 +76,7 @@ external_render_classpath = ${deploy.webapp.dir}/WEB-INF/lib
 	<delete dir="${build.dir}"/>
 </target>
 
-<target name="clean.all" depends="clean, cleanTomcatWebappExtracted">
+<target name="clean.all" depends="clean, clean.webapp.unpacked">
 	<delete dir="${build.dir}"/>
 </target>
 
@@ -83,7 +84,7 @@ external_render_classpath = ${deploy.webapp.dir}/WEB-INF/lib
 	<copy file="${war.file}" todir="${deploy.dir}"/>
 </target>
 
-<target name="cleanTomcatWebappExtracted">
-	<delete dir="${deploy.webapp.dir}"/>
+<target name="clean.webapp.unpacked">
+	<delete dir="${deploy.webapp.unpacked.dir}"/>
 </target>
 </project>

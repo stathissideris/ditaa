@@ -5,7 +5,7 @@
 	</description>
     
 	<property name="rootDir" value=".."/>
-	<property name="version.string" value="0_9"/>
+	<property name="version.string" value="0_10"/>
 	
 	<target name="release-all" depends="release-zip,release-src" />
 	

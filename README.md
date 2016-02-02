@@ -66,7 +66,7 @@ There are several reasons why I did this:
 
 ## Getting it
 
-For Ubuntu, there is an [package](http://packages.ubuntu.com/precise/ditaa).
+For Ubuntu, there is a [package](http://packages.ubuntu.com/precise/ditaa).
 
 For MacOSX, you can install via [brew](http://brewformulas.org/Ditaa).
 

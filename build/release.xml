@@ -13,7 +13,8 @@
     <property name="compile.classes.dir" value="${basedir}/jar-temp"/>
     <property name="releases.dir" value="${root.dir}/releases"/>
     <property name="test.dir" value="${root.dir}/tests"/>
-    <property name="test.output.dir" value="${test.dir}/images"/>
+    <property name="test.images.dir" value="${test.dir}/images"/>
+    <property name="reference.images.dir" value="${test.dir}/images-expected"/>
     <property name="test.classes.dir" value="${basedir}/testclasses"/>
 
     <property name="release.jar" value="${releases.dir}/${versioned.name}.jar"/>
@@ -56,8 +57,11 @@
         <delete dir="${compile.classes.dir}" />
     </target>
     
+    <target name="clean-test-images">
+        <delete dir="${test.images.dir}"/>
+    </target>
+
     <target name="clean-tests">
-        <delete dir="${test.output.dir}"/>
         <delete dir="${test.classes.dir}"/>
     </target>
     
@@ -77,16 +81,27 @@
           </javac>
     </target>
 
+    <target name="generate-test-images" depends="compile-tests">
+        <mkdir dir="${reference.images.dir}"/>
+        <java classname="org.stathissideris.ascii2image.test.GenerateExpectedImages"
+	      fork="true" dir="${root.dir}" classpathref="test.classpath" /> 
+    </target>
+
     <target name="test" description="Run unit tests" depends="compile-tests">
-        <mkdir dir="${test.output.dir}"/>
+        <echo>
+To generate test images ahead of time, ant generate-test-images. They
+are platform-dependent because of fonts etc. Be sure to inspect them
+for sanity.
+	</echo>
+        <mkdir dir="${test.images.dir}"/>
         <junit fork="true" dir="${root.dir}" showoutput="true" printsummary="withOutAndErr">
             <formatter type="plain"/>
-            <batchtest todir="${test.output.dir}">
+            <batchtest todir="${test.images.dir}">
                 <fileset dir="${src.dir}">
                     <include name="org/stathissideris/ascii2image/test/*.java"/>
                 </fileset>
             </batchtest>
-	    <classpath refid="test.classpath"/>
+            <classpath refid="test.classpath"/>
         </junit>
     </target>
 

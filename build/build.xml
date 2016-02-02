@@ -17,4 +17,7 @@
   <target name="debug">
     <ant antfile="release.xml" target="debug"/>
   </target>
+  <target name="generate-test-images">
+    <ant antfile="release.xml" target="generate-test-images"/>
+  </target>
 </project>

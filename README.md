@@ -39,7 +39,7 @@ There are several reasons why I did this:
 1. Simply for hack value. I wanted to know if/how it could be done and
    how easily.
 2. Aesthetic reasons and legacy formats: there are several old FAQs
-   with ascii diagrams lying out there. At this time and age ascii
+   with ASCII diagrams lying out there. At this time and age ascii
    diagrams make my eyes hurt due to their ugliness. ditaa can be used
    to convert them to something nicer. Although ditaa would not be
    able to convert all of them (due to differences in drawing 'style'
@@ -64,16 +64,6 @@ There are several reasons why I did this:
    of ditaa, and it looks better, with zero effort! In that sense
    ditaa is a diagram markup language, with very loose syntax.
 
-## Download
-
-The latest version of ditaa can be obtained from its SourceForge project page.
-
-You can checkout the code using:
-
-   svn co https://ditaa.svn.sourceforge.net/svnroot/ditaa ditaa
-
-You can also browse the code online.
-
 ## Usage and syntax
 
 ### Command line
@@ -95,6 +85,8 @@ You will be presented with the command-line options help:
                             shapes. You can see the difference below:
 ```
 
+Before processing:
+
 ```
 +---------+
 | cBLU    |
@@ -105,9 +97,13 @@ You will be presented with the command-line options help:
 +----+----+
 ```
 
-Before processing	Common edge
-separation (default)	No separation
-(with the -E option)
+Common edge separation (default)
+
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/separation.png)
+
+No separation (with the `-E` option)
+
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/no_separation.png)
 
 ```
 -e,--encoding <ENCODING>   The encoding of the input file.
@@ -148,8 +144,7 @@ If you use `/` and `\` to connect corners, they are rendered as round corners:
 +--/
 ```
 
-round corner demo
-Before processing	Rendered
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/round_corner.png)
 
 #### Color
 
@@ -175,8 +170,7 @@ color codes:
 \----/ \----/
 ```
 
-color demo
-Before processing	Rendered
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/color.png)
 
 This can become a bit tedious after a while, so there are (only some
 for now) human readable color codes provided:
@@ -193,8 +187,7 @@ Color codes
 \-------------+-------------/
 ```
 
-color code
-Before processing	Rendered
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/color_codes.png)
 
 As you can see above, if a colored shape contains any text, the color
 of the text is adjusted according to the underlying color. If the
@@ -206,11 +199,10 @@ they have no effect anywhere outside.
 
 #### Tags
 
-ditaa recognises some tags that change the way a rectangular shape is rendered. All tags are between `{` and `}`. See the table below:
+ditaa recognises some tags that change the way a rectangular shape is rendered. All tags are between `{` and `}`. See the reference below:
 
-Name	Original	Rendered	Comment
+Document - Symbol representing a document.
 
-Document
 ```
 +-----+
 |{d}  |
@@ -218,9 +210,11 @@ Document
 |     |
 +-----+
 ```
-Symbol representing a document.
 
-Storage
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/document.png)
+
+
+Storage - Symbol representing a form of storage, like a database or a hard disk.
 ```
 +-----+
 |{s}  |
@@ -229,9 +223,10 @@ Storage
 +-----+
 ```
 
-Symbol representing a form of storage, like a database or a hard disk.
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/storage.png)
 
-Input/Output
+Input/Output - Symbol representing input/output.
+
 ```
 +-----+
 |{io} |
@@ -239,7 +234,8 @@ Input/Output
 |     |
 +-----+
 ```
-	Symbol representing input/output.
+
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/io.png)
 
 #### Dashed lines
 
@@ -257,7 +253,9 @@ versa), rather than redrawing the whole line/shape. Special symbols
     |  |    |  |{s} |
     v  \-=--+  +----+
 ```
-Before processing	Rendered
+
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/dashed_demo.png)
+
 
 #### Point markers
 
@@ -272,8 +270,9 @@ is still experimental). See below:
 |    |  -*--+
 *----*
 ```
-point marker demo
-Before processing	Rendered
+
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/pointe_marker.png)
+
 
 #### Text handling
 
@@ -291,8 +290,8 @@ must be a space before the 'o' as well as after it. See below:
 | o Make website  |
 \-----------------/
 ```
-bullet point demo
-Before processing	Rendered
+
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/bullet.png)
 
 #### HTML mode
 

@@ -29,7 +29,7 @@ import java.io.StringReader;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.UserAgentAdapter;
-import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
+import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.renderer.ConcreteImageRendererFactory;
 import org.apache.batik.gvt.renderer.ImageRenderer;

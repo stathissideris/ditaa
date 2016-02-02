@@ -29,9 +29,11 @@
 	</copy>
 </target>
 	
-<target name="ditaa" description="build ditaa JAR and copy it here">
+<target name="ditaa" description="build ditaa release JAR and copy it here">
+  <echo>basedir = ${basedir}</echo>
+  <echo>ditaa dir = ${ditaa.dir}</echo>
 	<ant antfile="${ditaa.dir}/build/release.xml" target="release-jar" inheritAll="false" />
-	<copy todir="${lib.dir}" file="${ditaa.dir}/releases/ditaa0_9.jar" />
+	<copy todir="${lib.dir}" file="${ditaa.dir}/releases/ditaa0_10.jar" />
 </target>
 
 <target name="webapp" depends="clean.webapp,compile">
@@ -63,7 +65,6 @@ external_render_classpath = ${deploy.webapp.dir}/WEB-INF/lib
 </target>
 
 <target name="war" depends="lib, webapp">
-<!-- <target name="war" depends="lib"> -->
 	<mkdir dir="${web-inf.dir}" />
 
 	<war warfile="${war.file}" webxml="${web.xml}">
@@ -76,7 +77,7 @@ external_render_classpath = ${deploy.webapp.dir}/WEB-INF/lib
 	<delete dir="${build.dir}"/>
 </target>
 
-<target name="clean.all" depends="clean, clean.webapp.unpacked">
+<target name="clean.all" depends="clean, undeploy">
 	<delete dir="${build.dir}"/>
 </target>
 
@@ -84,7 +85,7 @@ external_render_classpath = ${deploy.webapp.dir}/WEB-INF/lib
 	<copy file="${war.file}" todir="${deploy.dir}"/>
 </target>
 
-<target name="clean.webapp.unpacked">
-	<delete dir="${deploy.webapp.unpacked.dir}"/>
+<target name="undeploy">
+	<delete file="${deploy.dir}/${war.filename}"/>
 </target>
 </project>

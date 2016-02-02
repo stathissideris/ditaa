@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- it would be nice to just say "ant" instead of "ant -f release.xml",
+     but for backward compatibility, let's keep release.xml. -->
+<project name="release-ditaa" default="release-all" basedir=".">
+  <target name="release-all">
+    <ant antfile="release.xml" target="release-all"/>
+  </target>
+  <target name="test">
+    <ant antfile="release.xml" target="test"/>
+  </target>
+  <target name="compile">
+    <ant antfile="release.xml" target="compile"/>
+  </target>
+  <target name="clean">
+    <ant antfile="release.xml" target="clean"/>
+  </target>
+  <target name="debug">
+    <ant antfile="release.xml" target="debug"/>
+  </target>
+</project>

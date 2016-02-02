@@ -1,11 +1,15 @@
-
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/logo.png)
 
 ## DIagrams Through Ascii Art
 
-(((-intro-))) (((-download-))) (((-usage and syntax-))) (((-friends-))) (((-contact-)))
+ditaa is a small command-line utility written in Java, that can
+convert diagrams drawn using ascii art ('drawings' that contain
+characters that resemble lines like | / - ), into proper bitmap
+graphics. This is best illustrated by the following example -- which
+also illustrates the benefits of using ditaa in comparison to other
+methods :)
 
-ditaa is a small command-line utility written in Java, that can convert diagrams drawn using ascii art ('drawings' that contain characters that resemble lines like | / - ), into proper bitmap graphics. This is best illustrated by the following example -- which also illustrates the benefits of using ditaa in comparison to other methods :)
-
+```
     +--------+   +-------+    +-------+
     |        | --+ ditaa +--> |       |
     |  Text  |   +-------+    |diagram|
@@ -15,21 +19,50 @@ ditaa is a small command-line utility written in Java, that can convert diagrams
         :                         ^
         |       Lots of work      |
         +-------------------------+
-After conversion using ditaa, the above file becomes:
-round
-		corner demo
-ditaa interprets ascci art as a series of open and closed shapes, but it also uses special markup syntax to increase the possibilities of shapes and symbols that can be rendered.
+```
 
-ditaa is open source and free software (free as in free speech), since it is released under the GPL license.
+After conversion using ditaa, the above file becomes:
+
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/first.png)
+
+ditaa interprets ascci art as a series of open and closed shapes, but
+it also uses special markup syntax to increase the possibilities of
+shapes and symbols that can be rendered.
+
+ditaa is open source and free software (free as in free speech), since
+it is released under the GPL license.
 
 ### BUT WHY? Does this thing have any real use?
 
 There are several reasons why I did this:
 
-Simply for hack value. I wanted to know if/how it could be done and how easily.
-Aesthetic reasons and legacy formats: there are several old FAQs with ascii diagrams lying out there. At this time and age ascii diagrams make my eyes hurt due to their ugliness. ditaa can be used to convert them to something nicer. Although ditaa would not be able to convert all of them (due to differences in drawing 'style' in each case), it could prove useful in the effort of modernising some of those documents without too much effort. I also know a lot of people that can make an ascii diagram easily, but when it gets to using a diagram program, they don't do very well. Maybe this utility could help them make good-looking diagrams easily/quickly.
-Embedding diagrams to text-only formats: There is a number of formats that are text-based (html, docbook, LaTeX, programming language comments), but when rendered by other software (browsers, interpreters, the javadoc tool etc), they can contain images as part of their content. If ditaa was intergrated with those tools (and I'm planning to do the javadoc bit myself soon), then you would have readable/editable diagrams within the text format itself, something that would make things much easier. ditaa syntax can currently be embedded to HTML.
-Reusability of "code": Suppose you make a diagram in ascii art and you render it with version 0.6b of ditaa. You keep the ascii diagram, and then version 0.8 comes out, which features some new cool effects. You re-render your old diagram with the new version of ditaa, and it looks better, with zero effort! In that sense ditaa is a diagram markup language, with very loose syntax.
+1. Simply for hack value. I wanted to know if/how it could be done and
+   how easily.
+2. Aesthetic reasons and legacy formats: there are several old FAQs
+   with ascii diagrams lying out there. At this time and age ascii
+   diagrams make my eyes hurt due to their ugliness. ditaa can be used
+   to convert them to something nicer. Although ditaa would not be
+   able to convert all of them (due to differences in drawing 'style'
+   in each case), it could prove useful in the effort of modernising
+   some of those documents without too much effort. I also know a lot
+   of people that can make an ascii diagram easily, but when it gets
+   to using a diagram program, they don't do very well. Maybe this
+   utility could help them make good-looking diagrams easily/quickly.
+3. Embedding diagrams to text-only formats: There is a number of
+   formats that are text-based (html, docbook, LaTeX, programming
+   language comments), but when rendered by other software (browsers,
+   interpreters, the javadoc tool etc), they can contain images as
+   part of their content. If ditaa was intergrated with those tools
+   (and I'm planning to do the javadoc bit myself soon), then you
+   would have readable/editable diagrams within the text format
+   itself, something that would make things much easier. ditaa syntax
+   can currently be embedded to HTML.
+4. Reusability of "code": Suppose you make a diagram in ascii art and
+   you render it with version 0.6b of ditaa. You keep the ascii
+   diagram, and then version 0.8 comes out, which features some new
+   cool effects. You re-render your old diagram with the new version
+   of ditaa, and it looks better, with zero effort! In that sense
+   ditaa is a diagram markup language, with very loose syntax.
 
 ## Download
 

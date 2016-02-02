@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="release-ditaa" default="test" basedir=".">
+  <target name="clean">
+    <ant antfile="../build/release.xml" target="clean-tests" dir="../build"/>
+  </target>
+  <target name="test">
+    <ant antfile="../build/release.xml" target="test" dir="../build"/>
+  </target>
+  <target name="generate">
+    <ant antfile="../build/release.xml" target="generate-test-images" dir="../build"/>
+  </target>
+</project>

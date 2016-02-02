@@ -57,12 +57,9 @@
         <delete dir="${compile.classes.dir}" />
     </target>
     
-    <target name="clean-test-images">
-        <delete dir="${test.images.dir}"/>
-    </target>
-
     <target name="clean-tests">
         <delete dir="${test.classes.dir}"/>
+        <delete dir="${test.images.dir}"/>
     </target>
     
     <target name="compile" description="Compiles ascii2image code">

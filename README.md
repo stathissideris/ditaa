@@ -64,6 +64,12 @@ There are several reasons why I did this:
    of ditaa, and it looks better, with zero effort! In that sense
    ditaa is a diagram markup language, with very loose syntax.
 
+## Getting it
+
+For Ubuntu, there is an [package](http://packages.ubuntu.com/precise/ditaa).
+
+For MacOSX, you can install via [brew](http://brewformulas.org/Ditaa).
+
 ## Usage and syntax
 
 ### Command line

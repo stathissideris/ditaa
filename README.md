@@ -175,9 +175,8 @@ color codes:
 This can become a bit tedious after a while, so there are (only some
 for now) human readable color codes provided:
 
-Color codes
-
 ```
+Color codes
 /-------------+-------------\
 |cRED RED     |cBLU BLU     |
 +-------------+-------------+
@@ -271,7 +270,7 @@ is still experimental). See below:
 *----*
 ```
 
-![](https://rawgit.com/stathissideris/ditaa/master/doc/images/pointe_marker.png)
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/point_marker.png)
 
 
 #### Text handling
@@ -324,22 +323,25 @@ Here is a list of projects that are related to ditaa and add to its functionalit
 * Mathieu Lecarme's [ditaa-web](http://ditaa.sourceforge.net/) allows
   you to install ditaa on your web server and use it as a webservice
   through a HTTP POST request.
-* ditaa comes bundled within [org-mode](http://orgmode.org/), a major
-  mode for emacs. Here's an example of how you can use it.
-* There is a plugin for DocuWiki that allows you to render ditaa
-  diagrams in the wiki pages. Written by Dennis Ploeger.
+* [org-mode](http://orgmode.org/), a major mode for emacs comes with
+  support for ditaa. Here's
+  [how to use it](http://orgmode.org/worg/org-contrib/babel/languages/ob-doc-ditaa.html).
+* There is a [plugin](https://www.dokuwiki.org/plugin:ditaa) for
+  [DocuWiki](https://www.dokuwiki.org/dokuwiki#) that allows you to
+  render ditaa diagrams in the wiki pages. Written by Dennis Ploeger.
 
 Here's a list of projects that are somehow related to ditaa, and could prove useful/relevant while using it:
 
-* Nadim Khemir's asciio could be used for producing the ascii diagrams
-  more easily. It would require some modifications to its default
-  settings for the diagrams to render properly (specifically the
-  characters used for corners should all be set to +). Here is a
-  screencast of how asciio works.
-* Markus Gebhard's JavE could be used for the same purpose, although
-  I've never tried it.
-* If you make sure to keep the lines straight, artist-mode for emacs
-  can be used to produce ditaa-compatible diagrams.
+* Nadim Khemir's [asciio](http://search.cpan.org/dist/App-Asciio/)
+  could be used for producing the ascii diagrams more easily. It would
+  require some modifications to its default settings for the diagrams
+  to render properly (specifically the characters used for corners
+  should all be set to +).
+* Markus Gebhard's [JavE](http://www.jave.de/) could be used for the
+  same purpose, although I've never tried it.
+* If you make sure to keep the lines straight,
+  [artist-mode](http://cinsk.github.io//emacs/emacs-artist.html) for
+  emacs can be used to produce ditaa-compatible diagrams.
 
 ## Contributors
 

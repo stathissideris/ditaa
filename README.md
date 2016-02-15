@@ -318,7 +318,8 @@ option.
 
 ## Friends and relatives
 
-Here is a list of projects that are related to ditaa and add to its functionality:
+Here is a list of projects that are related to ditaa and add to its
+functionality:
 
 * Mikael Brännström's
   [ditaa-addons](http://ditaa-addons.sourceforge.net/) offers two very
@@ -335,8 +336,11 @@ Here is a list of projects that are related to ditaa and add to its functionalit
 * There is a [plugin](https://www.dokuwiki.org/plugin:ditaa) for
   [DocuWiki](https://www.dokuwiki.org/dokuwiki#) that allows you to
   render ditaa diagrams in the wiki pages. Written by Dennis Ploeger.
+* [Markdeep](https://casual-effects.com/markdeep/) has great support
+  for generating diagrams from ASCII art among other things.
 
-Here's a list of projects that are somehow related to ditaa, and could prove useful/relevant while using it:
+Here's a list of projects that are somehow related to ditaa, and could
+prove useful/relevant while using it:
 
 * Nadim Khemir's [asciio](http://search.cpan.org/dist/App-Asciio/)
   could be used for producing the ascii diagrams more easily. It would

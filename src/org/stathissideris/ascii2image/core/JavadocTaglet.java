@@ -167,7 +167,7 @@ public class JavadocTaglet implements Taglet {
 		}
 
 		int i;
-		if(i1 == -1 || i1 == -1)
+		if(i1 == -1 || i2 == -1)
 			i = Math.max(i1, i2);
 		else
 			i = Math.min(i1, i2);

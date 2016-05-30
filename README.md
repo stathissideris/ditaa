@@ -242,6 +242,54 @@ Input/Output - Symbol representing input/output.
 
 ![](https://rawgit.com/stathissideris/ditaa/master/doc/images/io.png)
 
+Ellipse
+
+```
++-----+
+|{o}  |
+|     |
+|     |
++-----+
+```
+
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/ellipse.png)
+
+Manual operation
+
+```
++-----+
+|{mo} |
+|     |
+|     |
++-----+
+```
+
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/mo.png)
+
+Decision ("Choice")
+
+```
++-----+
+|{c}  |
+|     |
+|     |
++-----+
+```
+
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/choice.png)
+
+Trapezoid
+
+```
++-----+
+|{tr} |
+|     |
+|     |
++-----+
+```
+
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/trapezoid.png)
+
 #### Dashed lines
 
 Any lines that contain either at least one `=` (for horizontal lines)

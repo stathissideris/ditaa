@@ -384,6 +384,8 @@ functionality:
 * There is a [plugin](https://www.dokuwiki.org/plugin:ditaa) for
   [DocuWiki](https://www.dokuwiki.org/dokuwiki#) that allows you to
   render ditaa diagrams in the wiki pages. Written by Dennis Ploeger.
+* [asciidoctor-diagram](https://github.com/asciidoctor/asciidoctor-diagram/) a Asciidoctor
+  diagram extension, with support for ditaa and other. asciidoctor/asciidoctor-diagram#76 includes `ditaamini-0.10.jar`.
 * [Markdeep](https://casual-effects.com/markdeep/) has great support
   for generating diagrams from ASCII art among other things.
 

@@ -162,7 +162,7 @@ public class HTMLConverter extends HTMLEditorKit {
 		
 		System.out.println("Generating diagrams... ");
 		
-		File imageDir = new File(new File(targetFilename).getParent() + File.separator + imageDirName);
+		File imageDir = new File(new File(targetFilename).getAbsoluteFile().getParent() + File.separator + imageDirName);
 		if(!imageDir.exists()){
 			if(!imageDir.mkdir()){
 				System.err.println("Could not create directory " + imageDirName);
@@ -172,7 +172,7 @@ public class HTMLConverter extends HTMLEditorKit {
 		
 		for(String URL : diagramList.keySet()) {
 			String text = (String) diagramList.get(URL);
-			String imageFilename = new File(targetFilename).getParent() + File.separator + URL;
+			String imageFilename = new File(targetFilename).getAbsoluteFile().getParent() + File.separator + URL;
 			if(new File(imageFilename).exists() && !options.processingOptions.overwriteFiles()){
 				System.out.println("Error: Cannot overwrite file "+URL+", file already exists." +
 					" Use the --overwrite option if you would like to allow file overwrite.");

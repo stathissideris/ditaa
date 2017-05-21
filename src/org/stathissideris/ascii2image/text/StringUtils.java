@@ -90,7 +90,7 @@ public class StringUtils {
 		indexes[0] = 0;		
 		int k = 1;
 
-		//then we find the indexes (we have ckecked the first char already)
+		//then we find the indexes (we have checked the first char already)
 		for(int j =1; j < string.length(); j++){
 			if(Character.isUpperCase(string.charAt(j))) indexes[k++] = j;
 		}

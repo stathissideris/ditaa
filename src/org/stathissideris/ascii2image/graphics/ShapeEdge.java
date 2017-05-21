@@ -65,7 +65,7 @@ public class ShapeEdge {
 	public void moveInwardsBy(float offset){
 		int type = this.getType();
 		if(type == TYPE_SLOPED)
-			throw new RuntimeException("Cannot move a sloped egde inwards: "+this);
+			throw new RuntimeException("Cannot move a sloped edge inwards: "+this);
 		
 		float xOffset = 0;
 		float yOffset = 0;
@@ -221,7 +221,7 @@ public class ShapeEdge {
 	
 	/**
 	 * if horizontal flips start and end points so that start is left of end
-	 * if verical flips start and end points so that start is over of end
+	 * if vertical flips start and end points so that start is over of end
 	 *
 	 */
 	private void fixDirection(){
@@ -230,7 +230,7 @@ public class ShapeEdge {
 		} else if(isVertical()) {
 			if(startPoint.y > endPoint.y) flipDirection();
 		} else {
-			throw new RuntimeException("Cannot fix direction of sloped egde");
+			throw new RuntimeException("Cannot fix direction of sloped edge");
 		}
 	}
 	

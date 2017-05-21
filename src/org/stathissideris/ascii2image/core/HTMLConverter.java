@@ -105,7 +105,7 @@ public class HTMLConverter extends HTMLEditorKit {
 			return false;
 		}
 		
-		System.out.print("Convering HTML file ("+filename+" -> "+targetFilename+")... ");
+		System.out.print("Converting HTML file ("+filename+" -> "+targetFilename+")... ");
 		
 		Source source = new Source(htmlText);
 		OutputDocument outputDocument = new OutputDocument(source);
@@ -138,7 +138,8 @@ public class HTMLConverter extends HTMLEditorKit {
 		}
 		
 		if(diagramList.isEmpty()){
-			System.out.println("\nHTML document does not contain any " +				"<pre> tags with their class attribute set to \""+TAG_CLASS+"\". Nothing to do.");
+			System.out.println("\nHTML document does not contain any " +
+				"<pre> tags with their class attribute set to \""+TAG_CLASS+"\". Nothing to do.");
 			
 			//TODO: should return the method with appropriate exit code instead
 			System.exit(0);
@@ -173,7 +174,8 @@ public class HTMLConverter extends HTMLEditorKit {
 			String text = (String) diagramList.get(URL);
 			String imageFilename = new File(targetFilename).getParent() + File.separator + URL;
 			if(new File(imageFilename).exists() && !options.processingOptions.overwriteFiles()){
-				System.out.println("Error: Cannot overwrite file "+URL+", file already exists." +					" Use the --overwrite option if you would like to allow file overwrite.");
+				System.out.println("Error: Cannot overwrite file "+URL+", file already exists." +
+					" Use the --overwrite option if you would like to allow file overwrite.");
 				continue;
 			}
 	

@@ -398,7 +398,7 @@ public class TextGrid {
 
 
 	/**
-	 * Replace all occurences of c1 with c2
+	 * Replace all occurrences of c1 with c2
 	 * 
 	 * @param c1
 	 * @param c2
@@ -604,7 +604,7 @@ public class TextGrid {
 		}
 		
 		//remove in two stages, because decision of
-		//isBoundary depends on contants of surrounding
+		//isBoundary depends on content of surrounding
 		//cells 
 		Iterator it = toBeRemoved.iterator();
 		while(it.hasNext()){
@@ -1124,7 +1124,7 @@ public class TextGrid {
 		if(isLine(cell)) return followLine(cell, blocked);
 		if(isStub(cell)) return followStub(cell, blocked);
 		if(isCrossOnLine(cell)) return followCrossOnLine(cell, blocked);
-		System.err.println("Umbiguous input at position "+cell+":");
+		System.err.println("Ambiguous input at position "+cell+":");
 		TextGrid subGrid = getTestingSubGrid(cell);
 		subGrid.printDebug();
 		throw new RuntimeException("Cannot follow cell "+cell+": cannot determine cell type");

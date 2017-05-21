@@ -2,11 +2,11 @@
 
 ## DIagrams Through Ascii Art
 
-ditaa is a small command-line utility written in Java, that can
+```ditaa``` is a small command-line utility written in Java, that can
 convert diagrams drawn using ascii art ('drawings' that contain
-characters that resemble lines like | / - ), into proper bitmap
+characters that resemble lines like ```| / -``` ), into proper bitmap
 graphics. This is best illustrated by the following example -- which
-also illustrates the benefits of using ditaa in comparison to other
+also illustrates the benefits of using ```ditaa``` in comparison to other
 methods :)
 
 ```
@@ -21,15 +21,15 @@ methods :)
         +-------------------------+
 ```
 
-After conversion using ditaa, the above file becomes:
+After conversion using ```ditaa```, the above file becomes:
 
 ![](https://rawgit.com/stathissideris/ditaa/master/doc/images/first.png)
 
-ditaa interprets ascci art as a series of open and closed shapes, but
+```ditaa``` interprets ASCII art as a series of open and closed shapes, but
 it also uses special markup syntax to increase the possibilities of
 shapes and symbols that can be rendered.
 
-ditaa is open source and free software (free as in free speech), since
+```ditaa``` is open source and free software (free as in free speech), since
 it is released under the GPL license.
 
 ### BUT WHY? Does this thing have any real use?
@@ -40,8 +40,8 @@ There are several reasons why I did this:
    how easily.
 2. Aesthetic reasons and legacy formats: there are several old FAQs
    with ASCII diagrams lying out there. At this time and age ascii
-   diagrams make my eyes hurt due to their ugliness. ditaa can be used
-   to convert them to something nicer. Although ditaa would not be
+   diagrams make my eyes hurt due to their ugliness. ```ditaa``` can be used
+   to convert them to something nicer. Although ```ditaa``` would not be
    able to convert all of them (due to differences in drawing 'style'
    in each case), it could prove useful in the effort of modernising
    some of those documents without too much effort. I also know a lot
@@ -49,20 +49,20 @@ There are several reasons why I did this:
    to using a diagram program, they don't do very well. Maybe this
    utility could help them make good-looking diagrams easily/quickly.
 3. Embedding diagrams to text-only formats: There is a number of
-   formats that are text-based (html, docbook, LaTeX, programming
+   formats that are text-based (HTML, DocBook, LaTeX, programming
    language comments), but when rendered by other software (browsers,
    interpreters, the javadoc tool etc), they can contain images as
-   part of their content. If ditaa was intergrated with those tools
+   part of their content. If ```ditaa``` was integrated with those tools
    (and I'm planning to do the javadoc bit myself soon), then you
    would have readable/editable diagrams within the text format
-   itself, something that would make things much easier. ditaa syntax
+   itself, something that would make things much easier. ```ditaa``` syntax
    can currently be embedded to HTML.
 4. Reusability of "code": Suppose you make a diagram in ascii art and
-   you render it with version 0.6b of ditaa. You keep the ascii
+   you render it with version 0.6b of ```ditaa```. You keep the ascii
    diagram, and then version 0.8 comes out, which features some new
    cool effects. You re-render your old diagram with the new version
-   of ditaa, and it looks better, with zero effort! In that sense
-   ditaa is a diagram markup language, with very loose syntax.
+   of ```ditaa```, and it looks better, with zero effort! In that sense
+   ```ditaa``` is a diagram markup language, with very loose syntax.
 
 ## Getting it
 
@@ -74,7 +74,7 @@ For MacOSX, you can install via [brew](http://brewformulas.org/Ditaa).
 
 ### Command line
 
-You need the latest Java runtimes (JRE) to use ditaa. The best
+You need the latest Java runtime (JRE) to use ```ditaa```. The best
 anti-aliasing can be achieved using Java 1.5 or higher.
 
 To start from the command line, type (where `XXX` is the version number):
@@ -160,7 +160,7 @@ color codes is
 `cXXX`
 
 where XXX is a hex number. The first digit of the number represents
-the red compoment of the color, the second digit represents green and
+the red component of the color, the second digit represents green and
 the third blue (good ol' RGB). See below for an example of use of
 color codes:
 
@@ -196,7 +196,7 @@ Color codes
 
 As you can see above, if a colored shape contains any text, the color
 of the text is adjusted according to the underlying color. If the
-undelying color is dark, the text color is changed to white (from the
+underlying color is dark, the text color is changed to white (from the
 default black).
 
 Note that color codes only apply if they are within closed shapes, and
@@ -204,7 +204,7 @@ they have no effect anywhere outside.
 
 #### Tags
 
-ditaa recognises some tags that change the way a rectangular shape is rendered. All tags are between `{` and `}`. See the reference below:
+```ditaa``` recognises some tags that change the way a rectangular shape is rendered. All tags are between `{` and `}`. See the reference below:
 
 Document - Symbol representing a document.
 
@@ -300,7 +300,7 @@ must be a space before the 'o' as well as after it. See below:
 
 #### HTML mode
 
-When ditaa is run using the `--html` option, the input is an HTML
+When ```ditaa``` is run using the `--html` option, the input is an HTML
 file. The contents of the `<pre class="textdiagram">` tags are rendered
 as diagrams and saved in the images directory and a new HTML file is
 produced with the appropriate `<img>` tags.
@@ -318,28 +318,28 @@ option.
 
 ## Friends and relatives
 
-Here is a list of projects that are related to ditaa and add to its
+Here is a list of projects that are related to ```ditaa``` and add to its
 functionality:
 
 * Mikael Brännström's
   [ditaa-addons](http://ditaa-addons.sourceforge.net/) offers two very
   interesting pieces of functionality: The Textdiagram Javadoc taglet
-  allows you to embedd ascii diagrams to Java comments and have them
-  rendered as ditaa diagrams in the HTML output. The Ditaa Eps program
+  allows you to embed ASCII diagrams to Java comments and have them
+  rendered as ```ditaa``` diagrams in the HTML output. The ```ditaa``` Eps program
   allows you to render to EPS instead of PNG.
 * Mathieu Lecarme's [ditaa-web](http://ditaa.sourceforge.net/) allows
-  you to install ditaa on your web server and use it as a webservice
+  you to install ```ditaa``` on your web server and use it as a webservice
   through a HTTP POST request.
 * [org-mode](http://orgmode.org/), a major mode for emacs comes with
-  support for ditaa. Here's
+  support for ```ditaa```. Here's
   [how to use it](http://orgmode.org/worg/org-contrib/babel/languages/ob-doc-ditaa.html).
 * There is a [plugin](https://www.dokuwiki.org/plugin:ditaa) for
   [DocuWiki](https://www.dokuwiki.org/dokuwiki#) that allows you to
-  render ditaa diagrams in the wiki pages. Written by Dennis Ploeger.
+  render ```ditaa``` diagrams in the wiki pages. Written by Dennis Ploeger.
 * [Markdeep](https://casual-effects.com/markdeep/) has great support
   for generating diagrams from ASCII art among other things.
 
-Here's a list of projects that are somehow related to ditaa, and could
+Here's a list of projects that are somehow related to ```ditaa```, and could
 prove useful/relevant while using it:
 
 * Nadim Khemir's [asciio](http://search.cpan.org/dist/App-Asciio/)
@@ -351,7 +351,7 @@ prove useful/relevant while using it:
   same purpose, although I've never tried it.
 * If you make sure to keep the lines straight,
   [artist-mode](http://cinsk.github.io//emacs/emacs-artist.html) for
-  emacs can be used to produce ditaa-compatible diagrams.
+  emacs can be used to produce ```ditaa```-compatible diagrams.
 
 ## Contributors
 

@@ -599,7 +599,7 @@ public class DiagramShape extends DiagramComponent {
 		TextGrid.Cell cell = diagram.getCellFor(pointInCell);
 		
 		if(cell == null)
-			throw new RuntimeException("Upexpected error, cannot find cell corresponding to point "+pointInCell+" for diagram "+diagram);
+			throw new RuntimeException("Unexpected error, cannot find cell corresponding to point "+pointInCell+" for diagram "+diagram);
 		
 		if(otherPoint.isNorthOf(pointInCell))
 			result = new ShapePoint(pointInCell.x,
@@ -615,7 +615,7 @@ public class DiagramShape extends DiagramComponent {
 										pointInCell.y);
 		
 		if(result == null)
-			throw new RuntimeException("Upexpected error, cannot find cell edge point for points "+pointInCell+" and "+otherPoint+" for diagram "+diagram);
+			throw new RuntimeException("Unexpected error, cannot find cell edge point for points "+pointInCell+" and "+otherPoint+" for diagram "+diagram);
 
 		
 		return result;

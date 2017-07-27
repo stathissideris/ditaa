@@ -44,8 +44,6 @@ import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
 import org.apache.batik.dom.util.DocumentFactory;
-import org.apache.batik.ext.awt.image.codec.png.PNGEncodeParam;
-import org.apache.batik.ext.awt.image.codec.png.PNGImageEncoder;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.renderer.ConcreteImageRendererFactory;
 import org.apache.batik.gvt.renderer.ImageRenderer;

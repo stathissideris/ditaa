@@ -16,3 +16,4 @@ build/testclasses/
 releases/
 tests/images/
 tests/images-expected/
+target

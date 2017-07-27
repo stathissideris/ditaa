@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+		<relativePath></relativePath>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.stathissideris</groupId>
+	<artifactId>ascii2image-ditaa</artifactId>
+	<version>1.0.0</version>
+	<packaging>jar</packaging>
+	<name>ascii2image-ditaa</name>
+	<description>ditaa - ascii to image (ascii2image) </description>
+
+
+	<url>https://github.com/stathissideris/ditaa</url>
+
+	<properties>
+		<!-- <skip.javadoc>true</skip.javadoc> -->
+		<!-- <skip.javasource>false</skip.javasource> -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<version.maven-javadoc-plugin>2.9</version.maven-javadoc-plugin>
+		<version.maven-source-plugin>2.2.1</version.maven-source-plugin>
+		<version.maven-compiler-plugin>3.1</version.maven-compiler-plugin>
+		<version.maven-gpg-plugin>1.4</version.maven-gpg-plugin>
+		<version.maven-jar-plugin>2.6</version.maven-jar-plugin>
+		<maven.compile.source>1.5</maven.compile.source>
+        <maven.compile.target>1.5</maven.compile.target>
+        <version.batik>1.9</version.batik>
+	</properties>
+	<licenses>
+		<license>
+			<name>GNU GPL 3.0</name>
+			<url>http://www.gnu.org/licenses/gpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+
+	</developers>
+	<dependencies>
+		<dependency>
+			<groupId>commons-cli</groupId>
+			<artifactId>commons-cli</artifactId>
+			<version>1.4</version>
+		</dependency> 
+		<!-- https://mvnrepository.com/artifact/net.htmlparser.jericho/jericho-html -->
+<dependency>
+    <groupId>net.htmlparser.jericho</groupId>
+    <artifactId>jericho-html</artifactId>
+    <version>3.4</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/org.mozilla/rhino 
+<dependency>
+    <groupId>org.mozilla</groupId>
+    <artifactId>rhino</artifactId>
+    <version>1.7.7.1</version>
+</dependency>
+-->
+		<!-- https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-svggen -->
+		<!-- 
+		<dependency>
+		    <groupId>org.apache.xmlgraphics</groupId>
+		    <artifactId>batik-svggen</artifactId>
+		    <version>${version.batik}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.xmlgraphics</groupId>
+		    <artifactId>batik-dom</artifactId>
+		    <version>${version.batik}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.xmlgraphics</groupId>
+		    <artifactId>batik-xml</artifactId>
+		    <version>${version.batik}</version>
+		</dependency>
+
+		
+		<dependency>
+		    <groupId>org.apache.xmlgraphics</groupId>
+		    <artifactId>batik-ext</artifactId>
+		    <version>${version.batik}</version>
+		</dependency>
+		 -->
+		 
+		<dependency>
+		    <groupId>org.apache.xmlgraphics</groupId>
+		    <artifactId>batik-gvt</artifactId>
+		    <version>${version.batik}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.xmlgraphics</groupId>
+		    <artifactId>batik-bridge</artifactId>
+		    <version>${version.batik}</version>
+		</dependency>
+		
+		<dependency>
+		   <groupId>com.sun</groupId>
+		   <artifactId>tools</artifactId>
+		   <version>1.7</version>
+		   <scope>system</scope>
+		   <systemPath>${java.home}/../lib/tools.jar</systemPath>
+		 </dependency>
+		 
+		 
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>${version.maven-gpg-plugin}</version>
+			</plugin>
+			
+			<plugin>  
+                <groupId>org.apache.maven.plugins</groupId>  
+                <artifactId>maven-jar-plugin</artifactId>
+				<version>${version.maven-jar-plugin}</version>
+                <configuration>  
+                    <archive>  
+                        <manifest>  
+                            <mainClass>org.stathissideris.ascii2image.core.CommandLineConverter</mainClass>  
+                        </manifest>  
+                    </archive>  
+                </configuration>  
+            </plugin>  
+            <!-- mvn exec:java -Dexec.mainClass="org.stathissideris.ascii2image.core.CommandLineConverter" -Dexec.args="tests\text\art1.txt -v" -->
+		</plugins>
+		<sourceDirectory>src</sourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory>	
+	</build>
+	<profiles>
+		<profile>
+			<id>oss</id>
+			<properties>
+				<gpg.skip>false</gpg.skip>
+				<skip.javadoc>false</skip.javadoc>
+				<skip.javasource>false</skip.javasource>
+			</properties>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-compiler-plugin</artifactId>
+							<version>${version.maven-compiler-plugin}</version>
+							<configuration>
+								<source>${maven.compile.source}</source>
+								<target>${maven.compile.target}</target>
+							</configuration>
+						</plugin>
+
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-source-plugin</artifactId>
+							<version>${version.maven-source-plugin}</version>
+							<configuration>
+								<!-- <outputDirectory>${project.build.dist}</outputDirectory> -->
+							</configuration>
+							<executions>
+								<execution>
+									<id>attach-sources</id>
+									<phase>verify</phase>
+									<goals>
+										<goal>jar</goal>
+									</goals>
+									<configuration>
+										<skip>${skip.javasource}</skip>
+									</configuration>
+								</execution>
+							</executions>
+						</plugin>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-javadoc-plugin</artifactId>
+							<version>${version.maven-javadoc-plugin}</version>
+							<configuration>
+								<!-- <jarOutputDirectory>${project.build.dist}</jarOutputDirectory> -->
+							</configuration>
+							<executions>
+								<execution>
+									<id>attach-javadocs</id>
+									<phase>verify</phase>
+									<goals>
+										<goal>jar</goal>
+									</goals>
+									<configuration>
+										<skip>${skip.javadoc}</skip>
+									</configuration>
+								</execution>
+							</executions>
+						</plugin>
+
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-gpg-plugin</artifactId>
+							<version>${version.maven-gpg-plugin}</version>
+							<configuration>
+								<skip>${gpg.skip}</skip>
+							</configuration>
+							<executions>
+								<execution>
+									<id>sign-artifacts</id>
+									<phase>verify</phase>
+									<goals>
+										<goal>sign</goal>
+									</goals>
+								</execution>
+							</executions>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+			</build>
+
+		</profile>
+
+	</profiles>
+</project>

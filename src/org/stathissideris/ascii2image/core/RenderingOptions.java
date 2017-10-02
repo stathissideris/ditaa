@@ -44,6 +44,20 @@ public class RenderingOptions {
 	
 	private Color backgroundColor = Color.white;
 
+	public enum ImageType { PNG, SVG };
+
+	private ImageType imageType = ImageType.PNG;
+
+	public ImageType getImageType() { return imageType; }
+	public void setImageType(ImageType type) { imageType = type; }
+
+	private String fontFamily = "Courier";
+	private String fontURL = null;
+
+	public String getFontFamily() { return fontFamily; }
+	public String getFontURL() { return fontURL; }
+	public void setFontURL(String url) { fontFamily = "Custom"; fontURL = url; }
+
 	public int getCellHeight() {
 		return cellHeight;
 	}

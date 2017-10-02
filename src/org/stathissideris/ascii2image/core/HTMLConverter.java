@@ -20,13 +20,7 @@
 package org.stathissideris.ascii2image.core;
 
 import java.awt.image.RenderedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
@@ -40,6 +34,7 @@ import net.htmlparser.jericho.StartTag;
 
 import org.stathissideris.ascii2image.graphics.BitmapRenderer;
 import org.stathissideris.ascii2image.graphics.Diagram;
+import org.stathissideris.ascii2image.graphics.SVGRenderer;
 import org.stathissideris.ascii2image.text.TextGrid;
 
 /**
@@ -121,14 +116,16 @@ public class HTMLConverter extends HTMLEditorKit {
 				
 				String baseFilename = imageBaseFilename;
 				
+				String ext = options.renderingOptions.getImageType() == RenderingOptions.ImageType.SVG ? ".svg" : ".png";
+				
 				String URL;
 				Attribute nameAttr = tag.getAttributes().get("id");
 				if(nameAttr != null
 						&& nameAttr.hasValue()) {
 					baseFilename = makeFilenameFromTagName(nameAttr.getValue());
-					URL = imageDirName + "/" + baseFilename + ".png";
+					URL = imageDirName + "/" + baseFilename + ext;
 				} else {
-					URL = imageDirName + "/" + baseFilename + "_" + index + ".png";
+					URL = imageDirName + "/" + baseFilename + "_" + index + ext;
 					index++;
 				}
 
@@ -190,15 +187,33 @@ public class HTMLConverter extends HTMLEditorKit {
 			}
 
 			Diagram diagram = new Diagram(grid, options);
-			RenderedImage image = new BitmapRenderer().renderToImage(diagram, options.renderingOptions);
 
-			try {
-				File file = new File(imageFilename);
-				ImageIO.write(image, "png", file);
-			} catch (IOException e) {
-				//e.printStackTrace();
-				System.err.println("Error: Cannot write to file "+filename+" -- skipping");
-				continue;
+			if(options.renderingOptions.getImageType() == RenderingOptions.ImageType.SVG){
+
+				String content = new SVGRenderer().renderToImage(diagram, options.renderingOptions);
+
+				try {
+
+					PrintStream stream = new PrintStream(new FileOutputStream(imageFilename));
+
+					stream.print(content);
+
+				} catch (IOException e) {
+					System.err.println("Error: Cannot write to file "+filename+" -- skipping");
+					continue;
+				}
+
+			} else {
+				RenderedImage image = new BitmapRenderer().renderToImage(diagram, options.renderingOptions);
+
+				try {
+					File file = new File(imageFilename);
+					ImageIO.write(image, "png", file);
+				} catch (IOException e) {
+					//e.printStackTrace();
+					System.err.println("Error: Cannot write to file "+filename+" -- skipping");
+					continue;
+				}
 			}
 			
 			System.out.println("\t"+imageFilename);

@@ -242,6 +242,54 @@ Input/Output - Symbol representing input/output.
 
 ![](https://rawgit.com/stathissideris/ditaa/master/doc/images/io.png)
 
+Ellipse
+
+```
++-----+
+|{o}  |
+|     |
+|     |
++-----+
+```
+
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/ellipse.png)
+
+Manual operation
+
+```
++-----+
+|{mo} |
+|     |
+|     |
++-----+
+```
+
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/mo.png)
+
+Decision ("Choice")
+
+```
++-----+
+|{c}  |
+|     |
+|     |
++-----+
+```
+
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/choice.png)
+
+Trapezoid
+
+```
++-----+
+|{tr} |
+|     |
+|     |
++-----+
+```
+
+![](https://rawgit.com/stathissideris/ditaa/master/doc/images/trapezoid.png)
+
 #### Dashed lines
 
 Any lines that contain either at least one `=` (for horizontal lines)
@@ -336,6 +384,8 @@ functionality:
 * There is a [plugin](https://www.dokuwiki.org/plugin:ditaa) for
   [DocuWiki](https://www.dokuwiki.org/dokuwiki#) that allows you to
   render ```ditaa``` diagrams in the wiki pages. Written by Dennis Ploeger.
+* [asciidoctor-diagram](https://github.com/asciidoctor/asciidoctor-diagram/) a Asciidoctor
+  diagram extension, with support for ditaa and other. asciidoctor/asciidoctor-diagram#76 includes `ditaamini-0.10.jar`.
 * [Markdeep](https://casual-effects.com/markdeep/) has great support
   for generating diagrams from ASCII art among other things.
 

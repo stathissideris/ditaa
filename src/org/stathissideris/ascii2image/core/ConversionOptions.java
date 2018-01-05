@@ -106,6 +106,14 @@ public class ConversionOptions {
 			processingOptions.setCharacterEncoding(encoding);
 		}
 		
+		if (cmdLine.hasOption("svg")){
+			renderingOptions.setImageType(RenderingOptions.ImageType.SVG);
+		}
+
+		if (cmdLine.hasOption("svg-font-url")){
+			renderingOptions.setFontURL(cmdLine.getOptionValue("svg-font-url"));
+		}
+
 		ConfigurationParser configParser = new ConfigurationParser();
 		try {
 			for (Option curOption : cmdLine.getOptions()) {

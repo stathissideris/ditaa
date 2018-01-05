@@ -20,12 +20,7 @@
 package org.stathissideris.ascii2image.core;
 
 import java.awt.image.RenderedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 
 import javax.imageio.ImageIO;
 
@@ -38,6 +33,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
 import org.stathissideris.ascii2image.graphics.BitmapRenderer;
 import org.stathissideris.ascii2image.graphics.Diagram;
+import org.stathissideris.ascii2image.graphics.SVGRenderer;
 import org.stathissideris.ascii2image.text.TextGrid;
 
 /**
@@ -102,6 +98,20 @@ public class CommandLineConverter {
 				.create('b')
 				);
 		
+		cmdLnOptions.addOption(
+				OptionBuilder.withLongOpt("svg")
+				.withDescription( "Write a SVG image as destination file." )
+				.create()
+				);
+
+		cmdLnOptions.addOption(
+				OptionBuilder.withLongOpt("svg-font-url")
+				.withDescription( "SVG font URL." )
+				.hasArg()
+				.withArgName("FONT")
+				.create()
+				);
+
 //TODO: uncomment this for next version:
 //		cmdLnOptions.addOption(
 //				OptionBuilder.withLongOpt("config")
@@ -204,7 +214,8 @@ public class CommandLineConverter {
 					stdOut = true;
 					toFilename = "-";
 				} else {
-					toFilename = FileUtils.makeTargetPathname(fromFilename, "png", overwrite);
+					String ext = cmdLine.hasOption("svg") ? "svg" : "png";
+					toFilename = FileUtils.makeTargetPathname(fromFilename, ext, overwrite);
 					stdOut = false;
 				}
 			} else {
@@ -241,12 +252,20 @@ public class CommandLineConverter {
 			Diagram diagram = new Diagram(grid, options);
 			if (!stdOut) System.out.println("Rendering to file: "+toFilename);
 			
-			
-			RenderedImage image = new BitmapRenderer().renderToImage(diagram, options.renderingOptions);
-			
 			try {
-				OutputStream os = stdOut ? System.out : new FileOutputStream(toFilename);
-				ImageIO.write(image, "png", os);
+			
+				if(cmdLine.hasOption("svg")){
+					String content = new SVGRenderer().renderToImage(diagram, options.renderingOptions);
+
+					PrintStream stream = stdOut ? System.out : new PrintStream(new FileOutputStream(toFilename));
+					stream.print(content);
+				} else {
+					RenderedImage image = new BitmapRenderer().renderToImage(diagram, options.renderingOptions);
+			
+					OutputStream os = stdOut ? System.out : new FileOutputStream(toFilename);
+					ImageIO.write(image, "png", os);
+				}
+
 			} catch (IOException e) {
 				//e.printStackTrace();
 				System.err.println("Error: Cannot write to file "+toFilename);

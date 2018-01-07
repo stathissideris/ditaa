@@ -21,11 +21,7 @@ package org.stathissideris.ascii2image.test;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -46,6 +42,7 @@ import org.stathissideris.ascii2image.core.ConversionOptions;
 import org.stathissideris.ascii2image.graphics.BitmapRenderer;
 import org.stathissideris.ascii2image.graphics.Diagram;
 import org.stathissideris.ascii2image.graphics.ImageHandler;
+import org.stathissideris.ascii2image.graphics.SVGRenderer;
 import org.stathissideris.ascii2image.text.TextGrid;
 
 /**
@@ -60,16 +57,19 @@ import org.stathissideris.ascii2image.text.TextGrid;
 public class VisualTester {
 
 	private static final String HTMLReportName = "test_suite";
-	private static final String expectedDir = "tests/images-expected";
-	private static final String actualDir = "tests/images";
+	private static final String expectedDir = "test-resources/images-expected";
+	private static final String actualDir = "test-resources/images";
 	
 	private File textFile;
 	private int index;
 	
 	public static void main(String[] args){
-		String reportDir = "tests/images";
+		generate();
+	}
+
+	public static void generate() {
+		String reportDir = "test-resources/images";
 		VisualTester.createHTMLTestReport(getFilesToRender(), reportDir, HTMLReportName);
-		
 		System.out.println("Tests completed");
 	}
 
@@ -141,7 +141,7 @@ public class VisualTester {
 	}
 	
 	public static List<File> getFilesToRender() {
-		String textDir = "tests/text";
+		String textDir = "test-resources/text";
 		
 		File textDirObj = new File(textDir);
 		ArrayList<File> textFiles
@@ -247,31 +247,44 @@ public class VisualTester {
 		for(File textFile : textFiles) {
 			TextGrid grid = new TextGrid();
 
-			File toFile = new File(reportDir + File.separator + textFile.getName() + ".png");
-			
-			
+			File toFilePng = new File(reportDir + File.separator + textFile.getName() + ".png");
+			File toFileSvg = new File(reportDir + File.separator + textFile.getName() + ".svg");
+
 			long a = java.lang.System.nanoTime();
 			long b;
 			try {
-				System.out.println("Rendering "+textFile+" to "+toFile);
+				System.out.println("Rendering " + textFile + " to " + toFilePng);
 				
 				grid.loadFrom(textFile.toString());
 				Diagram diagram = new Diagram(grid, options);
 
 				RenderedImage image = new BitmapRenderer().renderToImage(diagram, options.renderingOptions);
-				
+
 				b = java.lang.System.nanoTime();
 		        java.lang.System.out.println( "Done in " + Math.round((b - a)/10e6) + "msec");
-				
+
+				//png
 				try {
-					File file = new File(toFile.getAbsolutePath());
+					File file = new File(toFilePng.getAbsolutePath());
 					ImageIO.write(image, "png", file);
 				} catch (IOException e) {
 					//e.printStackTrace();
-					System.err.println("Error: Cannot write to file "+toFile);
+					System.err.println("Error: Cannot write to file " + toFilePng);
 					System.exit(1);
 				}
-				
+
+				//SVG
+				System.out.println("Rendering " + textFile + " to " + toFileSvg);
+				try {
+					File file = new File(toFileSvg.getAbsolutePath());
+					String content = new SVGRenderer().renderToImage(diagram, options.renderingOptions);
+					new PrintStream(new FileOutputStream(file)).print(content);
+				} catch (Exception e) {
+					System.err.println("Error: Cannot write to file " + toFileSvg);
+					System.exit(1);
+				}
+
+
 			} catch (Exception e) {
 				s.println("<b>!!! Failed to render: "+textFile+" !!!</b>");
 				s.println("<pre>\n"+grid.getDebugString()+"\n</pre>");
@@ -285,7 +298,7 @@ public class VisualTester {
 				continue;
 			}
 			
-			s.println(makeReportTable(textFile.getName(), grid, toFile.getName(), b - a));
+			s.println(makeReportTable(textFile.getName(), grid, toFilePng.getName(), toFileSvg.getName(), b - a));
 			s.println("<hr />");
 			s.flush();
 		}
@@ -302,11 +315,12 @@ public class VisualTester {
 
 	}
 
-	private static String makeReportTable(String gridURI, TextGrid grid, String imageURI, long time){
+	private static String makeReportTable(String gridURI, TextGrid grid, String imagePngURI, String imageSvgURI, long time){
 		StringBuffer buffer = new StringBuffer("<center><table border=\"0\">");
-		buffer.append("<th colspan=\"2\"><h3>"+gridURI+" ("+Math.round(time/10e6)+"msec)</h3></th>");
+		buffer.append("<th colspan=\"3\"><h3>"+gridURI+" ("+Math.round(time/10e6)+"msec)</h3></th>");
 		buffer.append("<tr><td><pre>\n"+grid.getDebugString()+"\n</pre></td>");
-		buffer.append("<td><img border=\"0\" src=\""+imageURI+"\"</td></tr>");
+		buffer.append("<td><img border=\"0\" src=\""+imagePngURI+"\"</td>");
+		buffer.append("<td><img border=\"0\" src=\""+imageSvgURI+"\"</td></tr>");
 		buffer.append("</table></center>");
 		return buffer.toString();
 	}

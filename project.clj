@@ -4,12 +4,13 @@
   :url "https://github.com/stathissideris/ditaa"
   :license {:name "GNU Lesser General Public License v3.0"
             :url "https://www.gnu.org/licenses/lgpl-3.0.en.html"}
-  :dependencies [[commons-cli/commons-cli "1.4"]
+  :dependencies [[org.clojure/clojure "1.9.0"]
+                 [commons-cli/commons-cli "1.4"]
                  [net.htmlparser.jericho/jericho-html "3.4"]
                  [org.apache.xmlgraphics/batik-gvt "1.9"]
                  [org.apache.xmlgraphics/batik-codec "1.9"]
                  [org.apache.xmlgraphics/batik-bridge "1.9"]]
   :main org.stathissideris.ascii2image.core.CommandLineConverter
-  :java-source-paths ["src"]
+  :java-source-paths ["src/java"]
   :profiles {:dev {:dependencies      [[junit/junit "4.12"]]
-                   :java-source-paths ["test"]}})
+                   :java-source-paths ["test/java"]}})

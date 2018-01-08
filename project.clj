@@ -13,4 +13,5 @@
   :main org.stathissideris.ascii2image.core.CommandLineConverter
   :java-source-paths ["src/java"]
   :profiles {:dev {:dependencies      [[junit/junit "4.12"]]
+                   :source-paths      ["test/clj"]
                    :java-source-paths ["test/java"]}})

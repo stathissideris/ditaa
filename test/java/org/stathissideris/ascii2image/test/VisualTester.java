@@ -58,10 +58,7 @@ public class VisualTester {
 
 	private static final String HTMLReportName = "test_suite";
 	private static final String expectedDir = "test-resources/images-expected";
-	private static final String actualDir = "test-resources/images";
-	
-	private File textFile;
-	private int index;
+	private static final String actualDir = "test-resources/images-actual";
 	
 	public static void main(String[] args){
 		generate();
@@ -73,8 +70,7 @@ public class VisualTester {
 		System.out.println("Tests completed");
 	}
 
-	@Test
-	public void compareImages() throws FileNotFoundException, IOException {
+	public static boolean imagesAreEqual(File textFile, int index) throws Exception {
 		ConversionOptions options = new ConversionOptions();
 		File actualFile = new File(actualDir + File.separator + textFile.getName() + ".png");
 		File expectedFile = new File(expectedDir + File.separator + textFile.getName() + ".png");
@@ -98,9 +94,11 @@ public class VisualTester {
 		//compare images pixel-by-pixel
 		BufferedImage actualImage = ImageHandler.instance().loadBufferedImage(actualFile);
 		BufferedImage expectedImage = ImageHandler.instance().loadBufferedImage(expectedFile);
-		
-		assertTrue("Images are not the same size", actualImage.getWidth() == expectedImage.getWidth()
-				&& actualImage.getHeight() == expectedImage.getHeight());
+
+		if(!(actualImage.getWidth() == expectedImage.getWidth()
+				&& actualImage.getHeight() == expectedImage.getHeight())) {
+			throw new Exception("Images are not the same size");
+		}
 
 		boolean pixelsEqual = true;
 		int x = 0;
@@ -117,15 +115,14 @@ public class VisualTester {
 				}
 			}
 		}
-		
-		assertTrue("Images for "+textFile.getName()+" are not pixel-identical, first different pixel at: "+x+","+y, pixelsEqual);
+
+		if(!pixelsEqual) {
+			throw new Exception("Images for " + textFile.getName() + " are not pixel-identical, first different pixel at: " + x + "," + y);
+		}
+
+		return true;
 	}
-	
-	public VisualTester(File textFile, int index) {
-		this.textFile = textFile;
-		this.index = index;
-	}
-	
+
 	@Parameters
 	public static Collection getTestParameters() {
 		List<File> filesToRender = getFilesToRender();
@@ -176,7 +173,12 @@ public class VisualTester {
 	}
 	
 	public static void generateImages(List<File> textFiles, String destinationDir) {
-		
+
+		File dest = new File(destinationDir);
+		if(!dest.exists()) {
+			dest.mkdirs();
+		}
+
 		ConversionOptions options = new ConversionOptions();
 		
 		for(File textFile : textFiles) {

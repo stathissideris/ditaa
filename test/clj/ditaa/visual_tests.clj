@@ -4,7 +4,7 @@
   (:import [org.stathissideris.ascii2image.test VisualTester]))
 
 (defn generate-comparison-report []
-  (VisualTester/generate))
+  (VisualTester/generateComparisonReport))
 
 (defn generate-expected-images []
   (VisualTester/generateImages

@@ -64,7 +64,7 @@ public class VisualTester {
 		generate();
 	}
 
-	public static void generate() {
+	public static void generateComparisonReport() {
 		String reportDir = "test-resources/images";
 		VisualTester.createHTMLTestReport(getFilesToRender(), reportDir, HTMLReportName);
 		System.out.println("Tests completed");

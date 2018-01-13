@@ -376,6 +376,20 @@ In this mode, files that exist are not generated again, they are just
 skipped. You can force overwrite of the files using the `--overwrite`
 option.
 
+## Developers
+
+Ditaa is going to be gradually rewritten in Clojure (starting with the
+tests), so it now uses [Leiningen](https://leiningen.org/) for
+building. In order to get a new stand-alone jar file, just switch into
+ditaa's top-level dir and type:
+
+```
+lein uberjar
+```
+
+This produces a stand-alone jar in the target folder with a filename
+of `ditaa-x.xx.x-standalone.jar`.
+
 ## Friends and relatives
 
 Here is a list of projects that are related to `ditaa` and add to its
@@ -419,6 +433,7 @@ prove useful/relevant while using it:
 
 * Stathis Sideris - original author
 * Bill Baker - co-maintainer
+* [Jean Lazarou](https://github.com/jeanlazarou) - SVG rendering
 * John Tsiombikas - beta testing
 * Leonidas Tsampros - beta testing
 

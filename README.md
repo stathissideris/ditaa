@@ -83,11 +83,16 @@ To start from the command line, type (where `XXX` is the version number):
 You will be presented with the command-line options help:
 
 ```
- -A,--no-antialias          Turns anti-aliasing off.
- -d,--debug                 Renders the debug grid over the resulting
-                            image.
- -E,--no-separation         Prevents the separation of common edges of
-                            shapes. You can see the difference below:
+ -A,--no-antialias              Turns anti-aliasing off.
+ -b,--background <BACKGROUND>   The background colour of the image. The
+                                format should be a six-digit hexadecimal
+                                number (as in HTML, FF0000 for red). Pass
+                                an eight-digit hex to define transparency.
+                                This is overridden by --transparent.
+ -d,--debug                     Renders the debug grid over the resulting
+                                image.
+ -E,--no-separation             Prevents the separation of common edges of
+                                shapes.
 ```
 
 Before processing:
@@ -101,7 +106,6 @@ Before processing:
 |    |    |
 +----+----+
 ```
-
 Common edge separation (default)
 
 ![](https://rawgit.com/stathissideris/ditaa/master/doc/images/separation.png)
@@ -111,30 +115,39 @@ No separation (with the `-E` option)
 ![](https://rawgit.com/stathissideris/ditaa/master/doc/images/no_separation.png)
 
 ```
--e,--encoding <ENCODING>   The encoding of the input file.
- -h,--html                  In this case the input is an HTML file. The
-                            contents of the <pre class="textdiagram"> tags
-                            are rendered as diagrams and saved in the
-                            images directory and a new HTML file is
-                            produced with the appropriate <img> tags.
-                            See the HTML section.
-    --help                  Prints usage help.
- -o,--overwrite             If the filename of the destination image
-                            already exists, an alternative name is chosen.
-                            If the overwrite option is selected, the image
-                            file is instead overwriten.
- -r,--round-corners         Causes all corners to be rendered as round
-                            corners.
- -s,--scale <SCALE>         A natural number that determines the size of
-                            the rendered image. The units are fractions of
-                            the default size (2.5 renders 1.5 times bigger
-                            than the default).
- -S,--no-shadows            Turns off the drop-shadow effect.
- -t,--tabs <TABS>           Tabs are normally interpreted as 8 spaces but
-                            it is possible to change that using this
-                            option. It is not advisable to use tabs in
-                            your diagrams.
- -v,--verbose               Makes ditaa more verbose.
+ -e,--encoding <ENCODING>       The encoding of the input file.
+ -h,--html                      In this case the input is an HTML file.
+                                The contents of the <pre
+                                class="textdiagram"> tags are rendered as
+                                diagrams and saved in the images directory
+                                and a new HTML file is produced with the
+                                appropriate <img> tags.
+    --help                      Prints usage help.
+ -o,--overwrite                 If the filename of the destination image
+                                already exists, an alternative name is
+                                chosen. If the overwrite option is
+                                selected, the image file is instead
+                                overwriten.
+ -r,--round-corners             Causes all corners to be rendered as round
+                                corners.
+ -S,--no-shadows                Turns off the drop-shadow effect.
+ -s,--scale <SCALE>             A natural number that determines the size
+                                of the rendered image. The units are
+                                fractions of the default size (2.5 renders
+                                1.5 times bigger than the default).
+    --svg                       Write a SVG image as destination file.
+    --svg-font-url <FONT>       SVG font URL.
+ -T,--transparent               Causes the diagram to be rendered on a
+                                transparent background. Overrides
+                                --background.
+ -t,--tabs <TABS>               Tabs are normally interpreted as 8 spaces
+                                but it is possible to change that using
+                                this option. It is not advisable to use
+                                tabs in your diagrams.
+ -v,--verbose                   Makes ditaa more verbose.
+ -W,--fixed-slope               Makes sides of parallelograms and
+                                trapezoids fixed slope instead of fixed
+                                width.
 ```
 
 ### Syntax
@@ -363,6 +376,20 @@ In this mode, files that exist are not generated again, they are just
 skipped. You can force overwrite of the files using the `--overwrite`
 option.
 
+## Developers
+
+Ditaa is going to be gradually rewritten in Clojure (starting with the
+tests), so it now uses [Leiningen](https://leiningen.org/) for
+building. In order to get a new stand-alone jar file, just switch into
+ditaa's top-level dir and type:
+
+```
+lein uberjar
+```
+
+This produces a stand-alone jar in the target folder with a filename
+of `ditaa-x.xx.x-standalone.jar`.
+
 ## Friends and relatives
 
 Here is a list of projects that are related to `ditaa` and add to its
@@ -406,6 +433,7 @@ prove useful/relevant while using it:
 
 * Stathis Sideris - original author
 * Bill Baker - co-maintainer
+* [Jean Lazarou](https://github.com/jeanlazarou) - SVG rendering
 * John Tsiombikas - beta testing
 * Leonidas Tsampros - beta testing
 

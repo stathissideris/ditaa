@@ -1,4 +1,11 @@
+# Version 0.11.0
+
+  * SVG rendering
+  * Use Leiningen for building
+  * Some tests in Clojure
+
 # Version 0.9
+
   * New shapes:
     * Ellipse {o}
     * Manual operation {mo}
@@ -8,6 +15,7 @@
   * Further parsing optimisations (pre-compiled regexes)
 
 # Version 0.8
+
   * Parsing optimisation (~90% faster)
   * Fixed line separation bugs
   * Fixed open shape rendering bugs (missing lines)

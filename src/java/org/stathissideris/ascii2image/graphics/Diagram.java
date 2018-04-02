@@ -383,7 +383,7 @@ public class Diagram {
 		//assign color codes to shapes
 		//TODO: text on line should not change its color
 		
-		Iterator<CellColorPair> cellColorPairs = grid.findColorCodes().iterator();
+		Iterator<CellColorPair> cellColorPairs = grid.findColorCodes(options).iterator();
 		while(cellColorPairs.hasNext()){
 			TextGrid.CellColorPair pair =
 				(TextGrid.CellColorPair) cellColorPairs.next();
@@ -513,7 +513,7 @@ public class Diagram {
 		
 		//copy again
 		workGrid = new TextGrid(grid);
-		workGrid.removeNonText();
+		workGrid.removeNonText(options);
 		
 		
 		// ****** handle text *******

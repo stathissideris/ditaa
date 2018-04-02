@@ -25,6 +25,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.stathissideris.ascii2image.core.ConversionOptions;
 import org.stathissideris.ascii2image.core.FileUtils;
 import org.stathissideris.ascii2image.core.ProcessingOptions;
 import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
@@ -559,12 +560,12 @@ public class TextGrid {
 	 * Makes blank all the cells that contain non-text
 	 * elements.
 	 */
-	public void removeNonText(){
+	public void removeNonText(ConversionOptions options){
 		//the following order is significant
 		//since the south-pointing arrowheads
 		//are determined based on the surrounding boundaries
 		removeArrowheads();
-		removeColorCodes();
+		removeColorCodes(options);
 		removeBoundaries();
 		removeMarkupTags();
 	}
@@ -580,14 +581,19 @@ public class TextGrid {
 		}		
 	}
 
-	public void removeColorCodes(){
-		Iterator cells = findColorCodes().iterator();
+	public void removeColorCodes(ConversionOptions options){
+
+		Iterator cells = findColorCodes(options).iterator();
 		while(cells.hasNext()){
 			Cell cell = ((CellColorPair) cells.next()).cell;
 			set(cell, ' ');
 			cell = cell.getEast(); set(cell, ' ');
-			cell = cell.getEast(); set(cell, ' ');
-			cell = cell.getEast(); set(cell, ' ');
+			if (options.processingOptions.getShortColorCodes() == null) {
+				cell = cell.getEast();
+				set(cell, ' ');
+				cell = cell.getEast();
+				set(cell, ' ');
+			}
 		}
 	}
 
@@ -628,24 +634,33 @@ public class TextGrid {
 	}
 
 
-	public ArrayList<CellColorPair> findColorCodes(){
-		Pattern colorCodePattern = Pattern.compile("c[A-F0-9]{3}");
+	public ArrayList<CellColorPair> findColorCodes(ConversionOptions options){
+		Pattern colorCodePattern =
+				options.processingOptions.isShortColorCodes()?
+						Pattern.compile("z[A-Z0-9]"):
+						Pattern.compile("c[A-F0-9]{3}");
+		int colorCodeWidth= options.processingOptions.isShortColorCodes()?2:4;
 		ArrayList<CellColorPair> result = new ArrayList<CellColorPair>();
 		int width = getWidth();
 		int height = getHeight();
 		for(int yi = 0; yi < height; yi++){
-			for(int xi = 0; xi < width - 3; xi++){
+			for(int xi = 0; xi < width - colorCodeWidth-1; xi++){
 				Cell cell = new Cell(xi, yi);
-				String s = getStringAt(cell, 4);
+				String s = getStringAt(cell, colorCodeWidth);
 				Matcher matcher = colorCodePattern.matcher(s);
 				if(matcher.matches()){
-					char cR = s.charAt(1);
-					char cG = s.charAt(2);
-					char cB = s.charAt(3);
-					int r = Integer.valueOf(String.valueOf(cR), 16).intValue() * 17;
-					int g = Integer.valueOf(String.valueOf(cG), 16).intValue() * 17;
-					int b = Integer.valueOf(String.valueOf(cB), 16).intValue() * 17;
-					result.add(new CellColorPair(cell, new Color(r, g, b)));
+					if (options.processingOptions.isShortColorCodes()) {
+						Color c= options.processingOptions.getShortColorCodeMap().getOrDefault(s.charAt(1), Color.white);
+						result.add(new CellColorPair(cell, c));
+					} else {
+						char cR = s.charAt(1);
+						char cG = s.charAt(2);
+						char cB = s.charAt(3);
+						int r = Integer.valueOf(String.valueOf(cR), 16).intValue() * 17;
+						int g = Integer.valueOf(String.valueOf(cG), 16).intValue() * 17;
+						int b = Integer.valueOf(String.valueOf(cB), 16).intValue() * 17;
+						result.add(new CellColorPair(cell, new Color(r, g, b)));
+					}
 				}
 			}
 		}

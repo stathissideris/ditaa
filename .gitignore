@@ -16,4 +16,9 @@ build/testclasses/
 releases/
 tests/images/
 tests/images-expected/
+
+# Files copied by mvn's build procedure
+tests/text/
+tests/build.xml
 target/
+/.lein-failures

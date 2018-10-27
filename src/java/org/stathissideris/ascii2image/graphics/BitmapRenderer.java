@@ -19,15 +19,14 @@
  */
 package org.stathissideris.ascii2image.graphics;
 
-import java.awt.BasicStroke;
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Stroke;
+import org.stathissideris.ascii2image.core.ConversionOptions;
+import org.stathissideris.ascii2image.core.RenderingOptions;
+import org.stathissideris.ascii2image.core.Shape3DOrderingComparator;
+import org.stathissideris.ascii2image.core.ShapeAreaComparator;
+import org.stathissideris.ascii2image.text.TextGrid;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
@@ -39,14 +38,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-
-import javax.imageio.ImageIO;
-
-import org.stathissideris.ascii2image.core.ConversionOptions;
-import org.stathissideris.ascii2image.core.RenderingOptions;
-import org.stathissideris.ascii2image.core.Shape3DOrderingComparator;
-import org.stathissideris.ascii2image.core.ShapeAreaComparator;
-import org.stathissideris.ascii2image.text.TextGrid;
 
 /**
  * 
@@ -342,6 +333,8 @@ public class BitmapRenderer {
 		Iterator<DiagramText> textIt = diagram.getTextObjects().iterator();
 		while(textIt.hasNext()){
 			DiagramText text = textIt.next();
+			text.drawOn(g2);
+			/*
 			g2.setFont(text.getFont());
 			if(text.hasOutline()){
 				g2.setColor(text.getOutlineColor());
@@ -352,6 +345,7 @@ public class BitmapRenderer {
 			}
 			g2.setColor(text.getColor());
 			g2.drawString(text.getText(), text.getXPos(), text.getYPos());
+			*/
 		}
 		
 		if(options.renderDebugLines() || DEBUG_LINES){
@@ -392,20 +386,10 @@ public class BitmapRenderer {
 		}
 		
 		public void paint(Graphics g){
-			Graphics g2 = (Graphics2D) g;
+			Graphics2D g2 = (Graphics2D) g;
 			Iterator<DiagramText> textIt = textObjects.iterator();
 			while(textIt.hasNext()){
-				DiagramText text = (DiagramText) textIt.next();
-				g2.setFont(text.getFont());
-				if(text.hasOutline()){
-					g2.setColor(text.getOutlineColor());
-					g2.drawString(text.getText(), text.getXPos() + 1, text.getYPos());
-					g2.drawString(text.getText(), text.getXPos() - 1, text.getYPos());
-					g2.drawString(text.getText(), text.getXPos(), text.getYPos() + 1);
-					g2.drawString(text.getText(), text.getXPos(), text.getYPos() - 1);
-				}
-				g2.setColor(text.getColor());
-				g2.drawString(text.getText(), text.getXPos(), text.getYPos());
+				textIt.next().drawOn(g2);
 			}
 		}
 	}

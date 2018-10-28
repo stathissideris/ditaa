@@ -42,6 +42,7 @@ public class DiagramText extends DiagramComponent {
 
   public static final Color   DEFAULT_COLOR        = Color.black;
   public static final Pattern TEXT_SPLITTING_REGEX = Pattern.compile("([^$]+|\\$[^$]*\\$)");
+  private final       boolean latexMathEnabled;
 
   private String text;
   private Font   font;
@@ -51,7 +52,7 @@ public class DiagramText extends DiagramComponent {
   private boolean hasOutline   = false;
   private Color   outlineColor = Color.white;
 
-  public DiagramText(int x, int y, String text, Font font) {
+  public DiagramText(int x, int y, String text, Font font, boolean latexMathEnabled) {
     if (text == null)
       throw new IllegalArgumentException("DiagramText cannot be initialised with a null string");
     if (font == null)
@@ -61,6 +62,7 @@ public class DiagramText extends DiagramComponent {
     this.yPos = y;
     this.text = text;
     this.font = font;
+    this.latexMathEnabled = latexMathEnabled;
   }
 
   public void centerInBounds(Rectangle2D bounds) {
@@ -174,8 +176,8 @@ public class DiagramText extends DiagramComponent {
     }
   }
 
-  private static boolean isTeXFormula(String text) {
-    return text.startsWith("$");
+  private boolean isTeXFormula(String text) {
+    return this.latexMathEnabled && text.startsWith("$");
   }
 
   /**

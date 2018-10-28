@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- *
  * @author Efstathios Sideris
  */
 public class Diagram {
@@ -53,54 +52,53 @@ public class Diagram {
 
 
   /**
-   *
    * <p>An outline of the inner workings of this very important (and monstrous)
    * constructor is presented here. Boundary processing is the first step
    * of the process:</p>
    *
    * <ol>
-   *   <li>Copy the grid into a work grid and remove all type-on-line
-   *       and point markers from the work grid</li>
-   *   <li>Split grid into distinct shapes by plotting the grid
-   * 	     onto an AbstractionGrid and its getDistinctShapes() method.</li>
-   *   <li>Find all the possible boundary sets of each of the
-   *       distinct shapes. This can produce duplicate shapes (if the boundaries
-   *       are the same when filling from the inside and the outside).</li>
-   *   <li>Remove duplicate boundaries.</li>
-   *   <li>Remove obsolete boundaries. Obsolete boundaries are the ones that are
-   *       the sum of their parts when plotted as filled shapes. (see method
-   *       removeObsoleteShapes())</li>
-   *   <li>Separate the found boundary sets to open, closed or mixed
-   *       (See CellSet class on how its done).</li>
-   *   <li>Are there any closed boundaries?
-   *        <ul>
-   *           <li>YES. Subtract all the closed boundaries from each of the
-   *           open ones. That should convert the mixed shapes into open.</li>
-   *           <li>NO. In this (harder) case, we use the method
-   *           breakTrulyMixedBoundaries() of CellSet to break boundaries
-   *           into open and closed shapes (would work in any case, but it's
-   *           probably slower than the other method). This method is based
-   *           on tracing from the lines' ends and splitting when we get to
-   *           an intersection.</li>
-   *        </ul>
-   *   </li>
-   *   <li>If we had to eliminate any mixed shapes, we separate the found
-   *   boundary sets again to open, closed or mixed.</li>
+   * <li>Copy the grid into a work grid and remove all type-on-line
+   * and point markers from the work grid</li>
+   * <li>Split grid into distinct shapes by plotting the grid
+   * onto an AbstractionGrid and its getDistinctShapes() method.</li>
+   * <li>Find all the possible boundary sets of each of the
+   * distinct shapes. This can produce duplicate shapes (if the boundaries
+   * are the same when filling from the inside and the outside).</li>
+   * <li>Remove duplicate boundaries.</li>
+   * <li>Remove obsolete boundaries. Obsolete boundaries are the ones that are
+   * the sum of their parts when plotted as filled shapes. (see method
+   * removeObsoleteShapes())</li>
+   * <li>Separate the found boundary sets to open, closed or mixed
+   * (See CellSet class on how its done).</li>
+   * <li>Are there any closed boundaries?
+   * <ul>
+   * <li>YES. Subtract all the closed boundaries from each of the
+   * open ones. That should convert the mixed shapes into open.</li>
+   * <li>NO. In this (harder) case, we use the method
+   * breakTrulyMixedBoundaries() of CellSet to break boundaries
+   * into open and closed shapes (would work in any case, but it's
+   * probably slower than the other method). This method is based
+   * on tracing from the lines' ends and splitting when we get to
+   * an intersection.</li>
+   * </ul>
+   * </li>
+   * <li>If we had to eliminate any mixed shapes, we separate the found
+   * boundary sets again to open, closed or mixed.</li>
    * </ol>
    *
    * <p>At this stage, the boundary processing is all complete and we
    * proceed with using those boundaries to create the shapes:</p>
    *
    * <ol>
-   *   <li>Create closed shapes.</li>
-   *   <li>Create open shapes. That's when the line end corrections are
-   *   also applied, concerning the positioning of the ends of lines
-   *   see methods connectEndsToAnchors() and moveEndsToCellEdges() of
-   *   DiagramShape.</li>
-   *   <li>Assign color codes to closed shapes.</li>
-   *   <li>Assign extended markup tags to closed shapes.</p>
-   *   <li>Create arrowheads.</p>
-   *   <li>Create point markers.</p>
+   * <li>Create closed shapes.</li>
+   * <li>Create open shapes. That's when the line end corrections are
+   * also applied, concerning the positioning of the ends of lines
+   * see methods connectEndsToAnchors() and moveEndsToCellEdges() of
+   * DiagramShape.</li>
+   * <li>Assign color codes to closed shapes.</li>
+   * <li>Assign extended markup tags to closed shapes.</p>
+   * <li>Create arrowheads.</p>
+   * <li>Create point markers.</p>
    * </ol>
    *
    * <p>Finally, the text processing occurs: [pending]</p>
@@ -565,11 +563,12 @@ public class Diagram {
         int maxX = getCellMaxX(lastCell);
 
         DiagramText textObject;
+        boolean laTeXmathEnabled = options.processingOptions.isLaTeXmathEnabled();
         if (FontMeasurer.instance().getWidthFor(string, font) > maxX - minX) { //does not fit horizontally
           Font lessWideFont = FontMeasurer.instance().getFontFor(maxX - minX, string);
-          textObject = new DiagramText(minX, y, string, lessWideFont);
+          textObject = new DiagramText(minX, y, string, lessWideFont, laTeXmathEnabled);
         } else
-          textObject = new DiagramText(minX, y, string, font);
+          textObject = new DiagramText(minX, y, string, font, laTeXmathEnabled);
 
         textObject.centerVerticallyBetween(getCellMinY(cell), getCellMaxY(cell));
 
@@ -648,7 +647,6 @@ public class Diagram {
    * when plotted as filled shapes.
    *
    * @return true if it removed any obsolete.
-   *
    */
   private boolean removeObsoleteShapes(TextGrid grid, ArrayList<CellSet> sets) {
     if (DEBUG)

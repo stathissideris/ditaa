@@ -35,6 +35,7 @@ public class ProcessingOptions {
   private boolean overwriteFiles                 = false;
   private boolean performSeparationOfCommonEdges = true;
   private boolean allCornersAreRound             = false;
+  private boolean latexMathEnabled = false;
 
   public static final int USE_TAGS          = 0;
   public static final int RENDER_TAGS       = 1;
@@ -237,5 +238,11 @@ public class ProcessingOptions {
     return customShapes.get(tagName);
   }
 
+  public void enableLaTeXmath(boolean b) {
+    this.latexMathEnabled = b;
+  }
 
+  public boolean isLaTeXmathEnabled() {
+    return this.latexMathEnabled;
+  }
 }

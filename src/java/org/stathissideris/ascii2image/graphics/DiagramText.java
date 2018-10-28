@@ -1,10 +1,10 @@
 /**
  * ditaa - Diagrams Through Ascii Art
- * 
+ *
  * Copyright (C) 2004-2011 Efstathios Sideris
  *
  * ditaa is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as 
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
  *
@@ -15,178 +15,178 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with ditaa.  If not, see <http://www.gnu.org/licenses/>.
- *   
  */
 package org.stathissideris.ascii2image.graphics;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 /**
- * 
+ *
  * @author Efstathios Sideris
  */
 public class DiagramText extends DiagramComponent {
 
-	public static final Color DEFAULT_COLOR = Color.black;
-	
-	private String text;
-	private Font font;
-	private int xPos, yPos;
-	private Color color = Color.black;
-	private boolean isTextOnLine = false;
-	private boolean hasOutline = false;
-	private Color outlineColor = Color.white;
+  public static final Color DEFAULT_COLOR = Color.black;
 
-	public DiagramText(int x, int y, String text, Font font){
-		if(text == null) throw new IllegalArgumentException("DiagramText cannot be initialised with a null string");
-		if(font == null) throw new IllegalArgumentException("DiagramText cannot be initialised with a null font");
+  private String text;
+  private Font   font;
+  private int    xPos, yPos;
+  private Color   color        = Color.black;
+  private boolean isTextOnLine = false;
+  private boolean hasOutline   = false;
+  private Color   outlineColor = Color.white;
 
-		this.xPos = x;
-		this.yPos = y;
-		this.text = text;
-		this.font = font;
-	}
+  public DiagramText(int x, int y, String text, Font font) {
+    if (text == null)
+      throw new IllegalArgumentException("DiagramText cannot be initialised with a null string");
+    if (font == null)
+      throw new IllegalArgumentException("DiagramText cannot be initialised with a null font");
 
-	public void centerInBounds(Rectangle2D bounds){
-		centerHorizontallyBetween((int) bounds.getMinX(), (int) bounds.getMaxX());
-		centerVerticallyBetween((int) bounds.getMinY(), (int) bounds.getMaxY());
-	}
+    this.xPos = x;
+    this.yPos = y;
+    this.text = text;
+    this.font = font;
+  }
 
-	public void centerHorizontallyBetween(int minX, int maxX){
-		int width = FontMeasurer.instance().getWidthFor(text, font);
-		int center = Math.abs(maxX - minX) / 2;
-		xPos += Math.abs(center - width / 2);
-		
-	}
+  public void centerInBounds(Rectangle2D bounds) {
+    centerHorizontallyBetween((int) bounds.getMinX(), (int) bounds.getMaxX());
+    centerVerticallyBetween((int) bounds.getMinY(), (int) bounds.getMaxY());
+  }
 
-	public void centerVerticallyBetween(int minY, int maxY){
-		int zHeight = FontMeasurer.instance().getZHeight(font);
-		int center = Math.abs(maxY - minY) / 2;
-		yPos -= Math.abs(center - zHeight / 2);
-	}
+  public void centerHorizontallyBetween(int minX, int maxX) {
+    int width = FontMeasurer.instance().getWidthFor(text, font);
+    int center = Math.abs(maxX - minX) / 2;
+    xPos += Math.abs(center - width / 2);
 
-	public void alignRightEdgeTo(int x){
-		int width = FontMeasurer.instance().getWidthFor(text, font);
-		xPos = x - width;
-	}
+  }
+
+  public void centerVerticallyBetween(int minY, int maxY) {
+    int zHeight = FontMeasurer.instance().getZHeight(font);
+    int center = Math.abs(maxY - minY) / 2;
+    yPos -= Math.abs(center - zHeight / 2);
+  }
+
+  public void alignRightEdgeTo(int x) {
+    int width = FontMeasurer.instance().getWidthFor(text, font);
+    xPos = x - width;
+  }
 
 
-	/**
-	 * @return
-	 */
-	public Color getColor() {
-		return color;
-	}
+  /**
+   * @return
+   */
+  public Color getColor() {
+    return color;
+  }
 
-	/**
-	 * @return
-	 */
-	public Font getFont() {
-		return font;
-	}
+  /**
+   * @return
+   */
+  public Font getFont() {
+    return font;
+  }
 
-	/**
-	 * @return
-	 */
-	public String getText() {
-		return text;
-	}
+  /**
+   * @return
+   */
+  public String getText() {
+    return text;
+  }
 
-	/**
-	 * @return
-	 */
-	public int getXPos() {
-		return xPos;
-	}
+  /**
+   * @return
+   */
+  public int getXPos() {
+    return xPos;
+  }
 
-	/**
-	 * @return
-	 */
-	public int getYPos() {
-		return yPos;
-	}
+  /**
+   * @return
+   */
+  public int getYPos() {
+    return yPos;
+  }
 
-	/**
-	 * @param color
-	 */
-	public void setColor(Color color) {
-		this.color = color;
-	}
+  /**
+   * @param color
+   */
+  public void setColor(Color color) {
+    this.color = color;
+  }
 
-	/**
-	 * @param font
-	 */
-	public void setFont(Font font) {
-		this.font = font;
-	}
+  /**
+   * @param font
+   */
+  public void setFont(Font font) {
+    this.font = font;
+  }
 
-	/**
-	 * @param string
-	 */
-	public void setText(String string) {
-		text = string;
-	}
+  /**
+   * @param string
+   */
+  public void setText(String string) {
+    text = string;
+  }
 
-	/**
-	 * @param i
-	 */
-	public void setXPos(int i) {
-		xPos = i;
-	}
+  /**
+   * @param i
+   */
+  public void setXPos(int i) {
+    xPos = i;
+  }
 
-	/**
-	 * @param i
-	 */
-	public void setYPos(int i) {
-		yPos = i;
-	}
+  /**
+   * @param i
+   */
+  public void setYPos(int i) {
+    yPos = i;
+  }
 
-	public Rectangle2D getBounds(){
-		Rectangle2D bounds = FontMeasurer.instance().getBoundsFor(text, font);
-		bounds.setRect(
-			bounds.getMinX() + xPos,
-			bounds.getMinY() + yPos,
-			bounds.getWidth(),
-			bounds.getHeight());
-		return bounds;
-	}
-	
-	public String toString(){
-		return "DiagramText, at ("+xPos+", "+yPos+"), within "+getBounds()+" '"+text+"', "+color+" "+font;
-	}
+  public Rectangle2D getBounds() {
+    Rectangle2D bounds = FontMeasurer.instance().getBoundsFor(text, font);
+    bounds.setRect(
+        bounds.getMinX() + xPos,
+        bounds.getMinY() + yPos,
+        bounds.getWidth(),
+        bounds.getHeight());
+    return bounds;
+  }
 
-	/**
-	 * @return
-	 */
-	public boolean isTextOnLine() {
-		return isTextOnLine;
-	}
+  public String toString() {
+    return "DiagramText, at (" + xPos + ", " + yPos + "), within " + getBounds() + " '" + text + "', " + color + " " + font;
+  }
 
-	/**
-	 * @param b
-	 */
-	public void setTextOnLine(boolean b) {
-		isTextOnLine = b;
-	}
+  /**
+   * @return
+   */
+  public boolean isTextOnLine() {
+    return isTextOnLine;
+  }
 
-	public boolean hasOutline() {
-		return hasOutline;
-	}
+  /**
+   * @param b
+   */
+  public void setTextOnLine(boolean b) {
+    isTextOnLine = b;
+  }
 
-	public void setHasOutline(boolean hasOutline) {
-		this.hasOutline = hasOutline;
-	}
+  public boolean hasOutline() {
+    return hasOutline;
+  }
 
-	public Color getOutlineColor() {
-		return outlineColor;
-	}
+  public void setHasOutline(boolean hasOutline) {
+    this.hasOutline = hasOutline;
+  }
 
-	public void setOutlineColor(Color outlineColor) {
-		this.outlineColor = outlineColor;
-	}
+  public Color getOutlineColor() {
+    return outlineColor;
+  }
 
-	
+  public void setOutlineColor(Color outlineColor) {
+    this.outlineColor = outlineColor;
+  }
+
+
 }

@@ -1,10 +1,10 @@
 /**
  * ditaa - Diagrams Through Ascii Art
- * 
+ *
  * Copyright (C) 2004-2011 Efstathios Sideris
  *
  * ditaa is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as 
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
  *
@@ -15,118 +15,133 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with ditaa.  If not, see <http://www.gnu.org/licenses/>.
- *   
  */
 package org.stathissideris.ascii2image.core;
+
+import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
 
 import java.awt.Color;
 import java.util.HashMap;
 
-import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
-
 /**
- * 
+ *
  * @author Efstathios Sideris
  */
 public class RenderingOptions {
 
-	private HashMap<String, CustomShapeDefinition> customShapes;
-	
-	private boolean dropShadows = true;
-	private boolean renderDebugLines = false;
-	private boolean antialias = true;
-    private boolean fixedSlope = false;
+  private HashMap<String, CustomShapeDefinition> customShapes;
 
-	private int cellWidth = 10;
-	private int cellHeight = 14;
-	
-	private float scale = 1;
-	
-	private Color backgroundColor = Color.white;
+  private boolean dropShadows      = true;
+  private boolean renderDebugLines = false;
+  private boolean antialias        = true;
+  private boolean fixedSlope       = false;
 
-	public enum ImageType { PNG, SVG };
+  private int cellWidth  = 10;
+  private int cellHeight = 14;
 
-	private ImageType imageType = ImageType.PNG;
+  private float scale = 1;
 
-	public ImageType getImageType() { return imageType; }
-	public void setImageType(ImageType type) { imageType = type; }
+  private Color backgroundColor = Color.white;
 
-	private String fontFamily = "Courier";
-	private String fontURL = null;
+  public enum ImageType {PNG, SVG}
 
-	public String getFontFamily() { return fontFamily; }
-	public String getFontURL() { return fontURL; }
-	public void setFontURL(String url) { fontFamily = "Custom"; fontURL = url; }
+  ;
 
-	public int getCellHeight() {
-		return cellHeight;
-	}
+  private ImageType imageType = ImageType.PNG;
 
-	public int getCellWidth() {
-		return cellWidth;
-	}
+  public ImageType getImageType() {
+    return imageType;
+  }
 
-	public boolean dropShadows() {
-		return dropShadows;
-	}
+  public void setImageType(ImageType type) {
+    imageType = type;
+  }
 
-	public boolean renderDebugLines() {
-		return renderDebugLines;
-	}
+  private String fontFamily = "Courier";
+  private String fontURL    = null;
 
-	public float getScale() {
-		return scale;
-	}
+  public String getFontFamily() {
+    return fontFamily;
+  }
 
-	public void setDropShadows(boolean b) {
-		dropShadows = b;
-	}
+  public String getFontURL() {
+    return fontURL;
+  }
 
-	public void setRenderDebugLines(boolean b) {
-		renderDebugLines = b;
-	}
+  public void setFontURL(String url) {
+    fontFamily = "Custom";
+    fontURL = url;
+  }
 
-	public void setScale(float f) {
-		scale = f;
-		cellWidth *= scale;
-		cellHeight *= scale;
-	}
+  public int getCellHeight() {
+    return cellHeight;
+  }
 
-	public boolean performAntialias() {
-		return antialias;
-	}
+  public int getCellWidth() {
+    return cellWidth;
+  }
 
-	public void setAntialias(boolean b) {
-		antialias = b;
-	}
+  public boolean dropShadows() {
+    return dropShadows;
+  }
 
-	public Color getBackgroundColor() {
-		return backgroundColor;
-	}
+  public boolean renderDebugLines() {
+    return renderDebugLines;
+  }
 
-	public void setBackgroundColor(Color backgroundColor) {
-		this.backgroundColor = backgroundColor;
-	}
-	
-	public boolean needsTransparency() {
-		return backgroundColor.getAlpha() < 255;
-	}
+  public float getScale() {
+    return scale;
+  }
 
-	/**
-     * Should the sides of trapezoids and parallelograms have fixed width (false, default)
-     * or fixed slope (true)?
-     * @return true for fixed slope, false for fixed width
-     */
-    public boolean isFixedSlope() {
-        return fixedSlope;
-    }
+  public void setDropShadows(boolean b) {
+    dropShadows = b;
+  }
 
-    /**
-     * Should the sides of trapezoids and parallelograms have fixed width (false, default)
-     * or fixed slope (true)?
-     * @param b true for fixed slope, false for fixed width
-     */
-    public void setFixedSlope(boolean b) {
-        this.fixedSlope = b;
-    }
+  public void setRenderDebugLines(boolean b) {
+    renderDebugLines = b;
+  }
+
+  public void setScale(float f) {
+    scale = f;
+    cellWidth *= scale;
+    cellHeight *= scale;
+  }
+
+  public boolean performAntialias() {
+    return antialias;
+  }
+
+  public void setAntialias(boolean b) {
+    antialias = b;
+  }
+
+  public Color getBackgroundColor() {
+    return backgroundColor;
+  }
+
+  public void setBackgroundColor(Color backgroundColor) {
+    this.backgroundColor = backgroundColor;
+  }
+
+  public boolean needsTransparency() {
+    return backgroundColor.getAlpha() < 255;
+  }
+
+  /**
+   * Should the sides of trapezoids and parallelograms have fixed width (false, default)
+   * or fixed slope (true)?
+   * @return true for fixed slope, false for fixed width
+   */
+  public boolean isFixedSlope() {
+    return fixedSlope;
+  }
+
+  /**
+   * Should the sides of trapezoids and parallelograms have fixed width (false, default)
+   * or fixed slope (true)?
+   * @param b true for fixed slope, false for fixed width
+   */
+  public void setFixedSlope(boolean b) {
+    this.fixedSlope = b;
+  }
 }

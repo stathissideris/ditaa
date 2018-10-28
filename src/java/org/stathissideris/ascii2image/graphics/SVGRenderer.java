@@ -7,12 +7,12 @@ import org.stathissideris.ascii2image.core.RenderingOptions;
  */
 public class SVGRenderer {
 
-    public String renderToImage(Diagram diagram, RenderingOptions options) {
+  public String renderToImage(Diagram diagram, RenderingOptions options) {
 
-        SVGBuilder builder = new SVGBuilder(diagram, options);
+    SVGBuilder builder = new SVGBuilder(diagram, options);
 
-        return builder.build();
+    return builder.build();
 
-    }
+  }
 
 }

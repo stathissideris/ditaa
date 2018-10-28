@@ -21,6 +21,7 @@ package org.stathissideris.ascii2image.graphics;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
+import org.stathissideris.ascii2image.core.RenderingOptions;
 import org.stathissideris.ascii2image.text.StringUtils;
 
 import javax.swing.JLabel;
@@ -31,6 +32,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+
+import static org.stathissideris.ascii2image.graphics.SVGBuilder.colorToHex;
 
 /**
  * @author Efstathios Sideris
@@ -110,33 +113,69 @@ public class DiagramText extends DiagramComponent {
     if (this.hasOutline()) {
       g2.setColor(this.getOutlineColor());
       Stream.of(1, -1)
-          .peek(d -> draw(g2, this.getXPos() + d, this.getYPos()))
-          .peek(d -> draw(g2, this.getXPos(), this.getYPos() + d))
+          .peek(d -> draw(g2, this.getXPos() + d, this.getYPos(), this.getColor()))
+          .peek(d -> draw(g2, this.getXPos(), this.getYPos() + d, this.getColor()))
           .forEach(d -> {
           });
     }
     g2.setColor(this.getColor());
-    draw(g2, this.getXPos(), this.getYPos());
+    draw(g2, this.getXPos(), this.getYPos(), getColor());
   }
 
-  private void draw(Graphics2D g2, int xPos, int yPos) {
-    Iterator<String> i = StringUtils.createTextSplitter(TEXT_SPLITTING_REGEX, getText());
+  private void draw(Graphics2D g2, int xPos, int yPos, Color color) {
+    Iterator<String> i = StringUtils.createTextSplitter(TEXT_SPLITTING_REGEX, this.getText());
     int x = xPos;
     while (i.hasNext()) {
       String text = i.next();
-      if (text.startsWith("$"))
-        x += drawTeXFormula(
-            g2,
+      if (isTeXFormula(text))
+        x += drawTeXFormula(g2,
             text,
-            x, yPos, this.getColor(),
-            this.getFont().getSize());
+            x, yPos, color,
+            font.getSize());
       else
-        x += drawString(
-            g2,
+        x += drawString(g2,
             text,
-            x, yPos, this.getColor(),
-            this.getFont());
+            x, yPos, color,
+            font);
     }
+  }
+
+  public void renderOn(StringBuilder svgBuildingBuffer, RenderingOptions options) {
+    if (this.hasOutline()) {
+      Stream.of(1, -1)
+          .peek(d -> render(svgBuildingBuffer, options,
+              this.getXPos() + d, this.getYPos(),
+              this.getOutlineColor()))
+          .peek(d -> render(svgBuildingBuffer, options,
+              this.getXPos(), this.getYPos() + d,
+              this.getOutlineColor()))
+          .forEach(d -> {
+          });
+    }
+    render(svgBuildingBuffer, options, this.getXPos(), this.getYPos(), getColor());
+  }
+
+  private void render(StringBuilder svgBuildingBuffer, RenderingOptions options,
+      int xPos, int yPos, Color color) {
+    Iterator<String> i = StringUtils.createTextSplitter(TEXT_SPLITTING_REGEX, this.getText());
+    int x = xPos;
+    while (i.hasNext()) {
+      String token = i.next();
+      if (isTeXFormula(token))
+        x += renderTeXFormula(svgBuildingBuffer, options,
+            token,
+            x, yPos, color,
+            font.getSize());
+      else
+        x += renderString(svgBuildingBuffer, options,
+            token,
+            x, yPos, color,
+            font);
+    }
+  }
+
+  private static boolean isTeXFormula(String text) {
+    return text.startsWith("$");
   }
 
   /**
@@ -252,4 +291,30 @@ public class DiagramText extends DiagramComponent {
     return FontMeasurer.instance().getWidthFor(text, font);
   }
 
+  @SuppressWarnings("unused")
+  private static int renderTeXFormula(StringBuilder svgBuildingBuffer, RenderingOptions options, String text, int x, int yPos, Color color, int size) {
+    throw new UnsupportedOperationException("Rendering LaTeX formula in .svg format is not currently supported.");
+  }
+
+  private static int renderString(StringBuilder svgBuildingBuffer, RenderingOptions options, String text, int xPos, int yPos, Color color, Font font) {
+    String TEXT_ELEMENT = "    <text x='%d' y='%d' font-family='%s' font-size='%d' stroke='none' fill='%s' >" +
+        "<![CDATA[%s]]></text>\n";
+        /* Prefer normal font weight
+        if (font.isBold()) {
+            style = " font-weight='bold'";
+        }
+        */
+
+    svgBuildingBuffer.append(
+        String.format(TEXT_ELEMENT,
+            xPos,
+            yPos,
+            options.getFontFamily(),
+            font.getSize(),
+            colorToHex(color),
+            text
+        )
+    );
+    return FontMeasurer.instance().getWidthFor(text, font);
+  }
 }

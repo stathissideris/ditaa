@@ -5,7 +5,6 @@ import org.stathissideris.ascii2image.core.Shape3DOrderingComparator;
 import org.stathissideris.ascii2image.core.ShapeAreaComparator;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
 import java.util.ArrayList;
@@ -289,56 +288,10 @@ public class SVGBuilder {
   }
 
   private void renderTexts() {
-
-    for (DiagramText diagramText : diagram.getTextObjects()) {
-
-      Font font = diagramText.getFont();
-      String text = diagramText.getText();
-
-      int xPos = diagramText.getXPos();
-      int yPos = diagramText.getYPos();
-
-      renderText(text, xPos, yPos, font, diagramText.getColor());
-
-      if (diagramText.hasOutline()) {
-
-        Color outlineColor = diagramText.getOutlineColor();
-
-        renderText(text, xPos + 1, yPos, font, outlineColor);
-        renderText(text, xPos - 1, yPos, font, outlineColor);
-        renderText(text, xPos, yPos + 1, font, outlineColor);
-        renderText(text, xPos, yPos - 1, font, outlineColor);
-
-      }
-    }
-
+    diagram.getTextObjects().forEach(each -> each.renderOn(this.layer3, this.options));
   }
 
-  private void renderText(String text, int xPos, int yPos, Font font, Color color) {
-
-    String TEXT_ELEMENT = "    <text x='%d' y='%d' font-family='%s' font-size='%d' stroke='none' fill='%s' >" +
-        "<![CDATA[%s]]></text>\n";
-
-        /* Prefer normal font weight
-        if (font.isBold()) {
-            style = " font-weight='bold'";
-        }
-        */
-
-    layer3.append(
-        String.format(TEXT_ELEMENT,
-            xPos,
-            yPos,
-            options.getFontFamily(),
-            font.getSize(),
-            colorToHex(color),
-            text
-        )
-    );
-
-  }
-
-  private static String colorToHex(Color color) {
+  public static String colorToHex(Color color) {
     return String.format("#%s%s%s",
         toHex(color.getRed()),
         toHex(color.getGreen()),

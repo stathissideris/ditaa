@@ -1,18 +1,18 @@
 /**
  * ditaa - Diagrams Through Ascii Art
- *
+ * <p>
  * Copyright (C) 2004-2011 Efstathios Sideris
- *
+ * <p>
  * ditaa is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- *
+ * <p>
  * ditaa is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with ditaa.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -46,8 +46,7 @@ import static org.stathissideris.ascii2image.text.StringUtils.createTextSplitter
  *
  * @author Efstathios Sideris
  */
-public class TextGrid {
-
+public class TextGrid{
   private static final boolean DEBUG      = false;
   private static final char    PLAIN_MODE = 'P';
   public static final  char    LATEX_MODE = 'L';

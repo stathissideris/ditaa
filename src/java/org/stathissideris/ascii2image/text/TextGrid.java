@@ -415,7 +415,7 @@ public class TextGrid {
         char c = get(xi, yi);
         Cell cell = new Cell(xi, yi);
         if (StringUtils.isOneOf(c, pointMarkers)
-            && isStarOnLine(cell)) {
+            && isStarOnLine(cell) && isInPlainMode(cell)) {
 
           boolean isOnHorizontalLine = false;
           if (StringUtils.isOneOf(get(cell.getEast()), horizontalLines))
@@ -453,6 +453,8 @@ public class TextGrid {
     int height = getHeight();
     for (int yi = 0; yi < height; yi++) {
       for (int xi = 0; xi < width; xi++) {
+        if (!isInPlainMode(xi, yi))
+          continue;
         char c = get(xi, yi);
         if (StringUtils.isOneOf(c, pointMarkers)
             && isStarOnLine(new Cell(xi, yi))) {

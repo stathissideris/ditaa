@@ -41,7 +41,6 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
 /**
- *
  * @author Efstathios Sideris
  */
 public class CommandLineConverter {
@@ -67,6 +66,7 @@ public class CommandLineConverter {
     cmdLnOptions.addOption("d", "debug", false, "Renders the debug grid over the resulting image.");
     cmdLnOptions.addOption("r", "round-corners", false, "Causes all corners to be rendered as round corners.");
     cmdLnOptions.addOption("E", "no-separation", false, "Prevents the separation of common edges of shapes.");
+    cmdLnOptions.addOption("L", "latex-math", false, "Enable LaTeX math mode.");
     cmdLnOptions.addOption("h", "html", false, "In this case the input is an HTML file. The contents of the <pre class=\"textdiagram\"> tags are rendered as diagrams and saved in the images directory and a new HTML file is produced with the appropriate <img> tags.");
     cmdLnOptions.addOption("T", "transparent", false, "Causes the diagram to be rendered on a transparent background. Overrides --background.");
 

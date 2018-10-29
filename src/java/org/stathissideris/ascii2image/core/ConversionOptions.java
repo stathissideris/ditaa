@@ -82,6 +82,7 @@ public class ConversionOptions {
 
     processingOptions.setAllCornersAreRound(cmdLine.hasOption("round-corners"));
     processingOptions.setPerformSeparationOfCommonEdges(!cmdLine.hasOption("no-separation"));
+    processingOptions.enableLaTeXmath(cmdLine.hasOption("latex-math"));
     renderingOptions.setAntialias(!cmdLine.hasOption("no-antialias"));
     renderingOptions.setFixedSlope(cmdLine.hasOption("fixed-slope"));
 

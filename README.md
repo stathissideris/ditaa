@@ -428,6 +428,7 @@ prove useful/relevant while using it:
 * If you make sure to keep the lines straight,
   [artist-mode](http://cinsk.github.io//emacs/emacs-artist.html) for
   emacs can be used to produce `ditaa`-compatible diagrams.
+* Within [Eclipse asciidoctor editor](https://github.com/de-jcup/eclipse-asciidoctor-editor) there is support for ditaa rendeing and special editor for `.ditaa` files with preview.
 
 ## Contributors
 

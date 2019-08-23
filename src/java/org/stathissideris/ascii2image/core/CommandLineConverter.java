@@ -19,22 +19,15 @@
  */
 package org.stathissideris.ascii2image.core;
 
-import java.awt.image.RenderedImage;
-import java.io.*;
-
-import javax.imageio.ImageIO;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.PosixParser;
+import org.apache.commons.cli.*;
 import org.stathissideris.ascii2image.graphics.BitmapRenderer;
 import org.stathissideris.ascii2image.graphics.Diagram;
 import org.stathissideris.ascii2image.graphics.SVGRenderer;
 import org.stathissideris.ascii2image.text.TextGrid;
+
+import javax.imageio.ImageIO;
+import java.awt.image.RenderedImage;
+import java.io.*;
 
 /**
  *
@@ -63,6 +56,7 @@ public class CommandLineConverter {
 		cmdLnOptions.addOption("d", "debug", false, "Renders the debug grid over the resulting image.");
 		cmdLnOptions.addOption("r", "round-corners", false, "Causes all corners to be rendered as round corners.");
 		cmdLnOptions.addOption("E", "no-separation", false, "Prevents the separation of common edges of shapes.");
+		cmdLnOptions.addOption("L", "latex-math", false, "Enable LaTeX math mode.");
 		cmdLnOptions.addOption("h", "html", false, "In this case the input is an HTML file. The contents of the <pre class=\"textdiagram\"> tags are rendered as diagrams and saved in the images directory and a new HTML file is produced with the appropriate <img> tags.");
 		cmdLnOptions.addOption("T", "transparent", false, "Causes the diagram to be rendered on a transparent background. Overrides --background.");
 

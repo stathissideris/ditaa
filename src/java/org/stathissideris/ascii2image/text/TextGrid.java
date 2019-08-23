@@ -19,15 +19,18 @@
  */
 package org.stathissideris.ascii2image.text;
 
+import org.stathissideris.ascii2image.core.FileUtils;
+import org.stathissideris.ascii2image.core.ProcessingOptions;
+
 import java.awt.Color;
 import java.io.*;
 import java.util.*;
+import java.util.function.IntUnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.stathissideris.ascii2image.core.FileUtils;
-import org.stathissideris.ascii2image.core.ProcessingOptions;
-import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
+import static java.util.stream.Collectors.toList;
+import static org.stathissideris.ascii2image.text.StringUtils.createTextSplitter;
 
 
 /**
@@ -35,10 +38,13 @@ import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
  * @author Efstathios Sideris
  */
 public class TextGrid {
-
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG               = false;
+	private static final char    PLAIN_MODE          = 'P';
+	public static final  char    LATEX_MODE          = 'L';
+	public static final  Pattern COLORCODELIKE_REGEX = Pattern.compile("(c.{0,3}|[^c]+)");
 
 	private ArrayList<StringBuilder> rows;
+	private List<String>             modeRows;
 
 	private static char[] boundaries = {'/', '\\', '|', '-', '*', '=', ':'};
 	private static char[] undisputableBoundaries = {'|', '-', '*', '=', ':'};
@@ -84,6 +90,48 @@ public class TextGrid {
 		markupTags.add("o");
 	}
 
+	private void updateModeRows() {
+		// Collectors.toList creates ArrayList and you see no performance penalty
+		// caused by using LinkedList here.
+		this.modeRows = this.rows.stream().map(TextGrid::transformRowToModeRow).collect(toList());
+	}
+
+	public static String transformRowToModeRow(CharSequence row) {
+		StringBuilder b = new StringBuilder();
+		row.chars().map(new IntUnaryOperator() {
+			/**
+			 * This field hold current mode of a cell in the grid.
+			 * Only 2 values can be assigned, which are 'P' and 'L'.
+			 * They respectively represent 'Plain', which is normal ditaa mode, and 'LaTeX', which is LaTeX
+			 * formula mode.
+			 */
+			int cur = PLAIN_MODE;
+
+			@Override
+			public int applyAsInt(int operand) {
+				if (cur == PLAIN_MODE) {
+					if (operand == '$') {
+						cur = LATEX_MODE;
+						return LATEX_MODE;
+					}
+					return PLAIN_MODE;
+				} else if (cur == LATEX_MODE) {
+					if (operand == '$') {
+						cur = PLAIN_MODE;
+						return LATEX_MODE;
+					}
+					return this.cur;
+				}
+				throw new IllegalStateException();
+			}
+		}).forEach(c -> b.append((char) c));
+		String ret = b.toString();
+		if (ret.endsWith("L"))
+			if (row.charAt(row.length() - 1) != '$')
+				throw new IllegalArgumentException("LaTex mode was started but not finished.");
+		return ret;
+	}
+
 	public void addToMarkupTags(Collection<String> tags){
 		markupTags.addAll(tags);
 	}
@@ -106,6 +154,7 @@ public class TextGrid {
 
 	public TextGrid(){
 		rows = new ArrayList<StringBuilder>();
+		this.updateModeRows();
 	}
 	
 	public TextGrid(int width, int height){
@@ -113,6 +162,7 @@ public class TextGrid {
 		rows = new ArrayList<StringBuilder>();
 		for(int i = 0; i < height; i++)
 			rows.add(new StringBuilder(space));
+		this.updateModeRows();
 	}
 
 	public static TextGrid makeSameSizeAs(TextGrid grid){
@@ -124,7 +174,8 @@ public class TextGrid {
 		rows = new ArrayList<StringBuilder>();
 		for(StringBuilder row : otherGrid.getRows()) {
 			rows.add(new StringBuilder(row));
-		}		
+		}
+		this.updateModeRows();
 	}
 
 	public void clear(){
@@ -331,8 +382,7 @@ public class TextGrid {
 				char c = get(xi, yi);
 				Cell cell = new Cell(xi, yi);
 				if(StringUtils.isOneOf(c, pointMarkers)
-						&& isStarOnLine(cell)){
-					
+						&& isStarOnLine(cell) && isInPlainMode(cell)) {
 					boolean isOnHorizontalLine = false;
 					if(StringUtils.isOneOf(get(cell.getEast()), horizontalLines))
 						isOnHorizontalLine = true;
@@ -366,6 +416,8 @@ public class TextGrid {
 		int height = getHeight();
 		for(int yi = 0; yi < height; yi++){
 			for(int xi = 0; xi < width; xi++){
+				if (!isInPlainMode(xi, yi))
+					continue;
 				char c = get(xi, yi);
 				if(StringUtils.isOneOf(c, pointMarkers)
 						&& isStarOnLine(new Cell(xi, yi))){
@@ -379,23 +431,30 @@ public class TextGrid {
 
 	public void replaceHumanColorCodes(){
 		int height = getHeight();
-		for(int y = 0; y < height; y++){
-			String row = rows.get(y).toString();
-			Iterator it = humanColorCodes.keySet().iterator();
-			while(it.hasNext()){
-				String humanCode = (String) it.next();
-				String hexCode = (String) humanColorCodes.get(humanCode);
-				if(hexCode != null){
-					humanCode = "c" + humanCode;
-					hexCode = "c" + hexCode;
-					row = row.replaceAll(humanCode, hexCode);
-					rows.set(y, new StringBuilder(row)); //TODO: this is not the most efficient way to do this
-					row = rows.get(y).toString();
-				}
-			}
-		}		
+		for (int y = 0; y < height; y++)
+			rows.set(y, replaceHumanColorCodes(y, rows.get(y)));
 	}
 
+	private StringBuilder replaceHumanColorCodes(int rowIndex, StringBuilder in) {
+		StringBuilder ret = new StringBuilder(in.length());
+		Iterator<String> i = createTextSplitter(COLORCODELIKE_REGEX, in);
+		while (i.hasNext()) {
+			String next = i.next();
+			if (isInPlainMode(ret.length(), rowIndex) && looksColorCode(next)) {
+				String replacement = humanColorCodes.get(next.substring(1, 4));
+				if (replacement != null)
+					ret.append(String.format("c%s", replacement));
+				else
+					ret.append(next);
+			} else
+				ret.append(next);
+		}
+		return ret;
+	}
+
+	private static boolean looksColorCode(String word) {
+		return word.length() >= 4 && word.startsWith("c");
+	}
 
 	/**
 	 * Replace all occurrences of c1 with c2
@@ -609,7 +668,8 @@ public class TextGrid {
 		Iterator it = toBeRemoved.iterator();
 		while(it.hasNext()){
 			Cell cell = (Cell) it.next();
-			set(cell, ' ');
+			if (isInPlainMode(cell))
+				set(cell, ' ');
 		}
 	}
 
@@ -636,6 +696,8 @@ public class TextGrid {
 		for(int yi = 0; yi < height; yi++){
 			for(int xi = 0; xi < width - 3; xi++){
 				Cell cell = new Cell(xi, yi);
+				if (!isInPlainMode(cell))
+					continue;
 				String s = getStringAt(cell, 4);
 				Matcher matcher = colorCodePattern.matcher(s);
 				if(matcher.matches()){
@@ -661,6 +723,8 @@ public class TextGrid {
 		int height = getHeight();
 		for(int y = 0; y < height; y++){
 			for(int x = 0; x < width - 3; x++){
+				if (!isInPlainMode(x, y))
+					continue;
 				Cell cell = new Cell(x, y);
 				char c = get(cell);
 				if(c == '{'){
@@ -727,6 +791,8 @@ public class TextGrid {
 	}
 	public boolean isBoundary(int x, int y){ return isBoundary(new Cell(x, y)); }
 	public boolean isBoundary(Cell cell){
+		if (!isInPlainMode(cell))
+			return false;
 		char c = get(cell.x, cell.y);
 		if(0 == c) return false;
 		if('+' == c || '\\' == c || '/' == c){
@@ -753,17 +819,17 @@ public class TextGrid {
 	public static boolean isHorizontalLine(char c){
 		return StringUtils.isOneOf(c, horizontalLines);
 	}
-	public boolean isHorizontalLine(Cell cell){ return isHorizontalLine(cell.x, cell.y); }
+	public boolean isHorizontalLine(Cell cell){ return isHorizontalLine(cell.x, cell.y) && isInPlainMode(cell); }
 	public boolean isHorizontalLine(int x, int y){
 		char c = get(x, y);
 		if(0 == c) return false;
-		return StringUtils.isOneOf(c, horizontalLines);
+		return StringUtils.isOneOf(c, horizontalLines) && isInPlainMode(x, y);
 	}
 
 	public static boolean isVerticalLine(char c){
 		return StringUtils.isOneOf(c, verticalLines);
 	}
-	public boolean isVerticalLine(Cell cell){ return isVerticalLine(cell.x, cell.y); }
+	public boolean isVerticalLine(Cell cell){ return isVerticalLine(cell.x, cell.y) && isInPlainMode(cell); }
 	public boolean isVerticalLine(int x, int y){
 		char c = get(x, y);
 		if(0 == c) return false;
@@ -781,15 +847,15 @@ public class TextGrid {
 	 * @return
 	 */
 	public boolean isLinesEnd(Cell cell){
-		return matchesAny(cell, GridPatternGroup.linesEndCriteria);
+		return matchesAny(cell, GridPatternGroup.linesEndCriteria) && isInPlainMode(cell);
 	}
 
 	public boolean isVerticalLinesEnd(Cell cell){
-		return matchesAny(cell, GridPatternGroup.verticalLinesEndCriteria);
+		return matchesAny(cell, GridPatternGroup.verticalLinesEndCriteria) && isInPlainMode(cell);
 	}
 
 	public boolean isHorizontalLinesEnd(Cell cell){
-		return matchesAny(cell, GridPatternGroup.horizontalLinesEndCriteria);
+		return matchesAny(cell, GridPatternGroup.horizontalLinesEndCriteria) && isInPlainMode(cell);
 	}
 
 
@@ -798,7 +864,7 @@ public class TextGrid {
 			isCorner(cell)
 			|| isIntersection(cell)
 			|| isStub(cell)
-			|| isLinesEnd(cell));
+			|| isLinesEnd(cell)) && isInPlainMode(cell);
 	}
 
 
@@ -876,20 +942,21 @@ public class TextGrid {
 	}
 	
 	public boolean isNorthArrowhead(Cell cell){
-		return get(cell) == '^';
+		return get(cell) == '^' && isInPlainMode(cell);
 	}
 
 	public boolean isEastArrowhead(Cell cell){
-		return get(cell) == '>';
+		return get(cell) == '>' && isInPlainMode(cell);
 	}
 
 	public boolean isWestArrowhead(Cell cell){
-		return get(cell) == '<';
+		return get(cell) == '<' && isInPlainMode(cell);
 	}
 
 	public boolean isSouthArrowhead(Cell cell){
 		return (get(cell) == 'v' || get(cell) == 'V')
-				&& isVerticalLine(cell.getNorth());
+				&& isVerticalLine(cell.getNorth())
+				&& isInPlainMode(cell);
 	}
 	
 	
@@ -913,7 +980,8 @@ public class TextGrid {
 		if((c == 'o' || c == '*')
 			&& isBlank(cell.getEast())
 			&& isBlank(cell.getWest())
-			&& Character.isLetterOrDigit(get(cell.getEast().getEast())) )
+			&& Character.isLetterOrDigit(get(cell.getEast().getEast()))
+			&& isInPlainMode(cell))
 			return true;
 		return false;
 	}
@@ -1539,68 +1607,77 @@ public class TextGrid {
 		}
 		rows = new ArrayList<StringBuilder>(lines.subList(0, i + 2));
 
-		if(options != null) fixTabs(options.getTabSize());
-		else fixTabs(options.DEFAULT_TAB_SIZE);
+		this.updateModeRows();
+		try {
 
+			if (options != null)
+				fixTabs(options.getTabSize());
+			else
+				fixTabs(options.DEFAULT_TAB_SIZE);
 
-		// make all lines of equal length
-		// add blank outline around the buffer to prevent fill glitch
-		// convert tabs to spaces (or remove them if setting is 0)
-		
-		int blankBorderSize = 2;
-		
-		int maxLength = 0;
-		int index = 0;
-		
-		String encoding = null;
-		if(options != null) encoding = options.getCharacterEncoding();
-		
-		Iterator<StringBuilder> it = rows.iterator();
-		while(it.hasNext()){
-			String row = it.next().toString();
-			if(encoding != null){
-				byte[] bytes = row.getBytes();
-				row = new String(bytes, encoding);
+			// make all lines of equal length
+			// add blank outline around the buffer to prevent fill glitch
+			// convert tabs to spaces (or remove them if setting is 0)
+
+			int blankBorderSize = 2;
+
+			int maxLength = 0;
+			int index = 0;
+
+			String encoding = null;
+			if (options != null)
+				encoding = options.getCharacterEncoding();
+
+			Iterator<StringBuilder> it = rows.iterator();
+			while (it.hasNext()) {
+				String row = it.next().toString();
+				if (encoding != null) {
+					byte[] bytes = row.getBytes();
+					row = new String(bytes, encoding);
+				}
+				if (row.length() > maxLength)
+					maxLength = row.length();
+				rows.set(index, new StringBuilder(row));
+				index++;
 			}
-			if(row.length() > maxLength) maxLength = row.length();
-			rows.set(index, new StringBuilder(row));
-			index++;
+
+			it = rows.iterator();
+			ArrayList<StringBuilder> newRows = new ArrayList<StringBuilder>();
+			//TODO: make the following depend on blankBorderSize
+
+			StringBuilder topBottomRow =
+					new StringBuilder(StringUtils.repeatString(" ", maxLength + blankBorderSize * 2));
+
+			newRows.add(topBottomRow);
+			newRows.add(topBottomRow);
+			while (it.hasNext()) {
+				StringBuilder row = it.next();
+
+				if (row.length() < maxLength) {
+					String borderString = StringUtils.repeatString(" ", blankBorderSize);
+					StringBuilder newRow = new StringBuilder();
+
+					newRow.append(borderString);
+					newRow.append(row);
+					newRow.append(StringUtils.repeatString(" ", maxLength - row.length()));
+					newRow.append(borderString);
+
+					newRows.add(newRow);
+				} else { //TODO: why is the following line like that?
+					newRows.add(new StringBuilder("  ").append(row).append("  "));
+				}
+			}
+			//TODO: make the following depend on blankBorderSize
+			newRows.add(topBottomRow);
+			newRows.add(topBottomRow);
+			rows = newRows;
+		} finally {
+			this.updateModeRows();
 		}
 
-		it = rows.iterator();
-		ArrayList<StringBuilder> newRows = new ArrayList<StringBuilder>();
-		//TODO: make the following depend on blankBorderSize
-		
-		StringBuilder topBottomRow =
-			new StringBuilder(StringUtils.repeatString(" ", maxLength + blankBorderSize * 2));
-		
-		newRows.add(topBottomRow);
-		newRows.add(topBottomRow);
-		while(it.hasNext()){
-			StringBuilder row = it.next();
-			
-			if(row.length() < maxLength) {
-				String borderString = StringUtils.repeatString(" ", blankBorderSize);
-				StringBuilder newRow = new StringBuilder();
-				
-				newRow.append(borderString);
-				newRow.append(row);
-				newRow.append(StringUtils.repeatString(" ", maxLength - row.length()));
-				newRow.append(borderString);
-				
-				newRows.add(newRow);
-			} else { //TODO: why is the following line like that?
-				newRows.add(new StringBuilder("  ").append(row).append("  "));
-			}
-		}
-		//TODO: make the following depend on blankBorderSize
-		newRows.add(topBottomRow);
-		newRows.add(topBottomRow);
-		rows = newRows;
-		
 		replaceBullets();
 		replaceHumanColorCodes();
-		
+
 		return true;
 	}
 	
@@ -1638,7 +1715,15 @@ public class TextGrid {
 	protected ArrayList<StringBuilder> getRows() {
 		return rows;
 	}
-	
+
+	private boolean isInPlainMode(Cell cell) {
+		return this.modeRows.get(cell.y).charAt(cell.x) == PLAIN_MODE;
+	}
+
+	private boolean isInPlainMode(int x, int y) {
+		return this.modeRows.get(y).charAt(x) == PLAIN_MODE;
+	}
+
 	public class CellColorPair{
 		public CellColorPair(Cell cell, Color color){
 			this.cell = cell;

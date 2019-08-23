@@ -9,7 +9,10 @@
                  [net.htmlparser.jericho/jericho-html "3.4"]
                  [org.apache.xmlgraphics/batik-gvt "1.9"]
                  [org.apache.xmlgraphics/batik-codec "1.9"]
-                 [org.apache.xmlgraphics/batik-bridge "1.9"]]
+                 [org.apache.xmlgraphics/batik-bridge "1.9"]
+                 [org.apache.xmlgraphics/batik-bridge "1.9"]
+                 [com.github.dakusui/thincrest "3.6.0"]
+                 [org.scilab.forge/jlatexmath "1.0.7"]]
   :main org.stathissideris.ascii2image.core.CommandLineConverter
   :java-source-paths ["src/java"]
   :profiles {:dev {:dependencies      [[junit/junit "4.12"]]

@@ -17,9 +17,3 @@ releases/
 tests/images/
 tests/images-expected/
 target/
-
-# pom.xml for ditaa is available at https://gist.github.com/dakusui/c6b7532cbaae0ed7317036c389d761f4
-# pom.xml
-# Files copied by mvn's build procedure
-tests/latex
-test-results

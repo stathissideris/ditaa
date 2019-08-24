@@ -77,12 +77,12 @@ abstract class LaTeXModeTestBase extends TestBase {
   }
 
   private String actualOutpuImagePath(String s) {
-    return String.format("out/tests/latex/%s/actual.png", s);
+    return String.format("target/test-output/latex/%s/actual.png", s);
   }
 
 
   private String diffImagePath(String s) {
-    return String.format("out/tests/latex/%s/diff.png", s);
+    return String.format("target/test-output/latex/%s/diff.png", s);
   }
 
   String[] options(String s) throws IOException {

@@ -17,6 +17,6 @@
   :plugins [[lein-junit "1.1.9"]]
   :junit ["test/java"]
   :junit-formatter :plain
-  :junit-results-dir "test-results"
+  :junit-results-dir "target/test-results"
   :profiles {:dev {:dependencies      [[junit/junit "4.12"] [com.github.dakusui/thincrest "3.6.0"]]
                    :java-source-paths ["test/java"]}})

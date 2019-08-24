@@ -43,8 +43,10 @@ abstract class LaTeXModeTestBase extends TestBase {
   }
 
   private void exercise(String testName, String[] options) {
+    String actualOutputImagePath = actualOutpuImagePath(testName);
+    System.out.println("Create a directory for:" + actualOutputImagePath + ":"  + new File(actualOutputImagePath).getParentFile().mkdirs());
     String[] args = Stream.concat(
-        Stream.of(inputFilePath(testName), actualImagePath(testName), "-o"),
+        Stream.of(inputFilePath(testName), actualOutputImagePath, "-o"),
         Arrays.stream(options))
         .toArray(String[]::new);
     System.out.println("  ditaa " + String.join(" ", args));
@@ -63,28 +65,28 @@ abstract class LaTeXModeTestBase extends TestBase {
   }
 
   private String inputFilePath(String s) {
-    return String.format("tests/latex/%s/in.txt", s);
+    return String.format("test-resources/latex/%s/in.txt", s);
   }
 
   private ImageFile expectedImage(String s) {
-    return new ImageFile(String.format("tests/latex/%s/expected.png", s));
+    return new ImageFile(String.format("test-resources/latex/%s/expected.png", s));
   }
 
   private ImageFile actualImage(String s) {
-    return new ImageFile(actualImagePath(s));
+    return new ImageFile(actualOutpuImagePath(s));
   }
 
-  private String actualImagePath(String s) {
-    return String.format("tests/latex/%s/actual.png", s);
+  private String actualOutpuImagePath(String s) {
+    return String.format("out/tests/latex/%s/actual.png", s);
   }
 
 
   private String diffImagePath(String s) {
-    return String.format("tests/latex/%s/diff.png", s);
+    return String.format("out/tests/latex/%s/diff.png", s);
   }
 
   String[] options(String s) throws IOException {
-    return Files.lines(Paths.get(String.format("tests/latex/%s/options.txt", s)))
+    return Files.lines(Paths.get(String.format("test-resources/latex/%s/options.txt", s)))
         .collect(toList())
         .toArray(new String[0]);
   }

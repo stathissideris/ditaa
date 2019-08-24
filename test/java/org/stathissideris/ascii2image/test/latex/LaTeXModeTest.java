@@ -18,7 +18,7 @@ public class LaTeXModeTest extends LaTeXModeTestBase {
 
   @Parameters
   public static Object[] parameters() {
-    return Arrays.stream(requireNonNull(new File("tests/latex").listFiles()))
+    return Arrays.stream(requireNonNull(new File("test-resources/latex").listFiles()))
         .filter(File::isDirectory)
         .filter(d -> !d.getName().startsWith("_"))
         .map(d -> new Object[] { d.getName(), 0.98 })

@@ -4,7 +4,7 @@
    |                                          |
    +------------------------------------------+
 
-Horizontal bers are not confused.
+Horizontal bars are not confused.
  +-----+
  |     |
 $+-----+$

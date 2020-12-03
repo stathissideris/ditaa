@@ -204,9 +204,6 @@ public class SVGBuilder {
             if (shape.getType() == DiagramShape.TYPE_ARROWHEAD) {
                 renderPath(shape, commands, "none", fill);
             }
-
-        } else if (shape.isStrokeDashed()) {
-            fill = "white";
         }
 
         if (shape.getType() != DiagramShape.TYPE_ARROWHEAD) {

@@ -22,13 +22,15 @@ public class SVGBuilder {
         float dashInterval = Math.min(diagram.getCellWidth(), diagram.getCellHeight()) / 2;
         float strokeWeight = diagram.getMinimumOfCellDimension() / 10;
 
-        normalStroke = String.format("stroke-width='%f' stroke-linecap='round' stroke-linejoin='round' ",
-                strokeWeight);
+        normalStroke = String.format("stroke-width='%s' stroke-linecap='round' stroke-linejoin='round' ",
+                String.valueOf(strokeWeight));
 
         dashStroke = String.format(
-                "stroke-width='%f' stroke-dasharray='%f,%f' stroke-miterlimit='0' " +
+                "stroke-width='%s' stroke-dasharray='%s,%s' stroke-miterlimit='0' " +
                         "stroke-linecap='butt' stroke-linejoin='round' ",
-                strokeWeight, dashInterval, dashInterval);
+                String.valueOf(strokeWeight),
+                String.valueOf(dashInterval),
+                String.valueOf(dashInterval));
 
     }
 
@@ -71,15 +73,15 @@ public class SVGBuilder {
                 "<?xml version='1.0' encoding='UTF-8' standalone='no'?>\n" +
                 "<svg \n" +
                 "    xmlns='http://www.w3.org/2000/svg'\n" +
-                "    width='%d'\n" +
-                "    height='%d'\n" +
+                "    width='%s'\n" +
+                "    height='%s'\n" +
                 "    %s\n" +
                 "    version='1.0'>\n";
 
         return String.format(
                 HEADER,
-                diagram.getWidth(),
-                diagram.getHeight(),
+                String.valueOf(diagram.getWidth()),
+                String.valueOf(diagram.getHeight()),
                 antialiasing()
         );
 
@@ -275,9 +277,9 @@ public class SVGBuilder {
         if (color.getAlpha() == 0) return;
 
         layer0.append (
-                String.format("    <rect x='0' y='0' width='%d' height='%d' style='fill: %s'/>\n",
-                        diagram.getWidth(),
-                        diagram.getHeight(),
+                String.format("    <rect x='0' y='0' width='%s' height='%s' style='fill: %s'/>\n",
+                        String.valueOf(diagram.getWidth()),
+                        String.valueOf(diagram.getHeight()),
                         colorToHex(color)
                 )
         );
@@ -312,7 +314,7 @@ public class SVGBuilder {
 
     private void renderText(String text, int xPos, int yPos, Font font, Color color) {
 
-        String TEXT_ELEMENT = "    <text x='%d' y='%d' font-family='%s' font-size='%d' stroke='none' fill='%s' >" +
+        String TEXT_ELEMENT = "    <text x='%s' y='%s' font-family='%s' font-size='%s' stroke='none' fill='%s' >" +
                 "<![CDATA[%s]]></text>\n";
 
         /* Prefer normal font weight
@@ -323,10 +325,10 @@ public class SVGBuilder {
 
         layer3.append(
                 String.format(TEXT_ELEMENT,
-                    xPos,
-                    yPos,
+                    String.valueOf(xPos),
+                    String.valueOf(yPos),
                     options.getFontFamily(),
-                    font.getSize(),
+                    String.valueOf(font.getSize()),
                     colorToHex(color),
                     text
                 )

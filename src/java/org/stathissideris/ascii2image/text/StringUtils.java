@@ -19,6 +19,11 @@
  */
 package org.stathissideris.ascii2image.text;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * @author sideris
  *
@@ -165,5 +170,28 @@ public class StringUtils {
 		System.out.println(" ext: "+StringUtils.getExtension(path));
 
 
+	}
+
+	public static Iterator<String> createTextSplitter(Pattern pattern, CharSequence s) {
+		return new Iterator<String>() {
+			Pattern regex = pattern;
+			CharSequence rest = s;
+
+			@Override
+			public boolean hasNext() {
+				return rest.length() > 0;
+			}
+
+			@Override
+			public String next() {
+				Matcher m = regex.matcher(rest);
+				if (m.find()) {
+					String ret = m.group(1);
+					rest = rest.subSequence(ret.length(), rest.length());
+					return ret;
+				}
+				throw new NoSuchElementException();
+			}
+		};
 	}
 }

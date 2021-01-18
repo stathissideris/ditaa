@@ -19,12 +19,6 @@
  */
 package org.stathissideris.ascii2image.graphics;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.stathissideris.ascii2image.core.ConversionOptions;
 import org.stathissideris.ascii2image.core.Pair;
 import org.stathissideris.ascii2image.text.AbstractionGrid;
@@ -34,6 +28,12 @@ import org.stathissideris.ascii2image.text.TextGrid.Cell;
 import org.stathissideris.ascii2image.text.TextGrid.CellColorPair;
 import org.stathissideris.ascii2image.text.TextGrid.CellStringPair;
 import org.stathissideris.ascii2image.text.TextGrid.CellTagPair;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * 
@@ -550,11 +550,12 @@ public class Diagram {
 				int maxX = getCellMaxX(lastCell);
 			
 				DiagramText textObject;
+				boolean laTeXmathEnabled = options.processingOptions.isLaTeXmathEnabled();
 				if(FontMeasurer.instance().getWidthFor(string, font) > maxX - minX){ //does not fit horizontally
 					Font lessWideFont = FontMeasurer.instance().getFontFor(maxX - minX, string);
-					textObject = new DiagramText(minX, y, string, lessWideFont);
-				} else textObject = new DiagramText(minX, y, string, font);
-			
+					textObject = new DiagramText(minX, y, string, lessWideFont, laTeXmathEnabled);
+				} else  textObject = new DiagramText(minX, y, string, font, laTeXmathEnabled);
+
 				textObject.centerVerticallyBetween(getCellMinY(cell), getCellMaxY(cell));
 			
 				//TODO: if the strings start with bullets they should be aligned to the left

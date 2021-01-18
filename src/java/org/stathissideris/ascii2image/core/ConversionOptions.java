@@ -25,11 +25,12 @@ import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import java.awt.*;
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * 
@@ -80,6 +81,7 @@ public class ConversionOptions {
 		
 		processingOptions.setAllCornersAreRound(cmdLine.hasOption("round-corners"));
 		processingOptions.setPerformSeparationOfCommonEdges(!cmdLine.hasOption("no-separation"));
+		processingOptions.enableLaTeXmath(cmdLine.hasOption("latex-math"));
 		renderingOptions.setAntialias(!cmdLine.hasOption("no-antialias"));
 		renderingOptions.setFixedSlope(cmdLine.hasOption("fixed-slope"));
 
@@ -101,11 +103,16 @@ public class ConversionOptions {
 		}
 
 		String encoding = (String) cmdLine.getOptionValue("encoding");
-		if(encoding != null){
+		if(encoding != null) {
 			new String(new byte[2], encoding);
 			processingOptions.setCharacterEncoding(encoding);
 		}
-		
+
+		if (cmdLine.hasOption("latex")) {
+			processingOptions.enableLaTeXmath(
+					Objects.equals(cmdLine.getOptionValue("latex", "no"), "yes"));
+		}
+
 		if (cmdLine.hasOption("svg")){
 			renderingOptions.setImageType(RenderingOptions.ImageType.SVG);
 		}

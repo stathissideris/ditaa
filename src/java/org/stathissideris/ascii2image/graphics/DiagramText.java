@@ -19,19 +19,30 @@
  */
 package org.stathissideris.ascii2image.graphics;
 
+import org.scilab.forge.jlatexmath.TeXConstants;
+import org.scilab.forge.jlatexmath.TeXFormula;
+import org.scilab.forge.jlatexmath.TeXIcon;
+import org.stathissideris.ascii2image.core.RenderingOptions;
+import org.stathissideris.ascii2image.text.StringUtils;
+
+import javax.swing.JLabel;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Rectangle;
+import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Iterator;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * 
  * @author Efstathios Sideris
  */
 public class DiagramText extends DiagramComponent {
+	public static final Color   DEFAULT_COLOR        = Color.black;
+	public static final Pattern TEXT_SPLITTING_REGEX = Pattern.compile("([^$]+|\\$[^$]*\\$)");
+	private final       boolean latexMathEnabled;
 
-	public static final Color DEFAULT_COLOR = Color.black;
-	
 	private String text;
 	private Font font;
 	private int xPos, yPos;
@@ -40,7 +51,7 @@ public class DiagramText extends DiagramComponent {
 	private boolean hasOutline = false;
 	private Color outlineColor = Color.white;
 
-	public DiagramText(int x, int y, String text, Font font){
+	public DiagramText(int x, int y, String text, Font font, boolean latexMathEnabled) {
 		if(text == null) throw new IllegalArgumentException("DiagramText cannot be initialised with a null string");
 		if(font == null) throw new IllegalArgumentException("DiagramText cannot be initialised with a null font");
 
@@ -48,6 +59,7 @@ public class DiagramText extends DiagramComponent {
 		this.yPos = y;
 		this.text = text;
 		this.font = font;
+		this.latexMathEnabled = latexMathEnabled;
 	}
 
 	public void centerInBounds(Rectangle2D bounds){
@@ -93,6 +105,76 @@ public class DiagramText extends DiagramComponent {
 	 */
 	public String getText() {
 		return text;
+	}
+
+	public void drawOn(Graphics2D g2) {
+		g2.setFont(this.getFont());
+		if (this.hasOutline()) {
+			g2.setColor(this.getOutlineColor());
+			Stream.of(1, -1)
+					.peek(d -> draw(g2, this.getXPos() + d, this.getYPos(), this.getColor()))
+					.peek(d -> draw(g2, this.getXPos(), this.getYPos() + d, this.getColor()))
+					.forEach(d -> {
+					});
+		}
+		g2.setColor(this.getColor());
+		draw(g2, this.getXPos(), this.getYPos(), getColor());
+	}
+
+	private void draw(Graphics2D g2, int xPos, int yPos, Color color) {
+		Iterator<String> i = StringUtils.createTextSplitter(TEXT_SPLITTING_REGEX, this.getText());
+		int x = xPos;
+		while (i.hasNext()) {
+			String text = i.next();
+			if (isTeXFormula(text))
+				x += drawTeXFormula(g2,
+						text,
+						x, yPos, color,
+						font.getSize());
+			else
+				x += drawString(g2,
+						text,
+						x, yPos, color,
+						font);
+		}
+	}
+
+	public void renderOn(StringBuilder svgBuildingBuffer, RenderingOptions options) {
+		if (this.hasOutline()) {
+			Stream.of(1, -1)
+					.peek(d -> render(svgBuildingBuffer, options,
+							this.getXPos() + d, this.getYPos(),
+							this.getOutlineColor()))
+					.peek(d -> render(svgBuildingBuffer, options,
+							this.getXPos(), this.getYPos() + d,
+							this.getOutlineColor()))
+					.forEach(d -> {
+					});
+		}
+		render(svgBuildingBuffer, options, this.getXPos(), this.getYPos(), getColor());
+	}
+
+	private void render(StringBuilder svgBuildingBuffer, RenderingOptions options,
+			int xPos, int yPos, Color color) {
+		Iterator<String> i = StringUtils.createTextSplitter(TEXT_SPLITTING_REGEX, this.getText());
+		int x = xPos;
+		while (i.hasNext()) {
+			String token = i.next();
+			if (isTeXFormula(token))
+				x += renderTeXFormula(svgBuildingBuffer, options,
+						token,
+						x, yPos, color,
+						font.getSize());
+			else
+				x += renderString(svgBuildingBuffer, options,
+						token,
+						x, yPos, color,
+						font);
+		}
+	}
+
+	private boolean isTeXFormula(String text) {
+		return this.latexMathEnabled && text.startsWith("$");
 	}
 
 	/**
@@ -188,5 +270,51 @@ public class DiagramText extends DiagramComponent {
 		this.outlineColor = outlineColor;
 	}
 
-	
+	public static int drawTeXFormula(Graphics2D g2, String text, int x, int y, Color color, float fontSize) {
+		TeXFormula formula = new TeXFormula(text);
+		TeXIcon icon = formula.new TeXIconBuilder()
+				.setStyle(TeXConstants.STYLE_DISPLAY)
+				.setSize(fontSize)
+				.build();
+		/* 12 is a magic number to adjust vertical position */
+		icon.paintIcon(new JLabel() {{
+			setForeground(color);
+		}}, g2, x, y - 12);
+		return icon.getIconWidth();
+	}
+
+
+	private static int drawString(Graphics2D g2, String text, int xPos, int yPos, Color color, Font font) {
+		g2.setColor(color);
+		g2.setFont(font);
+		g2.drawString(text, xPos, yPos);
+		return FontMeasurer.instance().getWidthFor(text, font);
+	}
+
+	@SuppressWarnings("unused")
+	private static int renderTeXFormula(StringBuilder svgBuildingBuffer, RenderingOptions options, String text, int x, int yPos, Color color, int size) {
+		throw new UnsupportedOperationException("Rendering LaTeX formula in .svg format is not currently supported.");
+	}
+
+	private static int renderString(StringBuilder svgBuildingBuffer, RenderingOptions options, String text, int xPos, int yPos, Color color, Font font) {
+		String TEXT_ELEMENT = "    <text x='%d' y='%d' font-family='%s' font-size='%d' stroke='none' fill='%s' >" +
+				"<![CDATA[%s]]></text>\n";
+        /* Prefer normal font weight
+        if (font.isBold()) {
+            style = " font-weight='bold'";
+        }
+        */
+
+		svgBuildingBuffer.append(
+				String.format(TEXT_ELEMENT,
+						xPos,
+						yPos,
+						options.getFontFamily(),
+						font.getSize(),
+						SVGBuilder.colorToHex(color),
+						text
+				)
+		);
+		return FontMeasurer.instance().getWidthFor(text, font);
+	}
 }

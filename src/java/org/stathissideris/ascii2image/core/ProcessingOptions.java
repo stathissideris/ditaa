@@ -19,7 +19,10 @@
  */
 package org.stathissideris.ascii2image.core;
 
+import java.awt.*;
+import java.security.InvalidParameterException;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
 
@@ -36,6 +39,76 @@ public class ProcessingOptions {
 	private boolean overwriteFiles = false;
 	private boolean performSeparationOfCommonEdges = true;
 	private boolean allCornersAreRound = false;
+
+	public String getFontFamily() {
+		return fontFamily;
+	}
+
+	public void setFontFamily(final String fontFamily) {
+		this.fontFamily = fontFamily;
+	}
+
+	public String getFontSize() {
+		return fontSize;
+	}
+
+	public void setFontSize(final String fontSize) {
+		this.fontSize = fontSize;
+	}
+
+	private String  fontFamily;
+	private String  fontSize;
+	private String  fontStyle;
+
+	public String getFontStyle() {
+		return fontStyle;
+	}
+
+	public void setFontStyle(final String fontStyle) {
+		this.fontStyle = fontStyle;
+	}
+
+	public boolean isShortColorCodes() {
+		return shortColorCodes != null;
+	}
+	public String getShortColorCodes() {
+		return shortColorCodes;
+	}
+
+	public void setShortColorCodes(final String shortColorCodes) {
+		this.shortColorCodes = shortColorCodes;
+		shortColorCodeMap.put('0', new Color(0, 0, 0)); // Black
+		shortColorCodeMap.put('2', new Color(0x5*17, 0x5*17, 0xB*17)); //Blue
+		shortColorCodeMap.put('1', new Color(0x9*17, 0xD*17, 0x9*17)); //Green
+		shortColorCodeMap.put('3', new Color(0xF*17, 0xA*17, 0xA*17)); //Pink
+		shortColorCodeMap.put('4', new Color(0xE*17, 0x3*17, 0x2*17)); //Red        (RED)
+		shortColorCodeMap.put('5', new Color(0xF*17, 0xF*17, 0x3*17)); //Yellow
+		shortColorCodeMap.put('6', new Color(0x1 * 17, 0x4*17, 0x4*17)); //BlackGreen (144)
+		shortColorCodeMap.put('7', new Color(0x1*17, 0x8*17, 0x8*17)); //DarkGreen (188)
+		shortColorCodeMap.put('8', new Color(0x8 * 17, 0x8*17, 0x8*17)); //Grey      (888)
+		shortColorCodeMap.put('9', new Color(0xF*17, 0x7*17, 0x3*17)); //Orange (F73)
+        shortColorCodeMap.put('A', new Color(0xF*17, 0xD*17, 0xE*17)); //Light Pink (FDE)
+        shortColorCodeMap.put('B', new Color(0xB*17, 0xD*17, 0xE*17)); //Light Blue  (BDE)
+        shortColorCodeMap.put('C', new Color(0x0*17, 0xB*17, 0xF*17)); //Bright Blue (0BF)
+
+        if (shortColorCodes.length()==0) return;
+		String[]  rgbList= shortColorCodes.split(";");
+		Character currentKey= 'G';
+		for (int i=0; i<rgbList.length; i++) {
+			String[] rgb= rgbList[i].split(",");
+			if (rgb.length !=3 ) throw new InvalidParameterException(String.format("Invalid RBG Color format for %ith Color: %s", i+1, rgbList[i]));
+			shortColorCodeMap.put(currentKey, new Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])));
+			currentKey++;
+		}
+	}
+
+	private String shortColorCodes;
+
+	public HashMap<Character, Color> getShortColorCodeMap() {
+		return shortColorCodeMap;
+	}
+
+	private HashMap<Character, Color> shortColorCodeMap= new HashMap<Character, Color>();
 
 	public static final int USE_TAGS = 0;
 	public static final int RENDER_TAGS = 1;
@@ -238,6 +311,6 @@ public class ProcessingOptions {
 		return customShapes.get(tagName);
 	}
 	
-	
+
 
 }

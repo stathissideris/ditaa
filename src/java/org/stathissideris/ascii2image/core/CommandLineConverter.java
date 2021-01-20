@@ -112,6 +112,31 @@ public class CommandLineConverter {
 				.create()
 				);
 
+		cmdLnOptions.addOption(
+				OptionBuilder.withLongOpt("font-family")
+				.withDescription("Font Family.")
+				.hasArg()
+				.withArgName("FONTFAMILY")
+				.create()
+				);
+
+		cmdLnOptions.addOption(
+				OptionBuilder.withLongOpt("font-size")
+				.withDescription("Font Size.")
+				.hasArg()
+				.withArgName("FONTSIZE")
+				.create()
+				);
+
+		cmdLnOptions.addOption(
+				OptionBuilder.withLongOpt("short-color-codes")
+				.withDescription("Short Custom Color Codes.")
+				.hasArg()
+				.withArgName("SHORTCOLORCODES")
+				.create()
+				);
+
+
 //TODO: uncomment this for next version:
 //		cmdLnOptions.addOption(
 //				OptionBuilder.withLongOpt("config")

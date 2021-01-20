@@ -36,8 +36,35 @@ import javax.swing.JOptionPane;
  * @author Efstathios Sideris
  */
 public class FontMeasurer {
-	
-	private static final String fontFamilyName = "Dialog";
+
+	public static String getFontFamilyName() {
+		return fontFamilyName;
+	}
+
+	public static void setFontFamilyName (String fontFamily) {
+		fontFamilyName= fontFamily;
+	}
+
+	private static String fontFamilyName = "Dialog";
+	private static int    fontSize       = 12;
+	private static int    fontStyle      = Font.BOLD;
+
+	public static int getFontSize() {
+		return fontSize;
+	}
+
+	public static void setFontSize(final int fontSize) {
+		FontMeasurer.fontSize = fontSize;
+	}
+
+	public static int getFontStyle() {
+		return fontStyle;
+	}
+
+	public static void setFontStyle(final int fontStyle) {
+		FontMeasurer.fontStyle = fontStyle;
+	}
+
 	//private static final String fontFamilyName = "Helvetica";
 	
 	private static final boolean DEBUG = false;
@@ -139,8 +166,8 @@ public class FontMeasurer {
 
 
 	public Font getFontFor(int pixelHeight, FontRenderContext frc){
-		float size = 12;
-		Font currentFont = new Font(fontFamilyName, Font.BOLD, (int) size);
+		float fontSizeInFloat= fontSize;
+		Font currentFont = new Font(fontFamilyName, fontStyle, fontSize);
 //		Font currentFont = new Font("Times", Font.BOLD, (int) size);
 		if(DEBUG) System.out.println(currentFont.getFontName());
 		//ascent is the distance between the baseline and the tallest character
@@ -148,28 +175,28 @@ public class FontMeasurer {
 
 		int direction; //direction of size change (towards smaller or bigger)
 		if(ascent > pixelHeight){
-			currentFont = currentFont.deriveFont(size - 1);
-			size--;
+			currentFont = currentFont.deriveFont(fontSizeInFloat - 1);
+			fontSizeInFloat--;
 			direction = -1; 
 		} else {
-			currentFont = currentFont.deriveFont(size + 1);
-			size++;
+			currentFont = currentFont.deriveFont(fontSizeInFloat + 1);
+			fontSizeInFloat++;
 			direction = 1;
 		}
-		while(size > 0){
-			currentFont = currentFont.deriveFont(size);
+		while(fontSizeInFloat > 0){
+			currentFont = currentFont.deriveFont(fontSizeInFloat);
 			//rectangle = currentFont.getStringBounds(testString, frc);
 			ascent = getAscent(currentFont);
 			if(direction == 1){
 				if(ascent > pixelHeight){
-					size = size - 0.5f;
-					return currentFont.deriveFont(size);
+					fontSizeInFloat = fontSizeInFloat - 0.5f;
+					return currentFont.deriveFont(fontSizeInFloat);
 				}
-				else size = size + 0.5f;
+				else fontSizeInFloat = fontSizeInFloat + 0.5f;
 			} else {
 				if(ascent < pixelHeight)
 					return currentFont;
-				else size = size - 0.5f;
+				else fontSizeInFloat = fontSizeInFloat - 0.5f;
 			}
 		}
 		return null;

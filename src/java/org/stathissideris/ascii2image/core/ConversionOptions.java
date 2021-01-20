@@ -22,6 +22,7 @@ package org.stathissideris.ascii2image.core;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
+import org.stathissideris.ascii2image.graphics.FontMeasurer;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -114,6 +115,23 @@ public class ConversionOptions {
 			renderingOptions.setFontURL(cmdLine.getOptionValue("svg-font-url"));
 		}
 
+		if (cmdLine.hasOption("short-color-codes")) {
+			processingOptions.setShortColorCodes(cmdLine.getOptionValue("short-color-codes"));
+		}
+
+		if (cmdLine.hasOption(("font-family"))) {
+		    processingOptions.setFontFamily(cmdLine.getOptionValue("font-family"));
+            FontMeasurer.instance().setFontFamilyName(processingOptions.getFontFamily());
+        }
+
+        if (cmdLine.hasOption(("font-size"))) {
+            processingOptions.setFontSize(cmdLine.getOptionValue("font-size"));
+            FontMeasurer.instance().setFontSize(Integer.parseInt(cmdLine.getOptionValue("font-size")));
+        }
+		if (cmdLine.hasOption(("font-style"))) {
+			processingOptions.setFontSize(cmdLine.getOptionValue("font-style"));
+			FontMeasurer.setFontStyle(cmdLine.getOptionValue("font-style").equals("PLAIN")?Font.PLAIN:Font.BOLD);
+		}
 		ConfigurationParser configParser = new ConfigurationParser();
 		try {
 			for (Option curOption : cmdLine.getOptions()) {

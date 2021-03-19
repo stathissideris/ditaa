@@ -20,11 +20,10 @@
 package org.stathissideris.ascii2image.text;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 
@@ -41,8 +40,20 @@ public class CellSet implements Iterable<TextGrid.Cell> {
 	public static final int TYPE_HAS_CLOSED_AREA = 3;
 	public static final int TYPE_UNDETERMINED = 4;
 
-	Set<TextGrid.Cell> internalSet = new HashSet<TextGrid.Cell>();
-	
+	private static final Comparator<TextGrid.Cell> CELL_COMPARATOR = new Comparator<TextGrid.Cell>() {
+		@Override
+		public int compare(TextGrid.Cell o1, TextGrid.Cell o2) {
+			int yResult = Integer.compare(o1.y, o2.y);
+			if (yResult == 0) {
+				return Integer.compare(o1.x, o2.x);
+			} else {
+				return yResult;
+			}
+		}
+	};
+
+	Set<TextGrid.Cell> internalSet = new TreeSet<>(CELL_COMPARATOR);
+
 	private int type = TYPE_UNDETERMINED;
 	private boolean typeIsValid = false;
 

@@ -44,18 +44,16 @@ public class DiagramText extends DiagramComponent {
 	private final       boolean latexMathEnabled;
 
 	private String text;
-	private Font   font;
-	private int    xPos, yPos;
-	private Color   color        = Color.black;
+	private Font font;
+	private int xPos, yPos;
+	private Color color = Color.black;
 	private boolean isTextOnLine = false;
-	private boolean hasOutline   = false;
-	private Color   outlineColor = Color.white;
+	private boolean hasOutline = false;
+	private Color outlineColor = Color.white;
 
 	public DiagramText(int x, int y, String text, Font font, boolean latexMathEnabled) {
-		if (text == null)
-			throw new IllegalArgumentException("DiagramText cannot be initialised with a null string");
-		if (font == null)
-			throw new IllegalArgumentException("DiagramText cannot be initialised with a null font");
+		if(text == null) throw new IllegalArgumentException("DiagramText cannot be initialised with a null string");
+		if(font == null) throw new IllegalArgumentException("DiagramText cannot be initialised with a null font");
 
 		this.xPos = x;
 		this.yPos = y;
@@ -64,25 +62,25 @@ public class DiagramText extends DiagramComponent {
 		this.latexMathEnabled = latexMathEnabled;
 	}
 
-	public void centerInBounds(Rectangle2D bounds) {
+	public void centerInBounds(Rectangle2D bounds){
 		centerHorizontallyBetween((int) bounds.getMinX(), (int) bounds.getMaxX());
 		centerVerticallyBetween((int) bounds.getMinY(), (int) bounds.getMaxY());
 	}
 
-	public void centerHorizontallyBetween(int minX, int maxX) {
+	public void centerHorizontallyBetween(int minX, int maxX){
 		int width = FontMeasurer.instance().getWidthFor(text, font);
 		int center = Math.abs(maxX - minX) / 2;
 		xPos += Math.abs(center - width / 2);
 
 	}
 
-	public void centerVerticallyBetween(int minY, int maxY) {
+	public void centerVerticallyBetween(int minY, int maxY){
 		int zHeight = FontMeasurer.instance().getZHeight(font);
 		int center = Math.abs(maxY - minY) / 2;
 		yPos -= Math.abs(center - zHeight / 2);
 	}
 
-	public void alignRightEdgeTo(int x) {
+	public void alignRightEdgeTo(int x){
 		int width = FontMeasurer.instance().getWidthFor(text, font);
 		xPos = x - width;
 	}

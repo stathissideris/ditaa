@@ -455,6 +455,11 @@ functionality:
   diagram extension, with support for ditaa and other. asciidoctor/asciidoctor-diagram#76 includes `ditaamini-0.10.jar`.
 * [Markdeep](https://casual-effects.com/markdeep/) has great support
   for generating diagrams from ASCII art among other things.
+* [muextensions](https://github.com/pedrohdz/muextensions) allows
+  embedding `ditaa` art in documents rendered by *Docutils* (*reStructuredText*
+  documents).  This includes [Pelican](http://docs.getpelican.com/en/stable/)
+  statically generated web sites,
+  [Hovercraft!](https://github.com/regebro/hovercraft) presentations, and more.
 
 Here's a list of projects that are somehow related to `ditaa`, and could
 prove useful/relevant while using it:
@@ -469,6 +474,7 @@ prove useful/relevant while using it:
 * If you make sure to keep the lines straight,
   [artist-mode](http://cinsk.github.io//emacs/emacs-artist.html) for
   emacs can be used to produce `ditaa`-compatible diagrams.
+* Within [Eclipse asciidoctor editor](https://github.com/de-jcup/eclipse-asciidoctor-editor) there is support for ditaa rendeing and special editor for `.ditaa` files with preview.
 
 ## Contributors
 

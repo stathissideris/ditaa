@@ -22,13 +22,15 @@ public class SVGBuilder {
         float dashInterval = Math.min(diagram.getCellWidth(), diagram.getCellHeight()) / 2;
         float strokeWeight = diagram.getMinimumOfCellDimension() / 10;
 
-        normalStroke = String.format("stroke-width='%f' stroke-linecap='round' stroke-linejoin='round' ",
-                strokeWeight);
+        normalStroke = String.format("stroke-width='%s' stroke-linecap='round' stroke-linejoin='round' ",
+                String.valueOf(strokeWeight));
 
         dashStroke = String.format(
-                "stroke-width='%f' stroke-dasharray='%f,%f' stroke-miterlimit='0' " +
+                "stroke-width='%s' stroke-dasharray='%s,%s' stroke-miterlimit='0' " +
                         "stroke-linecap='butt' stroke-linejoin='round' ",
-                strokeWeight, dashInterval, dashInterval);
+                String.valueOf(strokeWeight),
+                String.valueOf(dashInterval),
+                String.valueOf(dashInterval));
 
     }
 
@@ -71,15 +73,15 @@ public class SVGBuilder {
                 "<?xml version='1.0' encoding='UTF-8' standalone='no'?>\n" +
                 "<svg \n" +
                 "    xmlns='http://www.w3.org/2000/svg'\n" +
-                "    width='%d'\n" +
-                "    height='%d'\n" +
+                "    width='%s'\n" +
+                "    height='%s'\n" +
                 "    %s\n" +
                 "    version='1.0'>\n";
 
         return String.format(
                 HEADER,
-                diagram.getWidth(),
-                diagram.getHeight(),
+                String.valueOf(diagram.getWidth()),
+                String.valueOf(diagram.getHeight()),
                 antialiasing()
         );
 
@@ -204,9 +206,6 @@ public class SVGBuilder {
             if (shape.getType() == DiagramShape.TYPE_ARROWHEAD) {
                 renderPath(shape, commands, "none", fill);
             }
-
-        } else if (shape.isStrokeDashed()) {
-            fill = "white";
         }
 
         if (shape.getType() != DiagramShape.TYPE_ARROWHEAD) {
@@ -275,9 +274,9 @@ public class SVGBuilder {
         if (color.getAlpha() == 0) return;
 
         layer0.append (
-                String.format("    <rect x='0' y='0' width='%d' height='%d' style='fill: %s'/>\n",
-                        diagram.getWidth(),
-                        diagram.getHeight(),
+                String.format("    <rect x='0' y='0' width='%s' height='%s' style='fill: %s'/>\n",
+                        String.valueOf(diagram.getWidth()),
+                        String.valueOf(diagram.getHeight()),
                         colorToHex(color)
                 )
         );

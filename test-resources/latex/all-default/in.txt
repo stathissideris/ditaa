@@ -1,0 +1,38 @@
+
+$Box_1$                    $Box^2$
++---------------------+    +------+   /---------\
+|$\sum_{i=0}^{n}x^i$  |    |$cBLU$|   |         |
+|                     +--->|cRED  +-=-+cGRE$C_k$|
+|{io}                 |    |cXYZ  |   |{o}      |
++----------+----------+    +---+--+   \---------/
+           |                   |
+           |                   :
+           |                   V
+           |           +-------------------+
+           +---------->*$A_i$ hello $B^i$  |
+                       |              +----+
+                       |              |c8FA|
+                       +--------------+----+
+
+$|Set| = o-*-Freunde-*-nicht=*=diese-=-*- * töne$
+
+o Quick brown fox jumps over
+* a lazy dog.
+
+$Q_u^i$, $C_k$, $B_r^{own}$, $F_{ox}$ jumps
+
+over a lazy $d\cdot\frac{o}{g}$.
+
+
+$\forall x \in X, \quad \exists y \leq \epsilon$
+
+
+$\sin A \cos B =$
+
+    $ \frac{1}{2}\left[ \sin(A-B)+\sin(A+B) \right]$
+
+
+$\frac{d}{dx}\left( \int_{0}^{x} f(u)\,du\right)=f(x).$
+
+
+ $v \sim \mathcal{N} (m,\sigma^2)$

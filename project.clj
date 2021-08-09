@@ -9,8 +9,14 @@
                  [net.htmlparser.jericho/jericho-html "3.4"]
                  [org.apache.xmlgraphics/batik-gvt "1.9"]
                  [org.apache.xmlgraphics/batik-codec "1.9"]
-                 [org.apache.xmlgraphics/batik-bridge "1.9"]]
+                 [org.apache.xmlgraphics/batik-bridge "1.9"]
+                 [org.apache.xmlgraphics/batik-bridge "1.9"]
+                 [org.scilab.forge/jlatexmath "1.0.7"]]
   :main org.stathissideris.ascii2image.core.CommandLineConverter
   :java-source-paths ["src/java"]
-  :profiles {:dev {:dependencies      [[junit/junit "4.12"]]
+  :plugins [[lein-junit "1.1.9"]]
+  :junit ["test/java"]
+  :junit-formatter :plain
+  :junit-results-dir "target/test-results"
+  :profiles {:dev {:dependencies      [[junit/junit "4.12"] [com.github.dakusui/thincrest "3.6.0"]]
                    :java-source-paths ["test/java"]}})

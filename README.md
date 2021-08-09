@@ -128,6 +128,7 @@ No separation (with the `-E` option)
                                 chosen. If the overwrite option is
                                 selected, the image file is instead
                                 overwriten.
+ -L,--latex-math                Enable LaTeX math mode. 
  -r,--round-corners             Causes all corners to be rendered as round
                                 corners.
  -S,--no-shadows                Turns off the drop-shadow effect.
@@ -357,6 +358,46 @@ must be a space before the 'o' as well as after it. See below:
 ```
 
 ![](https://rawgit.com/stathissideris/ditaa/master/doc/images/bullet.png)
+
+#### LaTeX mode.
+If you place LaTeX formulae inside 2 ```$```s, it will be rendered using [```jlatexmath```](https://github.com/opencollab/jlatexmath). That is, if you have a following input files.
+```ditaa
+$Box_1$                    $Box^2$
++---------------------+    +------+   /---------\
+|$\sum_{i=0}^{n}x^i$  |    |$cBLU$|   |         |
+|                     +--->|cRED  +-=-+cGRE$C_k$|
+|{io}                 |    |cXYZ  |   |{o}      |
++----------+----------+    +---+--+   \---------/
+           |                   |
+           |                   :
+           |                   V
+           |           +-------------------+
+           +---------->*$A_i$ hello $B^i$  |
+                       |              +----+
+                       |              |c8FA|
+                       +--------------+----+
+$|Set| = o-*-Freunde-*-nicht=*=diese-=-*- * töne$
+o Quick brown fox jumps over
+* a lazy dog.
+$Q_u^i$, $C_k$, $B_r^{own}$, $F_{ox}$ jumps
+over a lazy $d\cdot\frac{o}{g}$.
+$\forall x \in X, \quad \exists y \leq \epsilon$
+$\sin A \cos B =$
+    $ \frac{1}{2}\left[ \sin(A-B)+\sin(A+B) \right]$
+$\frac{d}{dx}\left( \int_{0}^{x} f(u)\,du\right)=f(x).$
+ $v \sim \mathcal{N} (m,\sigma^2)$
+```
+
+This will be rendered as follows.
+
+![art-latexmath-1](https://user-images.githubusercontent.com/529265/47648438-5d92be00-dbbd-11e8-90c0-e2aa1b4ee858.png)
+
+To enable this feature, you need to give ```ditaa``` an option ```-L``` or ```--latex```.
+
+##### Limitations
+
+* This feature is only available when you are generating ```.png``` files. [Issue-44](https://github.com/stathissideris/ditaa/issues/44)
+* Generally, LaTeX formulae are rendered narrower than the widths they occupy in ascii arts. You will sometimes see blanks after your formulae, especially when they are complicated ones, and there is no workaround to adjust this as of now. To mitigate this, you need to wait for [Issue-34](https://github.com/stathissideris/ditaa/issues/34)
 
 #### HTML mode
 

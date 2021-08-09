@@ -1,0 +1,13 @@
+   +------------------------------------------+
+   |                                          |
+  $|Vertical bars inside math are not confused|$
+   |                                          |
+   +------------------------------------------+
+
+Horizontal bars are not confused.
+ +-----+
+ |     |
+$+-----+$
+
+
+

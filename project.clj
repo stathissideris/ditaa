@@ -1,4 +1,4 @@
-(defproject stathissideris/ditaa "0.11.0"
+(defproject stathissideris/ditaa "0.11.0-borderwidth"
   :description "command-line utility that can convert diagrams drawn using ascii art into proper bitmap graphics"
   :min-lein-version "2.0.0"
   :url "https://github.com/stathissideris/ditaa"

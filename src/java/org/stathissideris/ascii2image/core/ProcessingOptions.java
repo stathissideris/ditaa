@@ -1,10 +1,10 @@
 /**
  * ditaa - Diagrams Through Ascii Art
- * 
+ *
  * Copyright (C) 2004-2011 Efstathios Sideris
  *
  * ditaa is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as 
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
  *
@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with ditaa.  If not, see <http://www.gnu.org/licenses/>.
- *   
+ *
  */
 package org.stathissideris.ascii2image.core;
 
@@ -30,7 +30,7 @@ import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
 public class ProcessingOptions {
 
 	private HashMap<String, CustomShapeDefinition> customShapes = new HashMap<String, CustomShapeDefinition>();
-	
+
 	private boolean beVerbose = false;
 	private boolean printDebugOutput = false;
 	private boolean overwriteFiles = false;
@@ -55,11 +55,14 @@ public class ProcessingOptions {
 	public static final int DEFAULT_TAB_SIZE = 8;
 	private int tabSize = DEFAULT_TAB_SIZE;
 
+	public static final int DEFAULT_BORDER_WIDTH = 2;
+	private int borderWidth = DEFAULT_BORDER_WIDTH;
+
 	private String inputFilename;
 	private String outputFilename;
-	
+
 	private String characterEncoding = null;
-	
+
 	/**
 	 * @return
 	 */
@@ -214,6 +217,21 @@ public class ProcessingOptions {
 		tabSize = i;
 	}
 
+	/**
+	 * @return
+	 */
+	public int getBorderWidth() {
+		return borderWidth;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setBorderWidth(int i) {
+		if (i < 1) borderWidth = 1;
+		else borderWidth = i;
+	}
+
 	public String getCharacterEncoding() {
 		return characterEncoding;
 	}
@@ -233,11 +251,11 @@ public class ProcessingOptions {
 	public void putAllInCustomShapes(HashMap<String, CustomShapeDefinition> customShapes) {
 		this.customShapes.putAll(customShapes);
 	}
-	
+
 	public CustomShapeDefinition getFromCustomShapes(String tagName){
 		return customShapes.get(tagName);
 	}
-	
-	
+
+
 
 }

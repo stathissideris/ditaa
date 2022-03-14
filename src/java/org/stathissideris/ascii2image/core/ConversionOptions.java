@@ -1,10 +1,10 @@
 /**
  * ditaa - Diagrams Through Ascii Art
- * 
+ *
  * Copyright (C) 2004-2011 Efstathios Sideris
  *
  * ditaa is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as 
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
  *
@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with ditaa.  If not, see <http://www.gnu.org/licenses/>.
- *   
+ *
  */
 package org.stathissideris.ascii2image.core;
 
@@ -32,21 +32,21 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
 /**
- * 
+ *
  * @author Efstathios Sideris
  */
 public class ConversionOptions {
-	
+
 	public ProcessingOptions processingOptions =
 		new ProcessingOptions();
 	public RenderingOptions renderingOptions =
 		new RenderingOptions();
-		
+
 	public void setDebug(boolean value){
 		processingOptions.setPrintDebugOutput(value);
 		renderingOptions.setRenderDebugLines(value);
 	}
-	
+
 	public ConversionOptions(){}
 
     /** Parse a color from a 6- or 8-digit hex string.  For example, FF0000 is red.
@@ -65,19 +65,19 @@ public class ConversionOptions {
             throw new IllegalArgumentException("Cannot interpret \""+hexString+"\" as background colour. It needs to be a 6- or 8-digit hex number, depending on whether you have transparency or not (same as HTML).");
         }
     }
-	
+
 	public ConversionOptions(CommandLine cmdLine) throws UnsupportedEncodingException{
-		
+
 		processingOptions.setVerbose(cmdLine.hasOption("verbose"));
 		renderingOptions.setDropShadows(!cmdLine.hasOption("no-shadows"));
 		this.setDebug(cmdLine.hasOption("debug"));
 		processingOptions.setOverwriteFiles(cmdLine.hasOption("overwrite"));
-		
+
 		if(cmdLine.hasOption("scale")){
 			Float scale = Float.parseFloat(cmdLine.getOptionValue("scale"));
 			renderingOptions.setScale(scale.floatValue());
 		}
-		
+
 		processingOptions.setAllCornersAreRound(cmdLine.hasOption("round-corners"));
 		processingOptions.setPerformSeparationOfCommonEdges(!cmdLine.hasOption("no-separation"));
 		renderingOptions.setAntialias(!cmdLine.hasOption("no-antialias"));
@@ -88,7 +88,7 @@ public class ConversionOptions {
             Color background = parseColor(b);
 			renderingOptions.setBackgroundColor(background);
 		}
-		
+
 		if(cmdLine.hasOption("transparent")) {
 			renderingOptions.setBackgroundColor(new Color(0,0,0,0));
 		}
@@ -100,12 +100,19 @@ public class ConversionOptions {
 			processingOptions.setTabSize(tabSizeValue);
 		}
 
+		if(cmdLine.hasOption("border-width")){
+			Integer borderWidth = Integer.parseInt(cmdLine.getOptionValue("border-width"));
+			int borderWidthValue = borderWidth.intValue();
+			if(borderWidthValue < 1) borderWidthValue = 1;
+			processingOptions.setBorderWidth(borderWidthValue);
+		}
+
 		String encoding = (String) cmdLine.getOptionValue("encoding");
 		if(encoding != null){
 			new String(new byte[2], encoding);
 			processingOptions.setCharacterEncoding(encoding);
 		}
-		
+
 		if (cmdLine.hasOption("svg")){
 			renderingOptions.setImageType(RenderingOptions.ImageType.SVG);
 		}
